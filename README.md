@@ -1,2 +1,3 @@
 # dotato
- A dotfile or symlink management tool
+A dotfile or symlink manager.
+
