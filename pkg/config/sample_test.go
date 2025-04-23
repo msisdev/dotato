@@ -11,10 +11,10 @@ func TestSampleConfig(t *testing.T) {
 		Version: GetDotatoVersion(),
 		Mode:	ModeFile,
 		Plans: map[string]GroupList{
-			"desktop": {"bash"},
+			"all": nil,
 		},
 		Groups: map[string]string{
-			"bash": "~",
+			"home": "~",
 		},
 	}
 

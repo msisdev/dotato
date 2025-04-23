@@ -50,7 +50,7 @@ var t1r = &RuleNode{
 					dirs: map[string]*RuleNode{
 						"themes": {
 							rules: NewRules(
-								"*.toml",
+								"*",
 								"!alabaster.toml",
 								"!alabaster_dark.toml",
 								"!ayu_mirage.toml",

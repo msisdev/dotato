@@ -4,13 +4,15 @@ import "fmt"
 
 const sampleConfigFormat = `version: %s
 
-mode: file
+mode: file # file or link are supported
 
 plans:
-  desktop: [bash]
+  all: # empty plan means all groups
+  # arch: [home] # select groups with list
 
 groups:
-  bash: "~"
+  home: "~" # 
+  # bash: "~"
 `
 
 func GetSampleConfigStr() string {
