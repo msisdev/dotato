@@ -1,5 +1,7 @@
 package ignore
 
+import "fmt"
+
 var t1e = []Entry{
 	{"/home/user", IsDir, NotIgnored},
 	{"/home/user/.bash_history", IsFile, Ignored},
@@ -77,19 +79,19 @@ var t1r = &RuleNode{
 // Equivalent ignore files of the above rules
 var t1i = []IgnoreEntry{
 	{
-		"/home/user/.dotignore",
+		fmt.Sprintf("/home/user/%s", DefaultIgnoreFileName),
 		[]string{".bash_history"},
 	},
 	{
-		"/home/user/.config/alacritty/themes/.dotignore",
+		fmt.Sprintf("/home/user/.config/alacritty/themes/%s", DefaultIgnoreFileName),
 		[]string{"*.toml", "!alabaster.toml", "!alabaster_dark.toml", "!ayu_mirage.toml"},
 	},
 	{
-		"/home/user/.ssh/.dotignore",
+		fmt.Sprintf("/home/user/.ssh/%s", DefaultIgnoreFileName),
 		[]string{"known_hosts"},
 	},
 	{
-		"/home/user/readme/.dotignore",
+		fmt.Sprintf("/home/user/readme/%s", DefaultIgnoreFileName),
 		[]string{"**/README.md"},
 	},
 }

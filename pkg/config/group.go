@@ -1,4 +1,4 @@
-package cfg
+package config
 
 import "sort"
 
@@ -19,8 +19,12 @@ func (g GroupList) IsEqual(other GroupList) bool {
 	}
 
 	// Sort and compare items
-	sort.Slice(g, func(i, j int) bool { return g[i] < g[j] })
-	sort.Slice(other, func(i, j int) bool { return other[i] < other[j] })
+	sort.Slice(g, func(i, j int) bool {
+		return g[i] < g[j]
+	})
+	sort.Slice(other, func(i, j int) bool {
+		return other[i] < other[j]
+	})
 	for i := range g {
 		if g[i] != other[i] {
 			return false
@@ -41,7 +45,7 @@ func (gs GroupSet) ToGroupList() GroupList {
 	return gl
 }
 
-func (gs GroupSet) IsEqual(other GroupSet) bool {	
+func (gs GroupSet) IsEqual(other GroupSet) bool {
 	// Compare length first
 	if len(gs) != len(other) {
 		return false

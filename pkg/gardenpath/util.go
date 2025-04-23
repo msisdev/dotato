@@ -12,9 +12,10 @@ func replaceTilde(rawPath string) (string, error) {
 		return rawPath, nil
 	}
 
+	// Is tilde followed by a slash?
 	end := strings.Index(rawPath, "/")
 	if end == -1 {
-		end = len(rawPath)
+		end = len(rawPath)	// No slash: use the whole string
 	}
 
 	// Path starts with ~

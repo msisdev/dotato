@@ -1,4 +1,4 @@
-package cfg
+package config
 
 import (
 	"testing"
@@ -8,17 +8,17 @@ import (
 
 func TestSampleConfig(t *testing.T) {
 	cfg := &Config{
-		Version: getDotatoVersion(),
-		Plans:   map[string]GroupList{
-			"arch": {"alacritty"},
+		Version: GetDotatoVersion(),
+		Mode:	ModeFile,
+		Plans: map[string]GroupList{
+			"desktop": {"bash"},
 		},
 		Groups: map[string]string{
-			"alacritty": "~/.config/alacritty",
+			"bash": "~",
 		},
 	}
 
-	genCfg, err := NewConfigFromStr(GetSampleConfigStr())
+	genCfg, err := NewFromStr(GetSampleConfigStr())
 	assert.NoError(t, err)
-
 	assert.True(t, cfg.IsEqual(genCfg), "Generated config should be equal to the sample config")
 }

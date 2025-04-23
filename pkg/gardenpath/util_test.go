@@ -1,6 +1,7 @@
 package gardenpath
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
@@ -9,12 +10,16 @@ import (
 
 func TestReplaceTilde(t *testing.T) {
 	os.Setenv("HOME", "/home/user")
+	user := os.Getenv("USER")
 
 	testcases := [][2]string{
 		{"/", "/"},
 		{"~", "/home/user"},
 		{"~/", "/home/user/"},
 		{"~/foo", "/home/user/foo"},
+		{fmt.Sprintf("~%s", user), fmt.Sprintf("/home/%s", user)},
+		{fmt.Sprintf("~%s/", user), fmt.Sprintf("/home/%s/", user)},
+		{fmt.Sprintf("~%s/foo", user), fmt.Sprintf("/home/%s/foo", user)},
 	}
 
 	for _, tc := range testcases {

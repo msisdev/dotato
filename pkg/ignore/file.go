@@ -2,11 +2,20 @@ package ignore
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"strings"
 
 	"github.com/go-git/go-billy/v5"
 	"github.com/msisdev/dotato/pkg/gardenpath"
+)
+
+const (
+	DefaultIgnoreFileName = "dotato.ignore"
+)
+
+var (
+	ErrNotDir = fmt.Errorf("not a directory")
 )
 
 func CompileIgnoreFile(fs billy.Filesystem, filePath gardenpath.GardenPath) (*Rules, bool, error) {
@@ -39,8 +48,18 @@ func CompileIgnoreFile(fs billy.Filesystem, filePath gardenpath.GardenPath) (*Ru
 // that are in the subdirectories of the given path.
 // The path must be a directory.
 func CompileIgnoreFileRecur(fs billy.Filesystem, tree *RuleTree, dirPath gardenpath.GardenPath, name string) error {
+	// Is path a directory?
+	fi, err := fs.Stat(dirPath.String())
+	if err != nil {
+		return err
+	}
+	if !fi.IsDir() {
+		return ErrNotDir
+	}
+
 	// Read ignore file from current directory
-	if rules, ok, err := CompileIgnoreFile(fs, append(dirPath, name)); err != nil {
+	rules, ok, err := CompileIgnoreFile(fs, append(dirPath, name))
+	if err != nil {
 		return err
 	} else if ok {
 		tree.Add(dirPath, rules)

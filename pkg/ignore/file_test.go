@@ -14,10 +14,12 @@ type FileTestHelper struct {
 }
 
 func NewFileTestHelper(es []Entry, ies []IgnoreEntry) *FileTestHelper {
+	// Create files
 	h := &FileTestHelper{
 		fs: NewMemFS(es),
 	}
 
+	// Create ignore files
 	for _, ie := range ies {
 		h.createIgnoreFile(ie)
 	}
@@ -62,7 +64,7 @@ func TestCompileIgnoreFile1(t *testing.T) {
 
 	tree := NewRuleTree(0)
 
-	err = CompileIgnoreFileRecur(h.fs, tree, gp, IgnoreFileName)
+	err = CompileIgnoreFileRecur(h.fs, tree, gp, DefaultIgnoreFileName)
 	assert.NoError(t, err)
 
 	for _, e := range t1e {

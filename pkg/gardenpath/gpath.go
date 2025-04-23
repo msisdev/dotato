@@ -7,18 +7,35 @@ import (
 	"strings"
 )
 
-// Path represents an absolute path as a sequence of directories.
-// It always starts with an empty string to distinguish nil from
-// root directory.
-// Therefore the length is always bigger than 0.
+// GardenPath is a smart path representation.
+// It is a sequence of directory names starting from root
+// directory.
+// 
+// It always contains an empty string at index 0
+// to distinguish root directory from nil.
 type GardenPath []string
 
 // NewGardenPath handles:
-// (1) environment variable expansion
-// (2) tilde replacement,
-// (3) absolute path conversion,
-// (4) trailing slash removal.
+//
+// 1. Clean dot and double dot
+//
+// 2. environment variable expansion
+//
+// 3. tilde replacement,
+//
+// 4. absolute path conversion,
+//
+// 5. trailing slash removal.
+//
+// Returns nil if the path is empty.
 func New(path string) (GardenPath, error) {
+	if path == "" {
+		return nil, nil
+	}
+
+	// Clean dots
+	path = filepath.Clean(path)
+
 	// Expand env vars
 	path, notFound := expandEnv(path)
 	if len(notFound) > 0 {

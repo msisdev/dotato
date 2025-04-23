@@ -10,14 +10,13 @@ const (
 	IsFile = false
 	Ignored = true
 	NotIgnored = false
-	IgnoreFileName = ".dotignore"
 )
 
 // Entry represents a file or directory
 type Entry struct {
-	path string
-	isDir bool
-	isIgnored bool
+	path 			string
+	isDir 		bool
+	isIgnored	bool
 }
 
 func NewMemFS(entries []Entry) billy.Filesystem {

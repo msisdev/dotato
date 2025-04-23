@@ -5,7 +5,7 @@ var t2e = []Entry{
 	{ "/.bar", IsFile, NotIgnored },
 	{ "/.baz", IsFile, NotIgnored },
 	{ "/one", IsDir, NotIgnored },
-	{ "/one/two", IsFile, NotIgnored },
+	{ "/one/two/the three", IsFile, NotIgnored },
 }
 
 // This rules start from `/` directory
@@ -17,3 +17,4 @@ var t2r = &RuleNode{
 	),
 	dirs: map[string]*RuleNode{},
 }
+

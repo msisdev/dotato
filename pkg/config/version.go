@@ -1,4 +1,4 @@
-package cfg
+package config
 
 import "runtime/debug"
 
@@ -6,7 +6,7 @@ const (
 	DotatoVersionUnknown = "unknown"
 )
 
-func getDotatoVersion() string {
+func GetDotatoVersion() string {
 	info, ok := debug.ReadBuildInfo()
 	if !ok {
 		return DotatoVersionUnknown
