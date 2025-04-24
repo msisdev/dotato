@@ -1,7 +1,10 @@
 package main
 
-import "github.com/msisdev/dotato/internal/cmd"
+import (
+	"context"
+	"github.com/msisdev/dotato/internal/cli"
+)
 
 func main() {
-	cmd.Run()
+	cli.Run(context.Background())
 }

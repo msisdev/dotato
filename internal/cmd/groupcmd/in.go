@@ -1,5 +1,0 @@
-package groupcmd
-
-func GroupIn() {
-
-}

@@ -13,7 +13,7 @@ type Helper struct {
 
 func (h Helper) Ignore(path string) (bool, error) {
 	// Make path
-	gp, err := gardenpath.New(path)
+	gp, err := gardenpath.NewGardenPath(path)
 	if err != nil {
 		return false, err
 	}

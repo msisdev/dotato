@@ -28,7 +28,7 @@ type GardenPath []string
 // 5. trailing slash removal.
 //
 // Returns nil if the path is empty.
-func New(path string) (GardenPath, error) {
+func NewGardenPath(path string) (GardenPath, error) {
 	if path == "" {
 		return nil, nil
 	}

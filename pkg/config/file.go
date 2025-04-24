@@ -25,7 +25,7 @@ func ReadFile(fs billy.Filesystem, name string) (*Config, error) {
 		return nil, err
 	}
 
-	return NewFromByte(b)
+	return NewConfigFromByte(b)
 }
 
 func WriteFile(fs billy.Filesystem, name string, cfg *Config) error {

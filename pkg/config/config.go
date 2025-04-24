@@ -27,7 +27,7 @@ type Config struct {
 	Groups  map[string]string    	`yaml:"groups"`
 }
 
-func New() *Config {
+func NewConfig() *Config {
 	return &Config{
 		Version:	GetDotatoVersion(),
 		Mode:			ModeDefault,
@@ -36,7 +36,7 @@ func New() *Config {
 	}
 }
 
-func NewFromByte(data []byte) (*Config, error) {
+func NewConfigFromByte(data []byte) (*Config, error) {
 	var config Config
 	if err := yaml.Unmarshal(data, &config); err != nil {
 		return nil, err
@@ -53,8 +53,8 @@ func NewFromByte(data []byte) (*Config, error) {
 	return &config, nil
 }
 
-func NewFromStr(str string) (*Config, error) {
-	return NewFromByte([]byte(str))
+func NewConfigFromStr(str string) (*Config, error) {
+	return NewConfigFromByte([]byte(str))
 }
 
 // IsEqual can compare two Config objects.

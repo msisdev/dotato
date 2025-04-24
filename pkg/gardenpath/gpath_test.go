@@ -21,7 +21,7 @@ func TestNewGardenPath(t *testing.T) {
 	if pwdStr == "" {
 		panic("PWD environment variable is not set")
 	}
-	pwd, err := New(pwdStr)
+	pwd, err := NewGardenPath(pwdStr)
 	if err != nil {
 		panic("Failed to create GardenPath from PWD: " + err.Error())
 	}
@@ -60,7 +60,7 @@ func TestNewGardenPath(t *testing.T) {
 
 	for _, tc := range testcases {
 		t.Run(tc.path, func(t *testing.T) {
-			gp, err := New(tc.path)
+			gp, err := NewGardenPath(tc.path)
 			assert.NoError(t, err)
 			assert.Equal(t, tc.gp, gp, "NewGardenPath(%s): expected %v, got %v", tc.path, tc.gp, gp)
 		})

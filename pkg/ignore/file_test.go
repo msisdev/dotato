@@ -29,7 +29,7 @@ func NewFileTestHelper(es []Entry, ies []IgnoreEntry) *FileTestHelper {
 
 func (h *FileTestHelper) createIgnoreFile(ie IgnoreEntry) {
 	// Get path object
-	path, err := gardenpath.New(ie.path)
+	path, err := gardenpath.NewGardenPath(ie.path)
 	if err != nil {
 		panic(err)
 	}
@@ -57,7 +57,7 @@ func (h *FileTestHelper) createIgnoreFile(ie IgnoreEntry) {
 func TestCompileIgnoreFile1(t *testing.T) {
 	h := NewFileTestHelper(t1e, t1i)
 
-	gp, err := gardenpath.New("/")
+	gp, err := gardenpath.NewGardenPath("/")
 	if err != nil {
 		panic(err)
 	}
@@ -68,7 +68,7 @@ func TestCompileIgnoreFile1(t *testing.T) {
 	assert.NoError(t, err)
 
 	for _, e := range t1e {
-		path, err := gardenpath.New(e.path)
+		path, err := gardenpath.NewGardenPath(e.path)
 		if err != nil {
 			panic(err)
 		}
