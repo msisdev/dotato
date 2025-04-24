@@ -11,7 +11,7 @@ type Mode string
 const (
 	ModeFile Mode = "file"
 	ModeLink Mode = "link"
-	ModeDefault = ModeFile
+	ModeDefault Mode = ModeFile
 )
 
 var (
@@ -19,7 +19,6 @@ var (
 	ErrModeNotFound    = fmt.Errorf("mode not found")
 )
 
-// YAML schema
 type Config struct {
 	Version string               	`yaml:"version"`
 	Mode		Mode               		`yaml:"mode"`

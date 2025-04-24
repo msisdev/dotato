@@ -33,7 +33,7 @@ func NewGardenPath(path string) (GardenPath, error) {
 		return nil, nil
 	}
 
-	// Clean dots
+	// Clean dots ("." or "..")
 	path = filepath.Clean(path)
 
 	// Expand env vars
@@ -59,7 +59,36 @@ func NewGardenPath(path string) (GardenPath, error) {
 	return strings.Split(path, "/"), nil
 }
 
-// Return absolute path
+// Return absolute path.
 func (p GardenPath) String() string {
 	return strings.Join(p, "/")
+}
+
+// Return the last element.
+func (p GardenPath) Last() string {
+	if len(p) == 0 {
+		return ""
+	}
+	return p[len(p)-1]
+}
+
+// Return the parent path.
+// This will work with both directory and file paths.
+func (p GardenPath) Parent() GardenPath {
+	if len(p) == 0 {
+		return p
+	}
+	return p[:len(p)-1]
+}
+
+func (p GardenPath) IsEqual(other GardenPath) bool {
+	if len(p) != len(other) {
+		return false
+	}
+	for i := range p {
+		if p[i] != other[i] {
+			return false
+		}
+	}
+	return true
 }

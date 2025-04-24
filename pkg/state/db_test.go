@@ -9,7 +9,7 @@ import (
 
 func TestNewState(t *testing.T) {
 	// Test the NewDB function
-	d, err := NewDB(DBPathInMemory)
+	d, err := NewDB(PathInMemory)
 	assert.NoError(t, err)
 	assert.NotNil(t, d)
 
@@ -19,4 +19,3 @@ func TestNewState(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, config.GetDotatoVersion(), ver)	
 }
-

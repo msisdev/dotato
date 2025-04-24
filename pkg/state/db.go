@@ -2,6 +2,7 @@ package state
 
 import (
 	"errors"
+	"time"
 
 	"github.com/glebarez/sqlite"
 	"github.com/msisdev/dotato/pkg/config"
@@ -9,8 +10,8 @@ import (
 )
 
 const (
-	DBPathDefault	= "~/.local/share/dotato/dotatostate.sqlite"
-	DBPathInMemory = ":memory:"
+	PathDefault	= "~/.local/share/dotato/dotatostate.sqlite"
+	PathInMemory = ":memory:"
 	
 	KeyVersion	 	= "version"
 )
@@ -23,6 +24,15 @@ type DB struct {
 type Store struct {
 	Key		string	`gorm:"primaryKey"`
 	Value string
+}
+
+type History struct {
+	TargetPath			string			`gorm:"primaryKey"`
+	SourcePath			string			`gorm:"uniqueIndex"`
+	Mode						config.Mode	`gorm:"not null"`
+	TargetUpdatedAt	time.Time 	`gorm:"not null"`
+	SourceUpdatedAt	time.Time		`gorm:"not null"`
+	Hash						string			`gorm:"not null"`
 }
 
 func NewDB(path string) (*DB, error) {
@@ -54,7 +64,7 @@ func NewDB(path string) (*DB, error) {
 		d.SetVersion(config.GetDotatoVersion())
 
 		// Migrate to v1
-		if err := d.V1_Migrate(); err != nil {
+		if err := d.v1_migrate(); err != nil {
 			return nil, err
 		}
 	}

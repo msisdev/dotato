@@ -26,6 +26,9 @@ func (n *RuleNode) Append(dir string, node *RuleNode) {
 }
 
 func (n *RuleNode) Ignore(relPath string) bool {
+	if n.rules == nil {
+		return false
+	}
 	return n.rules.Ignore(relPath)
 }
 
@@ -56,6 +59,11 @@ func NewRuleTreeFromPath(path gardenpath.GardenPath) *RuleTree {
 
 // This function may overwrite the rules.
 func (t *RuleTree) Add(path gardenpath.GardenPath, rules *Rules) {
+	// Some edge cases
+	if t.root == nil {
+		t.root = NewRuleNode(NewRules())
+	}
+
 	// Traverse tree with given path
 	// If given path is empty, rules will be added to the root node.
 	node := t.root
@@ -76,6 +84,15 @@ func (t *RuleTree) Add(path gardenpath.GardenPath, rules *Rules) {
 }
 
 func (t *RuleTree) Ignore(path gardenpath.GardenPath) bool {
+	// Some edge cases
+	if t.root == nil {
+		t.root = NewRuleNode(NewRules())
+		return false
+	}
+	if len(path) == 0 {
+		return false
+	}
+
 	// From root to the parent node of the path,
 	// check if the path is ignored on every node.
 	node := t.root

@@ -6,29 +6,56 @@ import (
 
 	"github.com/go-git/go-billy/v5"
 	"github.com/goccy/go-yaml"
+	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 
 const (
-	DefaultConfigFileName = "dotato.yaml"
+	ConfigFileName = "dotato.yaml"
 )
 
-func ReadFile(fs billy.Filesystem, name string) (*Config, error) {
+func ReadConfigFile(fs billy.Filesystem, filename string) (*Config, bool, error) {
 	// Open
-	file, err := fs.Open(name)
+	file, err := fs.Open(filename)
 	if err != nil {
-		return nil, err
+		if os.IsNotExist(err) {
+			return nil, false, nil
+		}
+		return nil, false, err
 	}
 
 	// Read
 	b, err := io.ReadAll(file)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
-	return NewConfigFromByte(b)
+	cfg, err := NewConfigFromByte(b)
+
+	return cfg, true, err
 }
 
-func WriteFile(fs billy.Filesystem, name string, cfg *Config) error {
+// ReadConfigRecur tries to find config file by
+// walking up the directory tree.
+// It returns the directory of the config file.
+func ReadConfigFileRecur(fs billy.Filesystem, dir gp.GardenPath, filename string) (*Config, gp.GardenPath, error) {
+	if dir == nil {
+		return nil, nil, nil
+	}
+
+	filepath := append(dir, filename)
+
+	cfg, ok, err := ReadConfigFile(fs, filepath.String())
+	if err != nil {
+		return nil, nil, err
+	}
+	if ok {
+		return cfg, dir, nil
+	}
+
+	return ReadConfigFileRecur(fs, dir.Parent(), filename)
+}
+
+func WriteConfigFile(fs billy.Filesystem, name string, cfg *Config) error {
 	// Open
 	file, err := fs.OpenFile(
 		name,

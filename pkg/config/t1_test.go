@@ -6,6 +6,7 @@ version: "0.0.1"
 mode: file
 
 plans:
+  all:
   default:  []
   fedora:   [kde, konsole, zsh]
   hyprland: [alacritty, fish, waybar]
@@ -24,6 +25,7 @@ var t1c = &Config{
 	Version: "0.0.1",
 	Mode:		ModeFile,
 	Plans: map[string]GroupList{
+		"all": 			nil,
 		"default":  {},
 		"fedora":   {"kde", "konsole", "zsh"},
 		"hyprland": {"alacritty", "fish", "waybar"},

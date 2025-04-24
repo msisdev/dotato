@@ -1,11 +1,12 @@
 package arg
 
 type Args struct {
-	Danger	*DangerArgs		`arg:"subcommand:!"`
+	Danger	*DangerArgs		`arg:"subcommand:danger|!"`
 	Plan		*PlanArgs			`arg:"subcommand:plan|p"`
 	Group		*GroupArgs		`arg:"subcommand:group|g"`
 	File		*FileArgs			`arg:"subcommand:file|f"`
 	Version *VersionArgs	`arg:"subcommand:version|v" help:"Show version"`
+	Verbose bool					`arg:"-v,--verbose" help:"Verbose output"`
 }
 
 type DangerArgs struct {
@@ -13,7 +14,6 @@ type DangerArgs struct {
 }
 type DangerUnlinkArgs struct {
 	Yes bool	`arg:"-y,--yes" help:"Skip confirmation"`
-	Verbose bool `arg:"-v" help:"Verbosity"`
 }
 
 
