@@ -3,26 +3,26 @@ package ignore
 import (
 	"testing"
 
-	"github.com/msisdev/dotato/pkg/gardenpath"
+	gp "github.com/msisdev/dotato/pkg/gardenpath"
 	"github.com/stretchr/testify/assert"
 )
 
-type Helper struct {
+type TreeHelper struct {
 	tree *RuleTree
 }
 
-func (h Helper) Ignore(path string) (bool, error) {
+func (h TreeHelper) Ignore(path string) (bool, error) {
 	// Make path
-	gp, err := gardenpath.NewGardenPath(path)
+	gpath, err := gp.New(path)
 	if err != nil {
 		return false, err
 	}
 
 	// Test
-	return h.tree.Ignore(gp), nil
+	return h.tree.Ignore(gpath), nil
 }
 
-func (h Helper) Test(t *testing.T, entries []Entry) {
+func (h TreeHelper) Test(t *testing.T, entries []Entry) {
 	for _, entry := range entries {
 		ignored, err := h.Ignore(entry.path)
 		assert.NoError(t, err)
@@ -46,7 +46,7 @@ func TestRuleTree1_Base0(t *testing.T) {
 		},
 	}
 
-	h := Helper{tree}
+	h := TreeHelper{tree}
 	h.Test(t, t1e)
 }
 
@@ -61,7 +61,7 @@ func TestRuleTree1_Base1(t *testing.T) {
 		},
 	}
 
-	h := Helper{tree}
+	h := TreeHelper{tree}
 	h.Test(t, t1e)
 }
 
@@ -71,7 +71,7 @@ func TestRuleTree1_Base2(t *testing.T) {
 		root: t1r,
 	}
 
-	h := Helper{tree}
+	h := TreeHelper{tree}
 	h.Test(t, t1e)
 }
 
@@ -81,6 +81,6 @@ func TestRuleTree2_Base0(t *testing.T) {
 		root: t2r,
 	}
 
-	h := Helper{tree}
+	h := TreeHelper{tree}
 	h.Test(t, t2e)
 }

@@ -18,14 +18,16 @@ var (
 	ErrNotDir = fmt.Errorf("not a directory")
 )
 
-func CompileIgnoreFile(fs billy.Filesystem, filePath gardenpath.GardenPath) (*Rules, bool, error) {
+// If file is not found, it will return empty rules.
+func ReadIgnoreFile(fs billy.Filesystem, filepath string) (*Rules, bool, error) {
 	// Open file
-	file, err := fs.Open(filePath.String())
+	file, err := fs.Open(filepath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, false, nil
+		} else {
+			return nil, false, err
 		}
-		return nil, false, err
 	}
 	defer file.Close()
 
@@ -44,29 +46,32 @@ func CompileIgnoreFile(fs billy.Filesystem, filePath gardenpath.GardenPath) (*Ru
 	return NewRules(buf...), true, nil
 }
 
-// CompileIgnoreFileRecur recursively compiles the ignore files
-// that are in the subdirectories of the given path.
-// The path must be a directory.
-func CompileIgnoreFileRecur(fs billy.Filesystem, tree *RuleTree, dirPath gardenpath.GardenPath, name string) error {
-	// Is path a directory?
-	fi, err := fs.Stat(dirPath.String())
-	if err != nil {
-		return err
-	}
-	if !fi.IsDir() {
-		return ErrNotDir
-	}
-
-	// Read ignore file from current directory
-	rules, ok, err := CompileIgnoreFile(fs, append(dirPath, name))
+// read the ignore file and add it to the tree
+func ReadIgnoreFileAdd(fs billy.Filesystem, tree *RuleTree, dir gardenpath.GardenPath, filename string) error {
+	// Read ignore file
+	rules, ok, err := ReadIgnoreFile(fs, append(dir, filename).String())
 	if err != nil {
 		return err
 	} else if ok {
-		tree.Add(dirPath, rules)
+		tree.AddRules(dir, rules)
+	}
+
+	return nil
+}
+
+// ReadIgnoreFileRecur recursively reads the ignore files
+// that are in the subdirectories of the given path.
+func ReadIgnoreFileRecur(fs billy.Filesystem, tree *RuleTree, dir gardenpath.GardenPath, filename string) error {
+	// Read ignore file in dir
+	rules, ok, err := ReadIgnoreFile(fs, append(dir, filename).String())
+	if err != nil {
+		return err
+	} else if ok {
+		tree.AddRules(dir, rules)
 	}
 
 	// Get file infos
-	fis, err := fs.ReadDir(dirPath.String())
+	fis, err := fs.ReadDir(dir.String())
 	if err != nil {
 		return err
 	}
@@ -77,15 +82,15 @@ func CompileIgnoreFileRecur(fs billy.Filesystem, tree *RuleTree, dirPath gardenp
 			continue
 		}
 
-		nextPath := append(dirPath, fi.Name())
+		nextPath := append(dir, fi.Name())
 
 		// Check if the directory is ignored
 		if tree.Ignore(nextPath) {
 			continue
 		}
 
-		// Recursively compile ignore files in subdirectories
-		if err := CompileIgnoreFileRecur(fs, tree, nextPath, name); err != nil {
+		// Recursively read ignore files in subdirectories
+		if err := ReadIgnoreFileRecur(fs, tree, nextPath, filename); err != nil {
 			return err
 		}
 	}

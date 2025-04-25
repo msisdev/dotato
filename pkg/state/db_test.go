@@ -17,5 +17,5 @@ func TestNewState(t *testing.T) {
 	ver, ok, err := d.GetVersion()
 	assert.NoError(t, err)
 	assert.True(t, ok)
-	assert.Equal(t, config.GetDotatoVersion(), ver)	
+	assert.Equal(t, config.DotatoVersion(), ver)	
 }

@@ -5,17 +5,17 @@ import (
 	"testing"
 
 	"github.com/go-git/go-billy/v5"
-	"github.com/msisdev/dotato/pkg/gardenpath"
+	gp "github.com/msisdev/dotato/pkg/gardenpath"
 	"github.com/stretchr/testify/assert"
 )
 
-type FileTestHelper struct {
+type FileHelper struct {
 	fs billy.Filesystem
 }
 
-func NewFileTestHelper(es []Entry, ies []IgnoreEntry) *FileTestHelper {
+func NewFileHelper(es []Entry, ies []IgnoreEntry) *FileHelper {
 	// Create files
-	h := &FileTestHelper{
+	h := &FileHelper{
 		fs: NewMemFS(es),
 	}
 
@@ -27,9 +27,9 @@ func NewFileTestHelper(es []Entry, ies []IgnoreEntry) *FileTestHelper {
 	return h
 }
 
-func (h *FileTestHelper) createIgnoreFile(ie IgnoreEntry) {
+func (h *FileHelper) createIgnoreFile(ie IgnoreEntry) {
 	// Get path object
-	path, err := gardenpath.NewGardenPath(ie.path)
+	path, err := gp.New(ie.path)
 	if err != nil {
 		panic(err)
 	}
@@ -55,20 +55,20 @@ func (h *FileTestHelper) createIgnoreFile(ie IgnoreEntry) {
 }
 
 func TestCompileIgnoreFile1(t *testing.T) {
-	h := NewFileTestHelper(t1e, t1i)
+	h := NewFileHelper(t1e, t1i)
 
-	gp, err := gardenpath.NewGardenPath("/")
+	// Build rule tree from root dir
+	root, err := gp.New("/")
 	if err != nil {
 		panic(err)
 	}
-
 	tree := NewRuleTree(0)
-
-	err = CompileIgnoreFileRecur(h.fs, tree, gp, DefaultIgnoreFileName)
+	err = ReadIgnoreFileRecur(h.fs, tree, root, DefaultIgnoreFileName)
 	assert.NoError(t, err)
 
+	// Test rules on each file
 	for _, e := range t1e {
-		path, err := gardenpath.NewGardenPath(e.path)
+		path, err := gp.New(e.path)
 		if err != nil {
 			panic(err)
 		}

@@ -24,7 +24,7 @@ groups:
 var t1c = &Config{
 	Version: "0.0.1",
 	Mode:		ModeFile,
-	Plans: map[string]GroupList{
+	Plans: map[string][]string{
 		"all": 			nil,
 		"default":  {},
 		"fedora":   {"kde", "konsole", "zsh"},

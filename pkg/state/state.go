@@ -6,7 +6,7 @@ type State struct {
 	d *DB
 }
 
-func NewState(path string) (*State, error) {
+func New(path string) (*State, error) {
 	d, err := NewDB(path)
 	if err != nil {
 		return nil, err

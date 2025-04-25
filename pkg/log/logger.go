@@ -17,21 +17,26 @@ const (
 	FatalLevel Level = log.FatalLevel
 )
 
-func NewLogger(level log.Level) *log.Logger {
-	opt := log.Options{ Level: level }
+func New(level log.Level) *log.Logger {
+	logger := log.New(os.Stderr)
+	SetLevel(logger, level)
 
+	return logger
+}
+
+func SetLevel(logger	*log.Logger, level log.Level) {
+	// Set level
+	logger.SetLevel(level)
+
+	// Set options
 	switch level {
 	default: fallthrough
 	case log.DebugLevel:
-		opt.ReportCaller = true
+		logger.SetReportCaller(true)
 
 	case log.InfoLevel:
 	case log.WarnLevel:
 	case log.ErrorLevel:
 	case log.FatalLevel:
 	}
-
-	logger := log.NewWithOptions(os.Stderr, opt)
-
-	return logger
 }

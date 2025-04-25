@@ -61,7 +61,7 @@ func NewDB(path string) (*DB, error) {
 	// Is db empty?
 	if !ok {
 		// Set version
-		d.SetVersion(config.GetDotatoVersion())
+		d.SetVersion(config.DotatoVersion())
 
 		// Migrate to v1
 		if err := d.v1_migrate(); err != nil {
@@ -69,7 +69,7 @@ func NewDB(path string) (*DB, error) {
 		}
 	}
 	
-	if ver != config.GetDotatoVersion() {
+	if ver != config.DotatoVersion() {
 		// Migrate between different versions
 	}
 

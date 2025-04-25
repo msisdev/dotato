@@ -7,6 +7,10 @@ import (
 	"strings"
 )
 
+const (
+	DefaultSeparator = '/'
+)
+
 // GardenPath is a smart path representation.
 // It is a sequence of directory names starting from root
 // directory.
@@ -17,21 +21,23 @@ type GardenPath []string
 
 // NewGardenPath handles:
 //
-// 1. Clean dot and double dot
-//
-// 2. environment variable expansion
-//
-// 3. tilde replacement,
-//
-// 4. absolute path conversion,
-//
-// 5. trailing slash removal.
+//  1. Clean dot and double dot  
+//  2. environment variable expansion
+//  3. tilde replacement,
+//  4. absolute path conversion,
+//  5. trailing slash removal.
 //
 // Returns nil if the path is empty.
-func NewGardenPath(path string) (GardenPath, error) {
+func New(path string) (GardenPath, error) {
+	return NewWithSep(path, DefaultSeparator)
+}
+
+func NewWithSep(path string, separator rune) (GardenPath, error) {
 	if path == "" {
 		return nil, nil
 	}
+
+	sep := string(separator)
 
 	// Clean dots ("." or "..")
 	path = filepath.Clean(path)
@@ -49,19 +55,19 @@ func NewGardenPath(path string) (GardenPath, error) {
 	}
 
 	// Insert PWD
-	if !strings.HasPrefix(path, "/") {
+	if !strings.HasPrefix(path, sep) {
 		path = filepath.Join(os.Getenv("PWD"), path)
 	}
 
 	// Remove trailing slash
-	path = strings.TrimSuffix(path, "/")
+	path = strings.TrimSuffix(path, sep)
 
-	return strings.Split(path, "/"), nil
+	return strings.Split(path, sep), nil
 }
 
 // Return absolute path.
 func (p GardenPath) String() string {
-	return strings.Join(p, "/")
+	return strings.Join(p, string(DefaultSeparator))
 }
 
 // Return the last element.
@@ -73,7 +79,7 @@ func (p GardenPath) Last() string {
 }
 
 // Return the parent path.
-// This will work with both directory and file paths.
+// This works with both directory and file paths.
 func (p GardenPath) Parent() GardenPath {
 	if len(p) == 0 {
 		return p

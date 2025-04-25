@@ -16,28 +16,28 @@ func TestNewGardenPath(t *testing.T) {
 	// HOME
 	os.Setenv("HOME", "/home/user")
 
-	// PWD
-	pwdStr := os.Getenv("PWD")
-	if pwdStr == "" {
-		panic("PWD environment variable is not set")
+	// WD
+	wdStr, err := os.Getwd()
+	if err != nil {
+		panic("Failed to get current working directory: " + err.Error())
 	}
-	pwd, err := NewGardenPath(pwdStr)
+	wd, err := New(wdStr)
 	if err != nil {
 		panic("Failed to create GardenPath from PWD: " + err.Error())
 	}
-	assert.Equal(t, "", pwd[0], "Expected first element of PWD to be empty string")
-	assert.Equal(t, pwdStr, pwd.String(), "Expected PWD to match the string value of the environment variable")
+	assert.Equal(t, "", wd[0])
+	assert.Equal(t, wdStr, wd.String(), "Expected %s, got %s", wdStr, wd.String())
 
 	testcases := []Testcase{
 		// Test empty path
 		{"", nil},
-		// Test pwd
-		{".", GardenPath(pwd)},
-		{"./", GardenPath(pwd)},
-		{"./foo", GardenPath(append(pwd, "foo"))},
-		{"foo", GardenPath(append(pwd, "foo"))},
-		{"foo/", GardenPath(append(pwd, "foo"))},
-		{"foo/bar", GardenPath(append(pwd, "foo", "bar"))},
+		// Test wd
+		{".", wd},
+		{"./", wd},
+		{"./foo", append(wd, "foo")},
+		{"foo", append(wd, "foo")},
+		{"foo/", append(wd, "foo")},
+		{"foo/bar", append(wd, "foo", "bar")},
 		// Test root path
 		{"/", GardenPath{""}},
 		// Test normal paths
@@ -60,9 +60,9 @@ func TestNewGardenPath(t *testing.T) {
 
 	for _, tc := range testcases {
 		t.Run(tc.path, func(t *testing.T) {
-			gp, err := NewGardenPath(tc.path)
+			gp, err := New(tc.path)
 			assert.NoError(t, err)
-			assert.Equal(t, tc.gp, gp, "NewGardenPath(%s): expected %v, got %v", tc.path, tc.gp, gp)
+			assert.Equal(t, tc.gp, gp, "New(%s): expected %v, got %v", tc.path, tc.gp, gp)
 		})
 	}
 }

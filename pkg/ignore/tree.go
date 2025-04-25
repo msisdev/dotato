@@ -18,7 +18,7 @@ func NewRuleNode(rules *Rules) *RuleNode {
 	}
 }
 
-func (n *RuleNode) Append(dir string, node *RuleNode) {
+func (n *RuleNode) AddRules(dir string, node *RuleNode) {
 	if _, ok := n.dirs[dir]; ok {
 		return
 	}
@@ -49,16 +49,16 @@ func NewRuleTree(base uint32) *RuleTree {
 }
 
 // This function will calculate the base index
-// from the given path.
-func NewRuleTreeFromPath(path gardenpath.GardenPath) *RuleTree {
+// from the given base directory.
+func NewRuleTreeFromBase(base gardenpath.GardenPath) *RuleTree {
 	return &RuleTree{
 		root: NewRuleNode(NewRules()),
-		base: uint32(len(path))-1,
+		base: uint32(len(base))-1,
 	}
 }
 
 // This function may overwrite the rules.
-func (t *RuleTree) Add(path gardenpath.GardenPath, rules *Rules) {
+func (t *RuleTree) AddRules(path gardenpath.GardenPath, rules *Rules) {
 	// Some edge cases
 	if t.root == nil {
 		t.root = NewRuleNode(NewRules())
@@ -72,7 +72,7 @@ func (t *RuleTree) Add(path gardenpath.GardenPath, rules *Rules) {
 		dir := path[i]
 		if next, ok := node.dirs[dir]; !ok {
 			next = NewRuleNode(NewRules())
-			node.Append(dir, next)
+			node.AddRules(dir, next)
 			node = next
 		} else {
 			node = next

@@ -8,9 +8,9 @@ import (
 
 func TestSampleConfig(t *testing.T) {
 	cfg := &Config{
-		Version: GetDotatoVersion(),
+		Version: DotatoVersion(),
 		Mode:	ModeFile,
-		Plans: map[string]GroupList{
+		Plans: map[string][]string{
 			"all": nil,
 		},
 		Groups: map[string]string{
@@ -18,7 +18,7 @@ func TestSampleConfig(t *testing.T) {
 		},
 	}
 
-	genCfg, err := NewConfigFromStr(GetSampleConfigStr())
+	genCfg, err := parseConfigFromStr(GetSampleConfigStr())
 	assert.NoError(t, err)
-	assert.True(t, cfg.IsEqual(genCfg), "Generated config should be equal to the sample config")
+	assert.True(t, cfg.isEqual(genCfg), "Generated config should be equal to the sample config")
 }

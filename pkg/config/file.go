@@ -13,9 +13,9 @@ const (
 	ConfigFileName = "dotato.yaml"
 )
 
-func ReadConfigFile(fs billy.Filesystem, filename string) (*Config, bool, error) {
+func Read(fs billy.Filesystem, filepath string) (*Config, bool, error) {
 	// Open
-	file, err := fs.Open(filename)
+	file, err := fs.Open(filepath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, false, nil
@@ -29,7 +29,7 @@ func ReadConfigFile(fs billy.Filesystem, filename string) (*Config, bool, error)
 		return nil, false, err
 	}
 
-	cfg, err := NewConfigFromByte(b)
+	cfg, err := ParseConfig(b)
 
 	return cfg, true, err
 }
@@ -37,14 +37,14 @@ func ReadConfigFile(fs billy.Filesystem, filename string) (*Config, bool, error)
 // ReadConfigRecur tries to find config file by
 // walking up the directory tree.
 // It returns the directory of the config file.
-func ReadConfigFileRecur(fs billy.Filesystem, dir gp.GardenPath, filename string) (*Config, gp.GardenPath, error) {
+func ReadRecur(fs billy.Filesystem, dir gp.GardenPath, filename string) (*Config, gp.GardenPath, error) {
 	if dir == nil {
 		return nil, nil, nil
 	}
 
 	filepath := append(dir, filename)
 
-	cfg, ok, err := ReadConfigFile(fs, filepath.String())
+	cfg, ok, err := Read(fs, filepath.String())
 	if err != nil {
 		return nil, nil, err
 	}
@@ -52,13 +52,13 @@ func ReadConfigFileRecur(fs billy.Filesystem, dir gp.GardenPath, filename string
 		return cfg, dir, nil
 	}
 
-	return ReadConfigFileRecur(fs, dir.Parent(), filename)
+	return ReadRecur(fs, dir.Parent(), filename)
 }
 
-func WriteConfigFile(fs billy.Filesystem, name string, cfg *Config) error {
+func Write(fs billy.Filesystem, filepath string, cfg *Config) error {
 	// Open
 	file, err := fs.OpenFile(
-		name,
+		filepath,
 		os.O_WRONLY|os.O_CREATE|os.O_TRUNC|os.O_EXCL,
 		0644,
 	)

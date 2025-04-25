@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/goccy/go-yaml"
 )
@@ -22,20 +23,20 @@ var (
 type Config struct {
 	Version string               	`yaml:"version"`
 	Mode		Mode               		`yaml:"mode"`
-	Plans   map[string]GroupList	`yaml:"plans"`
+	Plans   map[string][]string	`yaml:"plans"`
 	Groups  map[string]string    	`yaml:"groups"`
 }
 
-func NewConfig() *Config {
+func New() *Config {
 	return &Config{
-		Version:	GetDotatoVersion(),
+		Version:	DotatoVersion(),
 		Mode:			ModeDefault,
-		Plans:   	map[string]GroupList{},
+		Plans:   	map[string][]string{},
 		Groups:  	map[string]string{}, // sample group
 	}
 }
 
-func NewConfigFromByte(data []byte) (*Config, error) {
+func ParseConfig(data []byte) (*Config, error) {
 	var config Config
 	if err := yaml.Unmarshal(data, &config); err != nil {
 		return nil, err
@@ -52,13 +53,12 @@ func NewConfigFromByte(data []byte) (*Config, error) {
 	return &config, nil
 }
 
-func NewConfigFromStr(str string) (*Config, error) {
-	return NewConfigFromByte([]byte(str))
+func parseConfigFromStr(str string) (*Config, error) {
+	return ParseConfig([]byte(str))
 }
 
-// IsEqual can compare two Config objects.
-// It is for testing purpose.
-func (r Config) IsEqual(other *Config) bool {
+// For testing purpose
+func (r Config) isEqual(other *Config) bool {
 	// Compare versions
 	if r.Version != other.Version {
 		return false
@@ -73,8 +73,8 @@ func (r Config) IsEqual(other *Config) bool {
 	if len(r.Plans) != len(other.Plans) {
 		return false
 	}
-	for key, rawPlan := range r.Plans {
-		if !rawPlan.IsEqual(other.Plans[key]) {
+	for key, plan := range r.Plans {
+		if !compStrings(plan, other.Plans[key]) {
 			return false
 		}
 	}
@@ -89,5 +89,20 @@ func (r Config) IsEqual(other *Config) bool {
 		}
 	}
 
+	return true
+}
+
+func compStrings(a []string, b []string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+
+	sort.Strings(a)
+	sort.Strings(b)
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
 	return true
 }
