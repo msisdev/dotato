@@ -10,6 +10,7 @@ func TestDB(t *testing.T) {
 	// Test the NewDB function
 	db, ver, err := NewDB(StatePathInMemory)
 	assert.NoError(t, err)
+	assert.Equal(t, ver, Version1)
 
 	// Test the version
 	{
