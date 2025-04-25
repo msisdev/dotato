@@ -3,19 +3,19 @@ package state
 import (
 	"testing"
 
-	"github.com/msisdev/dotato/pkg/config"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewState(t *testing.T) {
+func TestDB(t *testing.T) {
 	// Test the NewDB function
-	d, err := NewDB(PathInMemory)
+	db, ver, err := NewDB(StatePathInMemory)
 	assert.NoError(t, err)
-	assert.NotNil(t, d)
 
-	// Test the AutoMigrate function
-	ver, ok, err := d.GetVersion()
-	assert.NoError(t, err)
-	assert.True(t, ok)
-	assert.Equal(t, config.DotatoVersion(), ver)	
+	// Test the version
+	{
+		getVer, ok, err := GetVersion(db)
+		assert.NoError(t, err)
+		assert.True(t, ok)
+		assert.Equal(t, ver, getVer)
+	}
 }

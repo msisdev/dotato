@@ -1,9 +1,9 @@
 package cli
 
 import (
+	"github.com/charmbracelet/log"
 	"github.com/msisdev/dotato/internal/arg"
 	"github.com/msisdev/dotato/pkg/dotato"
-	"github.com/msisdev/dotato/pkg/log"
 )
 
 type Cli struct {
@@ -19,7 +19,20 @@ func NewCli(d *dotato.Dotato, logger *log.Logger) *Cli {
 }
 
 func (c *Cli) setLogLevel(level log.Level) {
-	log.SetLevel(c.l, level)
+	// Set level
+	c.l.SetLevel(level)
+
+	// Set options
+	switch level {
+	default: fallthrough
+	case log.DebugLevel:
+		c.l.SetReportCaller(true)
+
+	case log.InfoLevel:
+	case log.WarnLevel:
+	case log.ErrorLevel:
+	case log.FatalLevel:
+	}
 }
 
 func (c *Cli) Run() {

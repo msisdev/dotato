@@ -2,99 +2,94 @@ package state
 
 import (
 	"errors"
-	"time"
 
 	"github.com/glebarez/sqlite"
-	"github.com/msisdev/dotato/pkg/config"
 	"gorm.io/gorm"
 )
 
 const (
-	PathDefault	= "~/.local/share/dotato/dotatostate.sqlite"
-	PathInMemory = ":memory:"
+	StatePathDefault	= "~/.local/share/dotato/dotatostate.sqlite"
+	StatePathInMemory = ":memory:"
 	
 	KeyVersion	 	= "version"
 )
 
-// DB is a wrapper of external db driver
-type DB struct {
-	db *gorm.DB
-}
-
+// Key value store
 type Store struct {
 	Key		string	`gorm:"primaryKey"`
 	Value string
 }
 
-type History struct {
-	TargetPath			string			`gorm:"primaryKey"`
-	SourcePath			string			`gorm:"uniqueIndex"`
-	Mode						config.Mode	`gorm:"not null"`
-	TargetUpdatedAt	time.Time 	`gorm:"not null"`
-	SourceUpdatedAt	time.Time		`gorm:"not null"`
-	Hash						string			`gorm:"not null"`
-}
+// DB schema version
+type Version string
+const (
+	VersionUnknown	Version = "unknown"
+	Version1 				Version = "v1"
+)
 
-func NewDB(path string) (*DB, error) {
-	var d DB
-	{
-		// Open db
-		db, err := gorm.Open(sqlite.Open(path), &gorm.Config{})
-		if err != nil {
-			return nil, err
-		}
-	
-		// Create store table
-		if err := db.AutoMigrate(&Store{}); err != nil {
-			return nil, err
-		}
-
-		d.db = db
-	}
-	
-	// Get version
-	ver, ok, err := d.GetVersion()
+// What NewDB does:
+//  - Open/create db file
+//  - Automigrate Store table
+//
+// What NewDB does not do:
+//  - Automigrate History table
+func NewDB(path string) (*gorm.DB, Version, error) {
+	// Open db
+	db, err := gorm.Open(sqlite.Open(path), &gorm.Config{})
 	if err != nil {
-		return nil, err
+		return nil, VersionUnknown, err
 	}
-	
-	// Is db empty?
-	if !ok {
-		// Set version
-		d.SetVersion(config.DotatoVersion())
 
-		// Migrate to v1
-		if err := d.v1_migrate(); err != nil {
-			return nil, err
+	// Create store table
+	if err := db.AutoMigrate(&Store{}); err != nil {
+		return nil, VersionUnknown, err
+	}
+
+	// Get version
+	_, ok, err := GetVersion(db)
+	if err != nil {
+		return nil, VersionUnknown, err
+	}
+
+	// Is this db new?
+	if !ok {
+		if err := SetVersion(db, Version1); err != nil {
+			return nil, VersionUnknown, err
 		}
 	}
-	
-	if ver != config.DotatoVersion() {
-		// Migrate between different versions
-	}
 
-	return &d, nil
+	return db, Version1, nil
 }
 
-func (d DB) GetVersion() (string, bool, error) {
+func GetVersion(db *gorm.DB) (Version, bool, error) {
+	// Query
 	store := Store{ Key: KeyVersion }
-	if err := d.db.First(&store).Error; err != nil {
+	if err := db.First(&store).Error; err != nil {
+		// not found error?
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return "", false, nil
 		}
+
+		// It is an error
 		return "", false, err
 	}
-	return store.Value, true, nil
+
+	switch store.Value {
+	case string(Version1):
+		return Version1, true, nil
+	default:
+		return VersionUnknown, true, nil
+	}
 }
 
-func (d DB) SetVersion(version string) error {
+func SetVersion(db *gorm.DB, version Version) error {
+	// db.Save handles upsert
 	store := Store{
 		Key:   KeyVersion,
-		Value: version,
+		Value: string(version),
 	}
-	if err := d.db.Save(&store).Error; err != nil {
+	if err := db.Save(&store).Error; err != nil {
 		return err
 	}
 	return nil
 }
-
