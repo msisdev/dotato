@@ -4,7 +4,7 @@ import (
 	"github.com/sabhiram/go-gitignore"
 )
 
-// Rule is a wrapper of external gitignore package.
+// A wrapper of external gitignore package.
 type Rules struct {
 	i *ignore.GitIgnore
 }

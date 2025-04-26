@@ -7,23 +7,22 @@ import (
 	"github.com/goccy/go-yaml"
 )
 
-type Mode string
+var (
+	ErrVersionNotFound = fmt.Errorf("version not found")
+	ErrModeNotFound    = fmt.Errorf("mode not found")
+)
 
+type Mode string
 const (
 	ModeFile Mode = "file"
 	ModeLink Mode = "link"
 	ModeDefault Mode = ModeFile
 )
 
-var (
-	ErrVersionNotFound = fmt.Errorf("version not found")
-	ErrModeNotFound    = fmt.Errorf("mode not found")
-)
-
 type Config struct {
 	Version string               	`yaml:"version"`
 	Mode		Mode               		`yaml:"mode"`
-	Plans   map[string][]string	`yaml:"plans"`
+	Plans   map[string][]string		`yaml:"plans"`
 	Groups  map[string]string    	`yaml:"groups"`
 }
 

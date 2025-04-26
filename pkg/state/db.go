@@ -2,6 +2,7 @@ package state
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
@@ -12,6 +13,10 @@ const (
 	StatePathInMemory = ":memory:"
 	
 	KeyVersion	 	= "version"
+)
+
+var (
+	ErrVersionUnknown = fmt.Errorf("unknown version")
 )
 
 // Key value store
@@ -61,6 +66,7 @@ func NewDB(path string) (*gorm.DB, Version, error) {
 	return db, Version1, nil
 }
 
+// Select version from db
 func GetVersion(db *gorm.DB) (Version, bool, error) {
 	// Query
 	store := Store{ Key: KeyVersion }
@@ -82,8 +88,8 @@ func GetVersion(db *gorm.DB) (Version, bool, error) {
 	}
 }
 
+// Upsert version into db
 func SetVersion(db *gorm.DB, version Version) error {
-	// db.Save handles upsert
 	store := Store{
 		Key:   KeyVersion,
 		Value: string(version),

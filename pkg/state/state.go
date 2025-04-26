@@ -1,14 +1,8 @@
 package state
 
 import (
-	"fmt"
-
 	"github.com/msisdev/dotato/pkg/config"
 	"gorm.io/gorm"
-)
-
-var (
-	ErrVersionUnknown = fmt.Errorf("unknown version")
 )
 
 type State struct {
@@ -35,12 +29,15 @@ func New(statePath string) (*State, error) {
 		if err := v1_migrate(db); err != nil {
 			return nil, err
 		}
+
 	default:
 		return nil, ErrVersionUnknown
 	}
 	
 	return &State{DB: db}, nil
 }
+
+///////////////////////////////////////////////////////////
 
 func (s State) GetAllLink() ([]History, error) {
 	return s.v1_getAllByMode(config.ModeLink)

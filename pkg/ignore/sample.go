@@ -1,5 +1,8 @@
 package ignore
 
-const SampleIgnore = `**/dotato.*
+const SampleBaseIgnore = `**/dotato.*
 **/README.md
+`
+
+const SampleIgnore = `**
 `

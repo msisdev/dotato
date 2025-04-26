@@ -80,7 +80,7 @@ func getDotatoDirUnsafe() (string) {
 	switch runtime.GOOS {
 	}
 
-	panic("Oops, dotato doesn't know your OS. Please provide a user-wide directory to let dotato save some files with DOTATO_DIR env var.")
+	panic("Oops, dotato doesn't know your OS. Please provide a user-wide directory with DOTATO_DIR env var to let dotato save some files")
 }
 
 func getStatePathUnsafe() string {
