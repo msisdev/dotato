@@ -2,7 +2,7 @@ package ignore
 
 import "fmt"
 
-var t1e = []Entry{
+var t1e = []FileEntry{
 	{"/home/user", IsDir, NotIgnored},
 	{"/home/user/.bash_history", IsFile, Ignored},
 	{"/home/user/.bashrc", IsFile, NotIgnored},

@@ -1,6 +1,6 @@
 package ignore
 
-var t2e = []Entry{
+var t2e = []FileEntry{
 	{ "/.foo", IsFile, Ignored },
 	{ "/.bar", IsFile, NotIgnored },
 	{ "/.baz", IsFile, NotIgnored },

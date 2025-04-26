@@ -22,7 +22,7 @@ func (h TreeHelper) Ignore(path string) (bool, error) {
 	return h.tree.Ignore(gpath), nil
 }
 
-func (h TreeHelper) Test(t *testing.T, entries []Entry) {
+func (h TreeHelper) Test(t *testing.T, entries []FileEntry) {
 	for _, entry := range entries {
 		ignored, err := h.Ignore(entry.path)
 		assert.NoError(t, err)

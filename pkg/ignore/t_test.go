@@ -5,21 +5,25 @@ import (
 	"github.com/go-git/go-billy/v5/memfs"
 )
 
+type FileType bool
 const (
-	IsDir = true
-	IsFile = false
-	Ignored = true
-	NotIgnored = false
+	IsDir				FileType = true
+	IsFile			FileType = false
 )
 
-// Entry represents a file or directory
-type Entry struct {
+type IgnoreType bool
+const (
+	Ignored 		IgnoreType = true
+	NotIgnored 	IgnoreType = false
+)
+
+type FileEntry struct {
 	path 			string
-	isDir 		bool
-	isIgnored	bool
+	isDir 		FileType
+	isIgnored	IgnoreType
 }
 
-func NewMemFS(entries []Entry) billy.Filesystem {
+func makeMemFS(entries []FileEntry) billy.Filesystem {
 	fs := memfs.New()
 
 	// Add entries

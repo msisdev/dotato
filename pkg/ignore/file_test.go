@@ -13,10 +13,10 @@ type FileHelper struct {
 	fs billy.Filesystem
 }
 
-func NewFileHelper(es []Entry, ies []IgnoreEntry) *FileHelper {
+func NewFileHelper(es []FileEntry, ies []IgnoreEntry) *FileHelper {
 	// Create files
 	h := &FileHelper{
-		fs: NewMemFS(es),
+		fs: makeMemFS(es),
 	}
 
 	// Create ignore files
