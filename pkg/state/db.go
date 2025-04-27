@@ -8,17 +8,6 @@ import (
 	"gorm.io/gorm"
 )
 
-const (
-	StatePathDefault	= "~/.local/share/dotato/dotatostate.sqlite"
-	StatePathInMemory = ":memory:"
-	
-	KeyVersion	 	= "version"
-)
-
-var (
-	ErrVersionUnknown = fmt.Errorf("unknown version")
-)
-
 // Key value store
 type Store struct {
 	Key		string	`gorm:"primaryKey"`
@@ -28,16 +17,21 @@ type Store struct {
 // DB schema version
 type Version string
 const (
+	KeyVersion							= "version"
 	VersionUnknown	Version = "unknown"
 	Version1 				Version = "v1"
 )
 
+var (
+	ErrVersionUnknown = fmt.Errorf("unknown version")
+)
+
 // What NewDB does:
 //  - Open/create db file
-//  - Automigrate Store table
+//  - Migrate Store table
 //
 // What NewDB does not do:
-//  - Automigrate History table
+//  - Migrate History table
 func NewDB(path string) (*gorm.DB, Version, error) {
 	// Open db
 	db, err := gorm.Open(sqlite.Open(path), &gorm.Config{})
@@ -58,6 +52,7 @@ func NewDB(path string) (*gorm.DB, Version, error) {
 
 	// Is this db new?
 	if !ok {
+		// Set version
 		if err := SetVersion(db, Version1); err != nil {
 			return nil, VersionUnknown, err
 		}
@@ -68,7 +63,7 @@ func NewDB(path string) (*gorm.DB, Version, error) {
 
 // Select version from db
 func GetVersion(db *gorm.DB) (Version, bool, error) {
-	// Query
+	// Query version
 	store := Store{ Key: KeyVersion }
 	if err := db.First(&store).Error; err != nil {
 		// not found error?
@@ -80,6 +75,7 @@ func GetVersion(db *gorm.DB) (Version, bool, error) {
 		return "", false, err
 	}
 
+	// Map value to version
 	switch store.Value {
 	case string(Version1):
 		return Version1, true, nil

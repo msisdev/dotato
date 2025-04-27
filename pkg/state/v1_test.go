@@ -8,8 +8,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+
+
 func TestV1_GetAllByMode(t *testing.T) {
-	s, err := New(StatePathInMemory)
+	state, err := New(PathInMemory)
 	assert.NoError(t, err)
 
 	now := time.Now()
@@ -23,20 +25,20 @@ func TestV1_GetAllByMode(t *testing.T) {
 	// Insert
 	{
 		for _, h := range hs {
-			err := s.v1_upsertOne(h)
+			err := state.v1_upsertOne(h)
 			assert.NoError(t, err)
 		}
 	}
 
 	// Get all by mode
 	{
-		all, err := s.v1_getAllByMode(config.ModeFile)
+		all, err := state.v1_getAllByMode(config.ModeFile)
 		assert.NoError(t, err)
 		assert.Equal(t, len(all), 2)
 		assert.Equal(t, all[0].TargetPath, hs[0].TargetPath)
 		assert.Equal(t, all[1].TargetPath, hs[2].TargetPath)
 
-		all, err = s.v1_getAllByMode(config.ModeLink)
+		all, err = state.v1_getAllByMode(config.ModeLink)
 		assert.NoError(t, err)
 		assert.Equal(t, len(all), 2)
 		assert.Equal(t, all[0].TargetPath, hs[1].TargetPath)
