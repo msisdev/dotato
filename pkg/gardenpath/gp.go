@@ -11,15 +11,19 @@ const (
 	DefaultSeparator = '/'
 )
 
+var (
+	Root = GardenPath{""}
+)
+
 // GardenPath is a smart path representation.
 // It is a sequence of directory names starting from root
 // directory.
 // 
-// It always contains an empty string at index 0
+// It always contains an empty string ("") at index 0
 // to distinguish root directory from nil.
 type GardenPath []string
 
-// NewGardenPath handles:
+// New constructor handles:
 //
 //  1. Clean dot and double dot  
 //  2. environment variable expansion
@@ -27,11 +31,13 @@ type GardenPath []string
 //  4. absolute path conversion,
 //  5. trailing slash removal.
 //
-// Returns nil if the path is empty.
+// It returns nil if the path is empty.
 func New(path string) (GardenPath, error) {
 	return NewWithSep(path, DefaultSeparator)
 }
 
+// Use NewWithSep if the OS is using different path separator.
+// (e.g. Windows uses \).
 func NewWithSep(path string, separator rune) (GardenPath, error) {
 	if path == "" {
 		return nil, nil
@@ -65,8 +71,8 @@ func NewWithSep(path string, separator rune) (GardenPath, error) {
 	return strings.Split(path, sep), nil
 }
 
-// Return absolute path.
-func (p GardenPath) String() string {
+// Get absolute path.
+func (p GardenPath) Abs() string {
 	return strings.Join(p, string(DefaultSeparator))
 }
 
@@ -79,7 +85,7 @@ func (p GardenPath) Last() string {
 }
 
 // Return the parent path.
-// This works with both directory and file paths.
+// Technically it returns [0:len(p)-1].
 func (p GardenPath) Parent() GardenPath {
 	if len(p) == 0 {
 		return p

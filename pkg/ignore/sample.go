@@ -5,4 +5,6 @@ const SampleBaseIgnore = `**/dotato.*
 `
 
 const SampleIgnore = `**
+# !my-dir
+# !.my-file
 `

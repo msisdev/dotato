@@ -2,7 +2,7 @@ package ignore
 
 import "fmt"
 
-var t1e = []FileEntry{
+var testcase1Files = []FileEntry{
 	{"/home/user", IsDir, NotIgnored},
 	{"/home/user/.bash_history", IsFile, Ignored},
 	{"/home/user/.bashrc", IsFile, NotIgnored},
@@ -36,62 +36,62 @@ var t1e = []FileEntry{
 }
 
 // This rules start from `/home/user` directory
-var t1r = &RuleNode{
-	rules: NewRules(
+var testcase1Rule = &ruleNode{
+	rules: newRules(
 		"# comment",
 		".bash_history",
 	),
-	dirs: map[string]*RuleNode{
+	dirs: map[string]*ruleNode{
 		".config": {
-			rules: NewRules(),
-			dirs: map[string]*RuleNode{
-				"alacritty":	{
-					rules: NewRules(),
-					dirs: map[string]*RuleNode{
+			rules: newRules(),
+			dirs: map[string]*ruleNode{
+				"alacritty": {
+					rules: newRules(),
+					dirs: map[string]*ruleNode{
 						"themes": {
-							rules: NewRules(
+							rules: newRules(
 								"*",
 								"!alabaster.toml",
 								"!alabaster_dark.toml",
 								"!ayu_mirage.toml",
 							),
-							dirs: map[string]*RuleNode{},
+							dirs: map[string]*ruleNode{},
 						},
 					},
 				},
 			},
 		},
 		".ssh": {
-			rules: NewRules(
+			rules: newRules(
 				"known_hosts",
 			),
-			dirs: map[string]*RuleNode{},
+			dirs: map[string]*ruleNode{},
 		},
 		"readme": {
-			rules: NewRules(
+			rules: newRules(
 				"**/README.md",
 			),
-			dirs: map[string]*RuleNode{},
+			dirs: map[string]*ruleNode{},
 		},
 	},
 }
 
 // Equivalent ignore files of the above rules
-var t1i = []IgnoreEntry{
+var testcase1Ignore = []IgnoreEntry{
 	{
-		fmt.Sprintf("/home/user/%s", DefaultIgnoreFileName),
+		fmt.Sprintf("/home/user/%s", IgnoreFileName),
 		[]string{".bash_history"},
 	},
 	{
-		fmt.Sprintf("/home/user/.config/alacritty/themes/%s", DefaultIgnoreFileName),
+		fmt.Sprintf("/home/user/.config/alacritty/themes/%s", IgnoreFileName),
 		[]string{"*.toml", "!alabaster.toml", "!alabaster_dark.toml", "!ayu_mirage.toml"},
 	},
 	{
-		fmt.Sprintf("/home/user/.ssh/%s", DefaultIgnoreFileName),
+		fmt.Sprintf("/home/user/.ssh/%s", IgnoreFileName),
 		[]string{"known_hosts"},
 	},
 	{
-		fmt.Sprintf("/home/user/readme/%s", DefaultIgnoreFileName),
+		fmt.Sprintf("/home/user/readme/%s", IgnoreFileName),
 		[]string{"**/README.md"},
 	},
 }

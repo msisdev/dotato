@@ -29,7 +29,7 @@ func Read(fs billy.Filesystem, filepath string) (*Config, bool, error) {
 		return nil, false, err
 	}
 
-	cfg, err := ParseConfig(b)
+	cfg, err := NewFromByte(b)
 
 	return cfg, true, err
 }

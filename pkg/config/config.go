@@ -35,7 +35,7 @@ func New() *Config {
 	}
 }
 
-func ParseConfig(data []byte) (*Config, error) {
+func NewFromByte(data []byte) (*Config, error) {
 	var config Config
 	if err := yaml.Unmarshal(data, &config); err != nil {
 		return nil, err
@@ -52,8 +52,8 @@ func ParseConfig(data []byte) (*Config, error) {
 	return &config, nil
 }
 
-func parseConfigFromStr(str string) (*Config, error) {
-	return ParseConfig([]byte(str))
+func NewFromString(str string) (*Config, error) {
+	return NewFromByte([]byte(str))
 }
 
 // For testing purpose
@@ -73,7 +73,7 @@ func (r Config) isEqual(other *Config) bool {
 		return false
 	}
 	for key, plan := range r.Plans {
-		if !compStrings(plan, other.Plans[key]) {
+		if !cmpStrSlice(plan, other.Plans[key]) {
 			return false
 		}
 	}
@@ -91,7 +91,7 @@ func (r Config) isEqual(other *Config) bool {
 	return true
 }
 
-func compStrings(a []string, b []string) bool {
+func cmpStrSlice(a []string, b []string) bool {
 	if len(a) != len(b) {
 		return false
 	}

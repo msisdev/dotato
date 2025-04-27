@@ -11,7 +11,7 @@ type TreeHelper struct {
 	tree *RuleTree
 }
 
-func (h TreeHelper) Ignore(path string) (bool, error) {
+func (h TreeHelper) IsIgnored(path string) (bool, error) {
 	// Make path
 	gpath, err := gp.New(path)
 	if err != nil {
@@ -19,12 +19,12 @@ func (h TreeHelper) Ignore(path string) (bool, error) {
 	}
 
 	// Test
-	return h.tree.Ignore(gpath), nil
+	return h.tree.IsIgnored(gpath), nil
 }
 
 func (h TreeHelper) Test(t *testing.T, entries []FileEntry) {
 	for _, entry := range entries {
-		ignored, err := h.Ignore(entry.path)
+		ignored, err := h.IsIgnored(entry.path)
 		assert.NoError(t, err)
 		assert.Equal(t, entry.isIgnored, ignored, "path: %s", entry.path)
 	}
@@ -33,13 +33,37 @@ func (h TreeHelper) Test(t *testing.T, entries []FileEntry) {
 func TestRuleTree1_Base0(t *testing.T) {
 	tree := &RuleTree{
 		base: 0,
-		root: &RuleNode{
-			rules: NewRules(),
-			dirs: map[string]*RuleNode{
+		head: &ruleNode{
+			rules: newRules(),
+			dirs: map[string]*ruleNode{
+				"": {
+					rules: newRules(),
+					dirs: map[string]*ruleNode{
+						"home": {
+							rules: newRules(),
+							dirs: map[string]*ruleNode{
+								"user": testcase1Rule,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	h := TreeHelper{tree}
+	h.Test(t, testcase1Files)
+}
+
+func TestRuleTree1_Base1(t *testing.T) {
+	tree := &RuleTree{
+		base: 1,
+		head: &ruleNode{
+			rules: newRules(),
+			dirs: map[string]*ruleNode{
 				"home": {
-					rules: NewRules(),
-					dirs: map[string]*RuleNode{
-						"user": t1r,
+					rules: newRules(),
+					dirs: map[string]*ruleNode{
+						"user": testcase1Rule,
 					},
 				},
 			},
@@ -47,40 +71,30 @@ func TestRuleTree1_Base0(t *testing.T) {
 	}
 
 	h := TreeHelper{tree}
-	h.Test(t, t1e)
-}
-
-func TestRuleTree1_Base1(t *testing.T) {
-	tree := &RuleTree{
-		base: 1,
-		root: &RuleNode{
-			rules: NewRules(),
-			dirs: map[string]*RuleNode{
-				"user": t1r,
-			},
-		},
-	}
-
-	h := TreeHelper{tree}
-	h.Test(t, t1e)
+	h.Test(t, testcase1Files)
 }
 
 func TestRuleTree1_Base2(t *testing.T) {
 	tree := &RuleTree{
 		base: 2,
-		root: t1r,
+		head: &ruleNode{
+			rules: newRules(),
+			dirs: map[string]*ruleNode{
+				"user": testcase1Rule,
+			},
+		},
 	}
 
 	h := TreeHelper{tree}
-	h.Test(t, t1e)
+	h.Test(t, testcase1Files)
 }
 
 func TestRuleTree2_Base0(t *testing.T) {
 	tree := &RuleTree{
 		base: 0,
-		root: t2r,
+		head: testcase2Rule,
 	}
 
 	h := TreeHelper{tree}
-	h.Test(t, t2e)
+	h.Test(t, testcase2Files)
 }

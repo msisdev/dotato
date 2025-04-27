@@ -14,7 +14,7 @@ func useEnvOrDefault(envVar, defaultValue string) string {
 	return defaultValue
 }
 
-func createAndWriteFile(fs billy.Filesystem, path string, content []byte) error {
+func createFile(fs billy.Filesystem, path string, content []byte) error {
 	file, err := fs.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0644)
 	if err != nil {
 		return err
@@ -25,7 +25,7 @@ func createAndWriteFile(fs billy.Filesystem, path string, content []byte) error 
 	return err
 }
 
-func overwriteFile(fs billy.Filesystem, path string, content []byte) error {
+func writeFile(fs billy.Filesystem, path string, content []byte) error {
 	// Open file for writing
 	file, err := fs.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {

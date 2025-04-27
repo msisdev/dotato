@@ -26,7 +26,7 @@ func TestNewGardenPath(t *testing.T) {
 		panic("Failed to create GardenPath from PWD: " + err.Error())
 	}
 	assert.Equal(t, "", wd[0])
-	assert.Equal(t, wdStr, wd.String(), "Expected %s, got %s", wdStr, wd.String())
+	assert.Equal(t, wdStr, wd.Abs(), "Expected %s, got %s", wdStr, wd.Abs())
 
 	testcases := []Testcase{
 		// Test empty path

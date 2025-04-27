@@ -15,6 +15,6 @@ groups:
   # bash: "$HOME" # you may use env vars
 `
 
-func GetSampleConfigStr() string {
+func GetSampleStr() string {
 	return fmt.Sprintf(sampleConfigFormat, DotatoVersion())
 }

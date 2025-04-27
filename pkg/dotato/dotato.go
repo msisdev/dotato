@@ -42,11 +42,10 @@ var (
 )
 
 type Dotato struct {
-	fs 			billy.Filesystem
-
-	base	*gp.GardenPath
+	fs 		billy.Filesystem
+	cdir	*gp.GardenPath			// config directory
 	cfg		*config.Config
-	rt		*ignore.RuleTree
+	rule	*ignore.RuleTree
 	state	*state.State
 }
 
@@ -64,6 +63,9 @@ func NewDotatoMemfs() *Dotato {
 	}
 }
 
+
+
+// Get state file directory
 func getDotatoDirUnsafe() (string) {
 	// Look up env var
 	if val, ok := os.LookupEnv(DotatoDirPathEnv); ok {
