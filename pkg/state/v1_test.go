@@ -13,7 +13,6 @@ func TestV1_GetAllByMode(t *testing.T) {
 	assert.NoError(t, err)
 
 	now := time.Now()
-
 	hs := []History{
 		{ "t1", "s1", config.ModeFile, now, now, "h1"},
 		{ "t2", "s2", config.ModeLink, now, now, "h2"},
