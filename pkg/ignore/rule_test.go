@@ -7,31 +7,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type TreeHelper struct {
-	tree *RuleTree
-}
-
-func (h TreeHelper) IsIgnored(path string) (bool, error) {
-	// Make path
-	gpath, err := gp.New(path)
-	if err != nil {
-		return false, err
-	}
-
-	// Test
-	return h.tree.IsIgnored(gpath), nil
-}
-
-func (h TreeHelper) Test(t *testing.T, entries []FileEntry) {
-	for _, entry := range entries {
-		ignored, err := h.IsIgnored(entry.path)
+func testRuleTree(t *testing.T, rt *RuleTree, fs []FileEntry) {
+	for _, f := range fs {
+		path, err := gp.New(f.path)
 		assert.NoError(t, err)
-		assert.Equal(t, entry.isIgnored, ignored, "path: %s", entry.path)
+		ignored := rt.IsIgnored(path)
+		assert.Equal(t, f.isIgnored, ignored, "path: %s", f.path)
 	}
 }
 
 func TestRuleTree1_Base0(t *testing.T) {
-	tree := &RuleTree{
+	rt := &RuleTree{
 		base: 0,
 		head: &ruleNode{
 			rules: newRules(),
@@ -50,12 +36,12 @@ func TestRuleTree1_Base0(t *testing.T) {
 			},
 		},
 	}
-	h := TreeHelper{tree}
-	h.Test(t, testcase1Files)
+
+	testRuleTree(t, rt, testcase1Files)
 }
 
 func TestRuleTree1_Base1(t *testing.T) {
-	tree := &RuleTree{
+	rt := &RuleTree{
 		base: 1,
 		head: &ruleNode{
 			rules: newRules(),
@@ -70,12 +56,11 @@ func TestRuleTree1_Base1(t *testing.T) {
 		},
 	}
 
-	h := TreeHelper{tree}
-	h.Test(t, testcase1Files)
+	testRuleTree(t, rt, testcase1Files)
 }
 
 func TestRuleTree1_Base2(t *testing.T) {
-	tree := &RuleTree{
+	rt := &RuleTree{
 		base: 2,
 		head: &ruleNode{
 			rules: newRules(),
@@ -85,16 +70,14 @@ func TestRuleTree1_Base2(t *testing.T) {
 		},
 	}
 
-	h := TreeHelper{tree}
-	h.Test(t, testcase1Files)
+	testRuleTree(t, rt, testcase1Files)
 }
 
 func TestRuleTree2_Base0(t *testing.T) {
-	tree := &RuleTree{
+	rt := &RuleTree{
 		base: 0,
 		head: testcase2Rule,
 	}
 
-	h := TreeHelper{tree}
-	h.Test(t, testcase2Files)
+	testRuleTree(t, rt, testcase2Files)
 }

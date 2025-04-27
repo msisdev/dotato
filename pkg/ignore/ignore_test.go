@@ -54,9 +54,6 @@ func TestIgnore(t *testing.T) {
 		}
 
 		isIgnored := ig.IsIgnored(path)
-		if err != nil {
-			panic(err)
-		}
 
 		assert.Equal(t, fe.isIgnored, isIgnored, "Expected %v for %s", fe.isIgnored, fe.path)
 	}

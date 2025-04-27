@@ -7,13 +7,9 @@ import (
 	"strings"
 )
 
-const (
-	DefaultSeparator = '/'
-)
+const DefaultSeparator = '/'
 
-var (
-	Root = GardenPath{""}
-)
+var Root = GardenPath{""}
 
 // GardenPath is a smart path representation.
 // It is a sequence of directory names starting from root

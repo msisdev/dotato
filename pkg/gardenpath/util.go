@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// Copied from https://pkg.go.dev/github.com/go-git/go-git/v5/plumbing/format/gitignore
+// A modification from https://pkg.go.dev/github.com/go-git/go-git/v5/plumbing/format/gitignore
 func replaceTilde(rawPath string) (string, error) {
 	if !strings.HasPrefix(rawPath, "~") {
 		return rawPath, nil

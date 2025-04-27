@@ -63,8 +63,6 @@ func NewDotatoMemfs() *Dotato {
 	}
 }
 
-
-
 // Get state file directory
 func getDotatoDirUnsafe() (string) {
 	// Look up env var
