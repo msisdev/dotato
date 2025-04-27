@@ -18,7 +18,7 @@ func TestSampleConfig(t *testing.T) {
 		},
 	}
 
-	genCfg, err := NewFromString(GetSampleStr())
+	genCfg, err := NewFromString(GetExample())
 	assert.NoError(t, err)
-	assert.True(t, cfg.isEqual(genCfg), "Generated config should be equal to the sample config")
+	assert.True(t, cfg.IsEqual(genCfg), "Generated config should be equal to the sample config")
 }

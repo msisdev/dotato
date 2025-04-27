@@ -26,7 +26,7 @@ func TestConfigFile(t *testing.T) {
 	assert.NoError(t, err, "Read should not return an error")
 	assert.True(t, ok, "File should exist")
 	assert.Equal(t, t1c.Version, genCfg.Version, "Version should be equal")
-	assert.True(t, genCfg.isEqual(t1c), "Generated config should be equal to the expected config")
+	assert.True(t, genCfg.IsEqual(t1c), "Generated config should be equal to the expected config")
 
 	// Read recursively
 	root, err := gp.New("/")
@@ -44,7 +44,7 @@ func TestConfigFile(t *testing.T) {
 	assert.NoError(t, err, "ReadRecur should not return an error")
 	assert.Equal(t, gp.GardenPath{""}, dir, "Directory should be equal")
 	assert.Equal(t, t1c.Version, genCfg.Version, "Version should be equal")
-	assert.True(t, genCfg.isEqual(t1c), "Generated config should be equal to the expected config")
+	assert.True(t, genCfg.IsEqual(t1c), "Generated config should be equal to the expected config")
 }
 
 func TestReadRecur(t *testing.T) {
@@ -64,5 +64,5 @@ func TestReadRecur(t *testing.T) {
 	assert.NoError(t, err, "ReadRecur should not return an error")
 	assert.Equal(t, root, dir, "Directory should be equal")
 	assert.Equal(t, t1c.Version, genCfg.Version, "Version should be equal")
-	assert.True(t, genCfg.isEqual(t1c), "Generated config should be equal to the expected config")
+	assert.True(t, genCfg.IsEqual(t1c), "Generated config should be equal to the expected config")
 }

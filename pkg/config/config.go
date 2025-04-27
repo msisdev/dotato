@@ -57,7 +57,7 @@ func NewFromString(str string) (*Config, error) {
 }
 
 // For testing purpose
-func (r Config) isEqual(other *Config) bool {
+func (r Config) IsEqual(other *Config) bool {
 	// Compare versions
 	if r.Version != other.Version {
 		return false

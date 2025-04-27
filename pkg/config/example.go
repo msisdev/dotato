@@ -2,7 +2,7 @@ package config
 
 import "fmt"
 
-const sampleConfigFormat = `version: %s
+const configFormat = `version: %s
 
 mode: file # file or link
 
@@ -15,6 +15,6 @@ groups:
   # bash: "$HOME" # you may use env vars
 `
 
-func GetSampleStr() string {
-	return fmt.Sprintf(sampleConfigFormat, DotatoVersion())
+func GetExample() string {
+	return fmt.Sprintf(configFormat, DotatoVersion())
 }
