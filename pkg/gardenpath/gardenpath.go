@@ -7,8 +7,6 @@ import (
 	"strings"
 )
 
-const DefaultSeparator = '/'
-
 var Root = GardenPath{""}
 
 // GardenPath is a smart path representation.
@@ -43,7 +41,7 @@ func New(path string) (GardenPath, error) {
 		return nil, fmt.Errorf("env vars not found: %v", notFound)
 	}
 
-	// Replace tilde
+	// (linux) Replace tilde
 	path, err := expandTilde(path)
 	if err != nil {
 		return nil, err
@@ -58,6 +56,13 @@ func New(path string) (GardenPath, error) {
 	// Remove trailing slash
 	sep := string(os.PathSeparator)
 	path = strings.TrimSuffix(path, sep)
+
+	// (windows) handle volume name
+	if vol := filepath.VolumeName(path); vol != "" {
+		path = strings.TrimPrefix(path, vol)	// remove volume name
+		path = strings.TrimPrefix(path, sep)	// remove leading separator
+		return append(GardenPath{vol}, strings.Split(path, sep)...), nil
+	}
 
 	return strings.Split(path, sep), nil
 }

@@ -8,7 +8,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewGardenPath(t *testing.T) {
+func TestGardenPathLinux(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("Skipping Linux path test on non-Linux OS")
+		return
+	}
+
 	type Testcase struct {
 		path 	string
 		gp		GardenPath
@@ -68,7 +73,7 @@ func TestNewGardenPath(t *testing.T) {
 	}
 }
 
-func TestWindowsPath(t *testing.T) {
+func TestGardenPathWindows(t *testing.T) {
 	if runtime.GOOS != "windows" {
 		t.Skip("Skipping Windows path test on non-Windows OS")
 		return
