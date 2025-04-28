@@ -8,6 +8,7 @@ import (
 )
 
 var Root = GardenPath{""}
+var ErrEnvVarNotFound = fmt.Errorf("env var not found")
 
 // GardenPath is a smart path representation.
 // It is a sequence of directory names starting from root
@@ -28,29 +29,36 @@ type GardenPath []string
 //
 // It returns nil if the path is empty.
 func New(path string) (GardenPath, error) {
+	gp, _, err := NewCheckEnv(path)
+	return gp, err
+}
+
+// Returns a list of env vars that were not found.
+func NewCheckEnv(path string) (gp GardenPath, notFound []string, err error) {
 	if path == "" {
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	// Clean dots ("." or "..")
 	path = filepath.Clean(path)
 
 	// Expand env vars
-	path, notFound := expandEnv(path)
+	path, notFound = expandEnv(path)
 	if len(notFound) > 0 {
-		return nil, fmt.Errorf("env vars not found: %v", notFound)
+		err = ErrEnvVarNotFound
+		return
 	}
 
 	// (linux) Replace tilde
-	path, err := expandTilde(path)
+	path, err = expandTilde(path)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	// Resolve working directory
 	path, err = filepath.Abs(path)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	// Remove trailing slash
@@ -61,10 +69,12 @@ func New(path string) (GardenPath, error) {
 	if vol := filepath.VolumeName(path); vol != "" {
 		path = strings.TrimPrefix(path, vol)	// remove volume name
 		path = strings.TrimPrefix(path, sep)	// remove leading separator
-		return append(GardenPath{vol}, strings.Split(path, sep)...), nil
+		gp = append(GardenPath{vol}, strings.Split(path, sep)...)
+		return
 	}
 
-	return strings.Split(path, sep), nil
+	gp = strings.Split(path, sep)
+	return
 }
 
 // Get absolute path.

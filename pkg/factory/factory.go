@@ -25,10 +25,6 @@ const (
 	// Config file name
 	ConfigFileNameEnv 		= "DOTATO_CONFIG"
 	ConfigFileNameDefault = "dotato.yaml"
-
-	// Separator
-	SeparatorEnv 					= "DOTATO_SEPARATOR"
-	SeparatorDefault 			= string(gp.DefaultSeparator)
 	
 	// Ignore file name
 	IgnoreFileNameEnv 		= "DOTATO_IGNORE"
@@ -68,10 +64,6 @@ func getStatePathUnsafe() string {
 
 func getConfigFileName() string {
 	return useEnvOrDefault(ConfigFileNameEnv, ConfigFileNameDefault)
-}
-
-func GetConfigPathSeparator() rune {
-	return rune(useEnvOrDefault(SeparatorEnv, SeparatorDefault)[0])
 }
 
 func getIgnoreFileName() string {

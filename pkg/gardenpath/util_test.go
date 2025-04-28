@@ -3,12 +3,17 @@ package gardenpath
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestReplaceTilde(t *testing.T) {
+func TestExpandTilde(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Tilde expansion is only supported on Linux")
+	}
+
 	os.Setenv("HOME", "/home/user")
 	user := os.Getenv("USER")
 
@@ -29,4 +34,8 @@ func TestReplaceTilde(t *testing.T) {
 			assert.Equal(t, tc[1], p)
 		})
 	}
+}
+
+func TestExpandEnv(t *testing.T) {
+	
 }
