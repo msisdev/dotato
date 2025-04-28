@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/goccy/go-yaml"
-	gp "github.com/msisdev/dotato/pkg/gardenpath"
+	// gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 
 var (
@@ -20,10 +20,10 @@ const (
 )
 
 type Config struct {
-	Version string               	`yaml:"version"`
-	Mode		Mode               		`yaml:"mode"`
-	Plans   map[string][]string		`yaml:"plans"`
-	Groups  map[string]string    	`yaml:"groups"`
+	Version string               					`yaml:"version"`
+	Mode		Mode               						`yaml:"mode"`
+	Plans   map[string][]string						`yaml:"plans"`
+	Groups  map[string]map[string]string	`yaml:"groups"`
 }
 
 func New() *Config {
@@ -31,7 +31,7 @@ func New() *Config {
 		Version:	DotatoVersion(),
 		Mode:			ModeDefault,
 		Plans:   	map[string][]string{},
-		Groups:  	map[string]string{}, // sample group
+		Groups:  	map[string]map[string]string{},
 	}
 }
 
@@ -82,24 +82,16 @@ func (r Config) IsEqual(other *Config) bool {
 	if len(r.Groups) != len(other.Groups) {
 		return false
 	}
-	for key, rawBase := range r.Groups {
-		if rawBase != other.Groups[key] {
+	for group, resolvers := range r.Groups {
+		if len(resolvers) != len(other.Groups[group]) {
 			return false
+		}
+		for key, resolver := range resolvers {
+			if other.Groups[group][key] != resolver {
+				return false
+			}
 		}
 	}
 
 	return true
 }
-
-func (c Config) GetGroups() map[string]gp.GardenPath {
-	groups := make(map[string]gp.GardenPath)
-	for key, rawBase := range c.Groups {
-		gp, err := gp.New(rawBase)
-		if err != nil {
-			continue
-		}
-		groups[key] = gp
-	}
-	return groups
-}
-

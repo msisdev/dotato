@@ -15,8 +15,9 @@ var Root = GardenPath{""}
 // It is a sequence of directory names starting from root
 // directory.
 // 
-// It always contains an empty string ("") at index 0
-// to distinguish root directory from nil.
+// The first element represents the root directory:
+//  - linux or else: empty string
+//  - windows: volume name (e.g. C:)
 type GardenPath []string
 
 // New constructor handles:
@@ -29,17 +30,9 @@ type GardenPath []string
 //
 // It returns nil if the path is empty.
 func New(path string) (GardenPath, error) {
-	return NewWithSep(path, DefaultSeparator)
-}
-
-// Use NewWithSep if the OS is using different path separator.
-// (e.g. Windows uses \).
-func NewWithSep(path string, separator rune) (GardenPath, error) {
 	if path == "" {
 		return nil, nil
 	}
-
-	sep := string(separator)
 
 	// Clean dots ("." or "..")
 	path = filepath.Clean(path)
@@ -51,17 +44,19 @@ func NewWithSep(path string, separator rune) (GardenPath, error) {
 	}
 
 	// Replace tilde
-	path, err := replaceTilde(path)
+	path, err := expandTilde(path)
 	if err != nil {
 		return nil, err
 	}
 
-	// Insert PWD
-	if !strings.HasPrefix(path, sep) {
-		path = filepath.Join(os.Getenv("PWD"), path)
+	// Resolve working directory
+	path, err = filepath.Abs(path)
+	if err != nil {
+		return nil, err
 	}
 
 	// Remove trailing slash
+	sep := string(os.PathSeparator)
 	path = strings.TrimSuffix(path, sep)
 
 	return strings.Split(path, sep), nil
@@ -69,7 +64,7 @@ func NewWithSep(path string, separator rune) (GardenPath, error) {
 
 // Get absolute path.
 func (p GardenPath) Abs() string {
-	return strings.Join(p, string(DefaultSeparator))
+	return strings.Join(p, string(os.PathSeparator))
 }
 
 // Return the last element.

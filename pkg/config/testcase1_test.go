@@ -1,6 +1,6 @@
 package config
 
-var t1s = `
+var testcase1String = `
 version: "0.0.1"
 
 mode: file
@@ -12,16 +12,23 @@ plans:
   hyprland: [alacritty, fish, waybar]
 
 groups:
-  alacritty:  "~/.config/alacritty"
-  bash:       "~"
-  fish:       "~/.config/fish"
-  kde:        "~"
-  konsole:    "~/.config"
-  waybar:     "~/.config/waybar"
-  zsh:        "~"
+  alacritty:
+    nux: "~/.config/alacritty"
+  bash:
+    nux: "~"
+  fish:
+    nux: "~/.config/fish"
+  kde:
+    nux: "~"
+  konsole:
+    nux: "~/.config"
+  waybar:
+    nux: "~/.config/waybar"
+  zsh:
+    nux: "~"
 `
 
-var t1c = &Config{
+var testcase1Config = &Config{
 	Version: "0.0.1",
 	Mode:		ModeFile,
 	Plans: map[string][]string{
@@ -30,13 +37,22 @@ var t1c = &Config{
 		"fedora":   {"kde", "konsole", "zsh"},
 		"hyprland": {"alacritty", "fish", "waybar"},
 	},
-	Groups: map[string]string{
-		"alacritty": "~/.config/alacritty",
-		"bash":      "~",
-		"fish":      "~/.config/fish",
-		"kde":       "~",
-		"konsole":   "~/.config",
-		"waybar":    "~/.config/waybar",
-		"zsh":       "~",
+	// Groups: map[string]string{
+	// 	"alacritty": "~/.config/alacritty",
+	// 	"bash":      "~",
+	// 	"fish":      "~/.config/fish",
+	// 	"kde":       "~",
+	// 	"konsole":   "~/.config",
+	// 	"waybar":    "~/.config/waybar",
+	// 	"zsh":       "~",
+	// },
+	Groups: map[string]map[string]string{
+		"alacritty": {"nux": "~/.config/alacritty"},
+		"bash":      {"nux": "~"},
+		"fish":      {"nux": "~/.config/fish"},
+		"kde":       {"nux": "~"},
+		"konsole":   {"nux": "~/.config"},
+		"waybar":    {"nux": "~/.config/waybar"},
+		"zsh":       {"nux": "~"},
 	},
 }

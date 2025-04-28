@@ -11,8 +11,9 @@ plans:
   # arch: [home] # select groups with list
 
 groups:
-  home: "~" # base directory of each group
-  # bash: "$HOME" # you may use env vars
+  home:
+    nux: "~" # base directory for home group in linux
+  # macos: "$HOME" # you may use env vars
 `
 
 func GetExample() string {

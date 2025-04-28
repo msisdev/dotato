@@ -7,7 +7,7 @@ import (
 )
 
 // A modification from https://pkg.go.dev/github.com/go-git/go-git/v5/plumbing/format/gitignore
-func replaceTilde(rawPath string) (string, error) {
+func expandTilde(rawPath string) (string, error) {
 	if !strings.HasPrefix(rawPath, "~") {
 		return rawPath, nil
 	}
@@ -18,7 +18,7 @@ func replaceTilde(rawPath string) (string, error) {
 		end = len(rawPath)	// No slash: use the whole string
 	}
 
-	// Path starts with ~
+	// Path in ~/
 	if end == 1 {
 		home, err := os.UserHomeDir()
 		if err != nil {
@@ -27,7 +27,7 @@ func replaceTilde(rawPath string) (string, error) {
 		return strings.Replace(rawPath, "~", home, 1), nil
 	}
 
-	// Path starts with ~<username>
+	// Path in ~<username>
 	username := rawPath[1:end]
 	u, err := user.Lookup(username)
 	if err != nil {

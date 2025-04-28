@@ -18,15 +18,15 @@ func TestConfigFile(t *testing.T) {
 	assert.False(t, ok, "File should not exist")
 
 	// Write
-	err = Write(fs, filename, t1c)
+	err = Write(fs, filename, testcase1Config)
 	assert.NoError(t, err, "Write should not return an error")
 
 	// Read
 	genCfg, ok, err := Read(fs, filename)
 	assert.NoError(t, err, "Read should not return an error")
 	assert.True(t, ok, "File should exist")
-	assert.Equal(t, t1c.Version, genCfg.Version, "Version should be equal")
-	assert.True(t, genCfg.IsEqual(t1c), "Generated config should be equal to the expected config")
+	assert.Equal(t, testcase1Config.Version, genCfg.Version, "Version should be equal")
+	assert.True(t, genCfg.IsEqual(testcase1Config), "Generated config should be equal to the expected config")
 
 	// Read recursively
 	root, err := gp.New("/")
@@ -43,8 +43,8 @@ func TestConfigFile(t *testing.T) {
 	genCfg, dir, err := ReadRecur(fs, home, filename)
 	assert.NoError(t, err, "ReadRecur should not return an error")
 	assert.Equal(t, gp.GardenPath{""}, dir, "Directory should be equal")
-	assert.Equal(t, t1c.Version, genCfg.Version, "Version should be equal")
-	assert.True(t, genCfg.IsEqual(t1c), "Generated config should be equal to the expected config")
+	assert.Equal(t, testcase1Config.Version, genCfg.Version, "Version should be equal")
+	assert.True(t, genCfg.IsEqual(testcase1Config), "Generated config should be equal to the expected config")
 }
 
 func TestReadRecur(t *testing.T) {
@@ -52,7 +52,7 @@ func TestReadRecur(t *testing.T) {
 	fs := memfs.New()
 
 	// Write config file in the root directory
-	err := Write(fs, filename, t1c)
+	err := Write(fs, filename, testcase1Config)
 	assert.NoError(t, err, "Write should not return an error")
 
 	// Read config file recursively
@@ -63,6 +63,6 @@ func TestReadRecur(t *testing.T) {
 	genCfg, dir, err := ReadRecur(fs, root, filename)
 	assert.NoError(t, err, "ReadRecur should not return an error")
 	assert.Equal(t, root, dir, "Directory should be equal")
-	assert.Equal(t, t1c.Version, genCfg.Version, "Version should be equal")
-	assert.True(t, genCfg.IsEqual(t1c), "Generated config should be equal to the expected config")
+	assert.Equal(t, testcase1Config.Version, genCfg.Version, "Version should be equal")
+	assert.True(t, genCfg.IsEqual(testcase1Config), "Generated config should be equal to the expected config")
 }

@@ -2,6 +2,7 @@ package gardenpath
 
 import (
 	"os"
+	"runtime"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -56,6 +57,37 @@ func TestNewGardenPath(t *testing.T) {
 		{"${HOME}", GardenPath{"", "home", "user"}},
 		{"${HOME}/", GardenPath{"", "home", "user"}},
 		{"${HOME}/foo", GardenPath{"", "home", "user", "foo"}},
+	}
+
+	for _, tc := range testcases {
+		t.Run(tc.path, func(t *testing.T) {
+			gp, err := New(tc.path)
+			assert.NoError(t, err)
+			assert.Equal(t, tc.gp, gp, "New(%s): expected %v, got %v", tc.path, tc.gp, gp)
+		})
+	}
+}
+
+func TestWindowsPath(t *testing.T) {
+	if runtime.GOOS != "windows" {
+		t.Skip("Skipping Windows path test on non-Windows OS")
+		return
+	}
+
+	type Testcase struct {
+		path 	string
+		gp		GardenPath
+	}
+
+	testcases := []Testcase{
+		// Test empty path
+		{"", nil},
+		// Test root path
+		{"C:\\", GardenPath{""}},
+		// Test normal paths
+		{"C:\\home", GardenPath{"", "home"}},
+		{"C:\\home\\", GardenPath{"", "home"}},
+		{"C:\\home\\user", GardenPath{"", "home", "user"}},
 	}
 
 	for _, tc := range testcases {

@@ -9,7 +9,10 @@ plans:
   hyprland: [alacritty, fish, waybar]
 
 groups:
-  alacritty:  "~/.config/alacritty"
+  alacritty:
+    win:
+    lin:  "~/.config/alacritty"
+  
   bash:       "~"
   fish:       "~/.config/fish"
   kde:        "~"

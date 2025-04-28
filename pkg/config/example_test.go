@@ -13,8 +13,10 @@ func TestSampleConfig(t *testing.T) {
 		Plans: map[string][]string{
 			"all": nil,
 		},
-		Groups: map[string]string{
-			"home": "~",
+		Groups: map[string]map[string]string{
+			"home": {
+				"nux": "~",
+			},
 		},
 	}
 
