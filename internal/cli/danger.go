@@ -1,7 +1,10 @@
 package cli
 
-import "github.com/msisdev/dotato/internal/arg"
+import (
+	"github.com/charmbracelet/log"
+	"github.com/msisdev/dotato/internal/arg"
+)
 
-func (c *Cli) DangerUnlink(args *arg.DangerUnlinkArgs) {
+func dangerUnlink(logger *log.Logger, args *arg.DangerUnlinkArgs) {
 	
 }

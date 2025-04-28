@@ -56,20 +56,11 @@ type GroupTidyArgs struct {
 
 
 type FileArgs struct {
-	In *FileInArgs	`arg:"subcommand:in"`
-	Out *FileOutArgs	`arg:"subcommand:out"`
 	Move *FileMoveArgs	`arg:"subcommand:move"`
 }
-type FileInArgs struct {
-	File string `arg:"positional" help:"File name"`
-	Yes bool	`arg:"-y,--yes" help:"Skip confirmation"`
-}
-type FileOutArgs struct {
-	File string `arg:"positional" help:"File name"`
-	Yes bool	`arg:"-y,--yes" help:"Skip confirmation"`
-}
 type FileMoveArgs struct {
-	File string `arg:"positional" help:"File name"`
+	Src string `arg:"positional" help:"File name"`
+	Dst string `arg:"positional" help:"File name"`
 	Yes bool	`arg:"-y,--yes" help:"Skip confirmation"`
 }
 

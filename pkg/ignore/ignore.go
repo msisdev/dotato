@@ -12,11 +12,11 @@ import (
 // Ignore wraps RuleTree and implements file read.
 type Ignore struct {
 	fn string						// ignore file name
-	fs billy.Filesystem
-	rt *RuleTree
+	fs billy.Filesystem	// filesystem
+	rt *RuleTree				// ignore rule tree
 }
 
-func newIgnore(fs billy.Filesystem, base gp.GardenPath, filename string) *Ignore {
+func _new(fs billy.Filesystem, base gp.GardenPath, filename string) *Ignore {
 	i := Ignore{
 		fn: filename,
 		fs: fs,
@@ -34,12 +34,12 @@ func newIgnore(fs billy.Filesystem, base gp.GardenPath, filename string) *Ignore
 
 // Create an Ignore instance.
 // It will also try to read the base ignore file.
-func New(base gp.GardenPath, filename string) *Ignore {
-	return newIgnore(osfs.New("."), base, filename)
+func New(base gp.GardenPath, ignoreFileName string) *Ignore {
+	return _new(osfs.New("."), base, ignoreFileName)
 }
 
-func NewWithFS(fs billy.Filesystem, base gp.GardenPath, filename string) *Ignore {
-	return newIgnore(fs, base, filename)
+func NewWithFS(fs billy.Filesystem, base gp.GardenPath, ignoreFileName string) *Ignore {
+	return _new(fs, base, ignoreFileName)
 }
 
 // Read the ignore file in the given directory.

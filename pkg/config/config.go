@@ -2,9 +2,9 @@ package config
 
 import (
 	"fmt"
-	"sort"
 
 	"github.com/goccy/go-yaml"
+	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 
 var (
@@ -91,17 +91,15 @@ func (r Config) IsEqual(other *Config) bool {
 	return true
 }
 
-func cmpStrSlice(a []string, b []string) bool {
-	if len(a) != len(b) {
-		return false
-	}
-
-	sort.Strings(a)
-	sort.Strings(b)
-	for i := range a {
-		if a[i] != b[i] {
-			return false
+func (c Config) GetGroups() map[string]gp.GardenPath {
+	groups := make(map[string]gp.GardenPath)
+	for key, rawBase := range c.Groups {
+		gp, err := gp.New(rawBase)
+		if err != nil {
+			continue
 		}
+		groups[key] = gp
 	}
-	return true
+	return groups
 }
+

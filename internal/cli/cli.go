@@ -1,32 +1,22 @@
 package cli
 
 import (
+	"os"
+
 	"github.com/charmbracelet/log"
 	"github.com/msisdev/dotato/internal/arg"
-	"github.com/msisdev/dotato/pkg/dotato"
 )
 
-type Cli struct {
-	d	*dotato.Dotato
-	l	*log.Logger
-}
-
-func NewCli(d *dotato.Dotato, logger *log.Logger) *Cli {
-	return &Cli{
-		d: d,
-		l: logger,
-	}
-}
-
-func (c *Cli) setLogLevel(level log.Level) {
+func setLogLevel(logger *log.Logger, level log.Level) {
 	// Set level
-	c.l.SetLevel(level)
+	logger.SetLevel(level)
 
 	// Set options
 	switch level {
-	default: fallthrough
+	default:
+		fallthrough
 	case log.DebugLevel:
-		c.l.SetReportCaller(true)
+		logger.SetReportCaller(true)
 
 	case log.InfoLevel:
 	case log.WarnLevel:
@@ -35,17 +25,48 @@ func (c *Cli) setLogLevel(level log.Level) {
 	}
 }
 
-func (c *Cli) Run() {
+func Run() {
+	logger := log.New(os.Stderr)
+
 	args, err := arg.Parse()
 	if err != nil {
-		c.l.Fatal(err)
+		logger.Fatal(err)
 		return
 	}
 
 	if args.Danger != nil {
 		if args.Danger.Unlink != nil {
-			defer c.DangerUnlink(args.Danger.Unlink)
-			return
+			dangerUnlink(logger, args.Danger.Unlink)
 		}
+		return
+	}
+
+	if args.Plan != nil {
+		if args.Plan.In != nil {
+			planIn(logger, args.Plan.In)
+		} else if args.Plan.Out != nil {
+			planOut(logger, args.Plan.Out)
+		} else if args.Plan.Tidy != nil {
+			planTidy(logger, args.Plan.Tidy)
+		}
+		return
+	}
+
+	if args.Group != nil {
+		if args.Group.In != nil {
+			groupIn(logger, args.Group.In)
+		} else if args.Group.Out != nil {
+			groupOut(logger, args.Group.Out)
+		} else if args.Group.Tidy != nil {
+			groupTidy(logger, args.Group.Tidy)
+		}
+		return
+	}
+
+	if args.File != nil {
+		if args.File.Move != nil {
+			fileMove(logger, args.File.Move)
+		}
+		return
 	}
 }
