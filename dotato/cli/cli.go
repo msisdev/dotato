@@ -4,7 +4,6 @@ import (
 	"os"
 
 	"github.com/charmbracelet/log"
-	"github.com/msisdev/dotato/internal/arg"
 )
 
 func setLogLevel(logger *log.Logger, level log.Level) {
@@ -28,7 +27,7 @@ func setLogLevel(logger *log.Logger, level log.Level) {
 func Run() {
 	logger := log.New(os.Stderr)
 
-	args, err := arg.Parse()
+	args, err := parse()
 	if err != nil {
 		logger.Fatal(err)
 		return
@@ -85,19 +84,19 @@ func printVersion() {
 	panic("unimplemented")
 }
 
-func unlinkGroup(logger *log.Logger, unlinkGroupArgs *arg.UnlinkGroupArgs) {
+func unlinkGroup(logger *log.Logger, unlinkGroupArgs *UnlinkGroupArgs) {
 	panic("unimplemented")
 }
 
-func unlinkPlan(logger *log.Logger, unlinkPlanArgs *arg.UnlinkPlanArgs) {
+func unlinkPlan(logger *log.Logger, unlinkPlanArgs *UnlinkPlanArgs) {
 	panic("unimplemented")
 }
 
-func exportGroup(logger *log.Logger, exportGroupArgs *arg.ExportGroupArgs) {
+func exportGroup(logger *log.Logger, exportGroupArgs *ExportGroupArgs) {
 	panic("unimplemented")
 }
 
-func exportPlan(logger *log.Logger, exportPlanArgs *arg.ExportPlanArgs) {
+func exportPlan(logger *log.Logger, exportPlanArgs *ExportPlanArgs) {
 	panic("unimplemented")
 }
 

@@ -1,4 +1,15 @@
-package arg
+package cli
+
+import (
+	"github.com/alexflint/go-arg"
+)
+
+func parse() (Args, error) {
+	var args Args
+	err := arg.Parse(&args)
+	return args, err
+}
+
 
 type Args struct {
 	Danger		*DangerArgs				`arg:"subcommand:danger|!"`
