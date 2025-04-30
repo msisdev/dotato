@@ -61,7 +61,7 @@ func (d *Dotato) setState() (err error) {
 	return
 }
 
-func (d *Dotato) setConfigIgnore() (err error) {
+func (d *Dotato) setIgnore() (err error) {
 	if d.ig != nil {
 		return
 	}
@@ -76,9 +76,33 @@ func (d *Dotato) setConfigIgnore() (err error) {
 	return
 }
 
-func (d Dotato) GetGroups(plan string) (groups map[string]bool, err error) {
-	err = d.setConfig()
-	if err != nil {
+func (d Dotato) GetConfigVersion() (string, error) {
+	if err := d.setConfig(); err != nil {
+		return "", err
+	}
+
+	return d.cfg.Version, nil
+}
+
+func (d Dotato) GetConfigMode() (config.Mode, error) {
+	if err := d.setConfig(); err != nil {
+		return "", err
+	}
+
+	return d.cfg.Mode, nil
+}
+
+func (d Dotato) GetConfigPlans() (map[string][]string, error) {
+	if err := d.setConfig(); err != nil {
+		return nil, err
+	}
+
+	// Get plans
+	return d.cfg.Plans, nil
+}
+
+func (d Dotato) GetConfigGroups(plan string) (groups map[string]bool, err error) {
+	if err = d.setConfig(); err != nil {
 		return
 	}
 
@@ -87,9 +111,8 @@ func (d Dotato) GetGroups(plan string) (groups map[string]bool, err error) {
 	return
 }
 
-func (d Dotato) GetGroupBase(group, resolver string) (base gp.GardenPath, notFound []string, err error) {
-	err = d.setConfig()
-	if err != nil {
+func (d Dotato) GetConfigGroupBase(group, resolver string) (base gp.GardenPath, notFound []string, err error) {
+	if err = d.setConfig(); err != nil {
 		return
 	}
 
@@ -109,8 +132,7 @@ type Entity struct {
 // Scan which files will be imported
 func (d Dotato) GetImportPaths(group string, base gp.GardenPath) (es []Entity, err error) {
 	if err = d.setConfig(); err != nil { return }
-	if err = d.setState(); err != nil { return }
-	if err = d.setConfigIgnore(); err != nil { return }
+	if err = d.setIgnore(); err != nil { return }
 
 	ig, err := readIgnoreRecur(d.fs, append(d.cdir, group))
 	if err != nil {
@@ -122,8 +144,7 @@ func (d Dotato) GetImportPaths(group string, base gp.GardenPath) (es []Entity, e
 
 func (d Dotato) GetExportPaths(group string) (es []Entity, err error) {
 	if err = d.setConfig(); err != nil { return }
-	if err = d.setState(); err != nil { return }
-	if err = d.setConfigIgnore(); err != nil { return }
+	if err = d.setIgnore(); err != nil { return }
 
 	ig, err := readIgnoreRecur(d.fs, append(d.cdir, group))
 	if err != nil {
@@ -131,4 +152,12 @@ func (d Dotato) GetExportPaths(group string) (es []Entity, err error) {
 	}
 
 	return d.walk(append(d.cdir, group), ig)
+}
+
+/////////////////////////////////////////////////
+
+func (d Dotato) PutHistory(h state.History) (err error) {
+	if err = d.setState(); err != nil { return }
+
+	panic("Not implemented")
 }

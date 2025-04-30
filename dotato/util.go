@@ -10,6 +10,7 @@ func (d Dotato) walk(root gp.GardenPath, ig *ignore.Ignore) (es []Entity, err er
 
 	var dfs func(dir gp.GardenPath) (err error)
 	dfs = func(dir gp.GardenPath) (err error) {
+		iter++
 		if iter > d.maxIter {
 			return ErrMaxIterExceeded
 		}
