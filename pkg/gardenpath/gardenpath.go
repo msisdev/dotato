@@ -79,9 +79,12 @@ func NewCheckEnv(path string) (gp GardenPath, notFound []string, err error) {
 
 // Get absolute path.
 func (p GardenPath) Abs() string {
+	// handle empty path
 	if len(p) == 0 {
 		return ""
 	}
+
+	// (linux) handle root directory
 	if len(p) == 1 && p[0] == "" {
 		return "/"
 	}
