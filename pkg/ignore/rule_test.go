@@ -9,9 +9,17 @@ import (
 
 func testRuleTree(t *testing.T, rt *RuleTree, fs []FileEntry) {
 	for _, f := range fs {
+		// garden path
 		path, err := gp.New(f.path)
 		assert.NoError(t, err)
+
+		// test IsIgnored
 		ignored := rt.IsIgnored(path)
+		assert.Equal(t, f.isIgnored, ignored, "path: %s", f.path)
+
+		// test IsIgnoredWithBase
+		remotePath := append(gp.GardenPath{"dummy"}, path...)
+		ignored = rt.IsIgnoredWithBase(rt.base + 1, remotePath)
 		assert.Equal(t, f.isIgnored, ignored, "path: %s", f.path)
 	}
 }

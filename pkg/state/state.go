@@ -1,6 +1,9 @@
 package state
 
 import (
+	"path/filepath"
+
+	"github.com/go-git/go-billy/v5"
 	"github.com/msisdev/dotato/pkg/config"
 	"gorm.io/gorm"
 )
@@ -15,7 +18,13 @@ type History = HistoryV1
 // What New does:
 //  - Initialize db instance
 //  - Migrate db to latest version
-func New(statePath string) (*State, error) {
+func New(fs billy.Filesystem, statePath string) (*State, error) {
+	// Create directories
+	err := fs.MkdirAll(filepath.Dir(statePath), 0644)
+	if err != nil {
+		return nil, err
+	}
+
 	// Open db
 	db, ver, err := NewDB(statePath)
 	if err != nil {

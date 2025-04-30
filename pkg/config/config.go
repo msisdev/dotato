@@ -10,6 +10,8 @@ import (
 var (
 	ErrVersionNotFound 	= fmt.Errorf("version not found")
 	ErrModeNotFound    	= fmt.Errorf("mode not found")
+	ErrGroupNotFound 		= fmt.Errorf("group not found")
+	ErrResolverNotFound = fmt.Errorf("resolver not found")
 )
 
 type Mode string
@@ -96,27 +98,56 @@ func (r Config) IsEqual(other *Config) bool {
 	return true
 }
 
-// Returns groups of the plan as a map
-func (c Config) GetPlan(plan string) map[string]bool {
-	// Does the plan exist?
-	if _, ok := c.Plans[plan]; !ok {
+// Returns groups of the plan as a map.
+//
+// If a plan has empty list, it returns all groups.
+func (c Config) GetGroups(plan string) map[string]bool {
+	// Find list by plan
+	list, ok := c.Plans[plan]
+	if !ok {
 		return nil
 	}
 
-	// Convert plan to a map
-	groups := make(map[string]bool)
-	for _, group := range c.Plans[plan] {
-		groups[group] = true
+	set := make(map[string]bool)
+
+	if list == nil {
+		// Empty list means all
+		for group := range c.Groups {
+			set[group] = true
+		}
+	} else {
+		// Convert list to set
+		for _, group := range list {
+			set[group] = true
+		}
 	}
 
-	return groups
+	return set
+}
+
+func (c Config) GetGroupBase(group, resolver string) (base gp.GardenPath, notFound []string, err error) {
+	resolverMap, ok := c.Groups[group]
+	if !ok {
+		err = ErrGroupNotFound
+		return
+	}
+
+	// Get path
+	rawPath, ok := resolverMap[resolver]
+	if !ok {
+		err = ErrResolverNotFound
+		return
+	}
+
+	base, notFound, err = gp.NewCheckEnv(rawPath)
+	return
 }
 
 // Returns:
-//  - groups - groups that has the resolver, with garden path
-//  - notFound - env vars that are not found in the resolver
+//  - groups - map of group and base pairs
+//  - notFound - env vars that are not found in the base
 //	- err - error if any
-func (c Config) GetGroups(resolver string) (groups map[string]gp.GardenPath, notFound []string, err error) {
+func (c Config) GetGroupBaseAll(resolver string) (groups map[string]gp.GardenPath, notFound []string, err error) {
 	groups = make(map[string]gp.GardenPath)
 	
 	// Make groups
@@ -134,7 +165,7 @@ func (c Config) GetGroups(resolver string) (groups map[string]gp.GardenPath, not
 		)
 		gpath, envs, err = gp.NewCheckEnv(path)
 		if err != nil {
-			if err == gp.ErrEnvVarNotFound {
+			if err == gp.ErrEnvVarNotSet {
 				notFound = append(notFound, envs...)	// Append not found env vars
 			} else {
 				return

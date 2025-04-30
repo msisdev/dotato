@@ -8,7 +8,7 @@ import (
 )
 
 var Root = GardenPath{""}
-var ErrEnvVarNotFound = fmt.Errorf("env var not found")
+var ErrEnvVarNotSet = fmt.Errorf("env var not set")
 
 // GardenPath is a smart path representation.
 // It is a sequence of directory names starting from root
@@ -45,7 +45,7 @@ func NewCheckEnv(path string) (gp GardenPath, notFound []string, err error) {
 	// Expand env vars
 	path, notFound = expandEnv(path)
 	if len(notFound) > 0 {
-		err = ErrEnvVarNotFound
+		err = ErrEnvVarNotSet
 		return
 	}
 
@@ -79,6 +79,13 @@ func NewCheckEnv(path string) (gp GardenPath, notFound []string, err error) {
 
 // Get absolute path.
 func (p GardenPath) Abs() string {
+	if len(p) == 0 {
+		return ""
+	}
+	if len(p) == 1 && p[0] == "" {
+		return "/"
+	}
+	
 	return strings.Join(p, string(os.PathSeparator))
 }
 

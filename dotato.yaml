@@ -4,18 +4,11 @@ mode: "file"
 
 plans:
   all:
-  default:  []
-  fedora:   [kde, konsole, zsh]
-  hyprland: [alacritty, fish, waybar]
+  example:  [example]
 
 groups:
   alacritty:
     win:
-    lin:  "~/.config/alacritty"
-  
-  bash:       "~"
-  fish:       "~/.config/fish"
-  kde:        "~"
-  konsole:    "~/.config"
-  waybar:     "~/.config/waybar"
-  zsh:        "~"
+    nux:  "~/.config/alacritty"
+  example:
+    nux: "~"

@@ -22,8 +22,13 @@ const (
 	Version1 				Version = "v1"
 )
 
+const (
+	PathInMemory = ":memory:"
+)
+
 var (
 	ErrVersionUnknown = fmt.Errorf("unknown version")
+
 )
 
 // What NewDB does:

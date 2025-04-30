@@ -37,36 +37,68 @@ func Run() {
 	if args.Danger != nil {
 		if args.Danger.Unlink != nil {
 			dangerUnlink(logger, args.Danger.Unlink)
+			return
+		}
+	}
+
+	if args.Import != nil {
+		if args.Import.Plan != nil {
+			importPlan(logger, args.Import.Plan)
+			return
+		}
+		if args.Import.Group != nil {
+			importGroup(logger, args.Import.Group)
+			return
+		}
+	}
+
+	if args.Export != nil {
+		if args.Export.Plan != nil {
+			exportPlan(logger, args.Export.Plan)
+			return
+		}
+		if args.Export.Group != nil {
+			exportGroup(logger, args.Export.Group)
+			return
+		}
+	}
+
+	if args.Unlink != nil {
+		if args.Unlink.Plan != nil {
+			unlinkPlan(logger, args.Unlink.Plan)
+			return
+		}
+		if args.Unlink.Group != nil {
+			unlinkGroup(logger, args.Unlink.Group)
+			return
 		}
 		return
 	}
 
-	if args.Plan != nil {
-		if args.Plan.In != nil {
-			planIn(logger, args.Plan.In)
-		} else if args.Plan.Out != nil {
-			planOut(logger, args.Plan.Out)
-		} else if args.Plan.Tidy != nil {
-			planTidy(logger, args.Plan.Tidy)
-		}
-		return
-	}
-
-	if args.Group != nil {
-		if args.Group.In != nil {
-			groupIn(logger, args.Group.In)
-		} else if args.Group.Out != nil {
-			groupOut(logger, args.Group.Out)
-		} else if args.Group.Tidy != nil {
-			groupTidy(logger, args.Group.Tidy)
-		}
-		return
-	}
-
-	if args.File != nil {
-		if args.File.Move != nil {
-			fileMove(logger, args.File.Move)
-		}
+	if args.Version != nil {
+		printVersion()
 		return
 	}
 }
+
+func printVersion() {
+	panic("unimplemented")
+}
+
+func unlinkGroup(logger *log.Logger, unlinkGroupArgs *arg.UnlinkGroupArgs) {
+	panic("unimplemented")
+}
+
+func unlinkPlan(logger *log.Logger, unlinkPlanArgs *arg.UnlinkPlanArgs) {
+	panic("unimplemented")
+}
+
+func exportGroup(logger *log.Logger, exportGroupArgs *arg.ExportGroupArgs) {
+	panic("unimplemented")
+}
+
+func exportPlan(logger *log.Logger, exportPlanArgs *arg.ExportPlanArgs) {
+	panic("unimplemented")
+}
+
+

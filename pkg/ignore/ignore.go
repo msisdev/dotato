@@ -24,18 +24,17 @@ func _new(fs billy.Filesystem, base gp.GardenPath, filename string) *Ignore {
 	}
 
 	// Read the base ignore file
-	_, err := i.Read(base)
-	if err != nil {
-		panic(err)
-	}
+	// _, err := i.Read(base)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
 	return &i
 }
 
 // Create an Ignore instance.
-// It will also try to read the base ignore file.
 func New(base gp.GardenPath, ignoreFileName string) *Ignore {
-	return _new(osfs.New("."), base, ignoreFileName)
+	return _new(osfs.New("/"), base, ignoreFileName)
 }
 
 func NewWithFS(fs billy.Filesystem, base gp.GardenPath, ignoreFileName string) *Ignore {
@@ -100,4 +99,8 @@ func (i Ignore) ReadRecur(dir gp.GardenPath) error {
 
 func (i Ignore) IsIgnored(path gp.GardenPath) bool {
 	return i.rt.IsIgnored(path)
+}
+
+func (i Ignore) IsIgnoredWithBaseDir(baseDir gp.GardenPath, path gp.GardenPath) bool {
+	return i.rt.IsIgnoredWithBaseDir(baseDir, path)
 }

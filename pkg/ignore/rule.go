@@ -58,12 +58,12 @@ func (n *ruleNode) IsIgnored(relPath string) bool {
 
 type RuleTree struct {
 	head *ruleNode // head is a dummy node
-	base uint32    // Base index for the path
+	base int		   // Base index for the path
 }
 
 // Further algorithms will skip path[0:base] and
 // start from path[base+1]
-func newRuleTree(base uint32) *RuleTree {
+func newRuleTree(base int) *RuleTree {
 	return &RuleTree{
 		head: newNode(newRules()),
 		base: base,
@@ -73,7 +73,7 @@ func newRuleTree(base uint32) *RuleTree {
 // Provide a directory that you will use as a root of rule tree.
 // This function will calculate the base index for you.
 func newRuleTreeFromDir(dir gp.GardenPath) *RuleTree {
-	return newRuleTree(uint32(len(dir)) - 1)
+	return newRuleTree(GetBaseFrom(dir))
 }
 
 // Add rules to the tree at the given dir.
@@ -88,6 +88,9 @@ func (t *RuleTree) Append(dir gp.GardenPath, rules *Rules) {
 	}
 	if t.head == nil {
 		t.head = newNode(newRules())
+	}
+	if GetBaseFrom(dir) < t.base {
+		return
 	}
 
 	node := t.head
@@ -106,10 +109,18 @@ func (t *RuleTree) Append(dir gp.GardenPath, rules *Rules) {
 	node.Set(rules)
 }
 
-func (t *RuleTree) IsIgnored(path gp.GardenPath) bool {
+func (t RuleTree) IsIgnored(path gp.GardenPath) bool {
+	return t.IsIgnoredWithBase(t.base, path)
+}
+
+// Use base from the given dir.
+func (t RuleTree) IsIgnoredWithBaseDir(baseDir gp.GardenPath, path gp.GardenPath) bool {
+	return t.IsIgnoredWithBase(GetBaseFrom(baseDir), path)
+}
+
+func (t RuleTree) IsIgnoredWithBase(base int, path gp.GardenPath) bool {
 	// Some edge cases
 	if t.head == nil {
-		t.head = newNode(newRules())
 		return false
 	}
 	if len(path) == 0 {
@@ -118,7 +129,7 @@ func (t *RuleTree) IsIgnored(path gp.GardenPath) bool {
 
 	node := t.head
 
-	for idx, nextName := range path[t.base : len(path)-1] {
+	for idx, nextName := range path[base : len(path)-1] {
 		if node.IsIgnored(path[idx:].Abs()) {
 			return true
 		}
@@ -127,9 +138,20 @@ func (t *RuleTree) IsIgnored(path gp.GardenPath) bool {
 		if !ok {
 			return false
 		}
-
 		node = nextNode
 	}
 
 	return node.IsIgnored(path.Last())
+}
+
+func (t *RuleTree) SetBase(base int) {
+	t.base = base
+}
+
+func (t *RuleTree) SetBaseFromDir(dir gp.GardenPath) {
+	t.SetBase(GetBaseFrom(dir))
+}
+
+func GetBaseFrom(dir gp.GardenPath) int {
+	return len(dir) - 1
 }

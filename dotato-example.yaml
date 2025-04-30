@@ -1,0 +1,21 @@
+version: "0.0.1"
+
+mode: "file"
+
+plans:
+  all:
+  default:  []
+  fedora:   [kde, konsole, zsh]
+  hyprland: [alacritty, fish, waybar]
+
+groups:
+  alacritty:
+    win:
+    lin:  "~/.config/alacritty"
+  
+  bash:       "~"
+  fish:       "~/.config/fish"
+  kde:        "~"
+  konsole:    "~/.config"
+  waybar:     "~/.config/waybar"
+  zsh:        "~"

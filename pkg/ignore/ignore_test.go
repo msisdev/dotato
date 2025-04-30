@@ -15,14 +15,14 @@ func TestIgnore(t *testing.T) {
 
 	// Create ignore files
 	for _, ie := range testcase1Ignore {
-		// Get path object
+		// Get garden path
 		path, err := gp.New(ie.path)
 		if err != nil {
 			panic(err)
 		}
 
 		// Create directories
-		if err = fs.MkdirAll(path[:len(path)-1].Abs(), 0755); err != nil {
+		if err = fs.MkdirAll(path.Parent().Abs(), 0755); err != nil {
 			panic(err)
 		}
 

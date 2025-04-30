@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/msisdev/dotato/pkg/config"
 	"github.com/stretchr/testify/assert"
 )
@@ -11,7 +12,8 @@ import (
 
 
 func TestV1_GetAllByMode(t *testing.T) {
-	state, err := New(PathInMemory)
+	fs := memfs.New()
+	state, err := New(fs, PathInMemory)
 	assert.NoError(t, err)
 
 	now := time.Now()
