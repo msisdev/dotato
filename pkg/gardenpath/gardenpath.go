@@ -22,10 +22,9 @@ type GardenPath []string
 // New constructor handles:
 //
 //  1. Clean dot and double dot  
-//  2. environment variable expansion
-//  3. tilde replacement,
-//  4. absolute path conversion,
-//  5. trailing slash removal.
+//  2. tilde replacement,
+//  3. absolute path conversion,
+//  4. trailing slash removal.
 //
 // It returns nil if the path is empty.
 func New(path string) (GardenPath, error) {
@@ -41,13 +40,6 @@ func NewCheckEnv(path string) (gp GardenPath, notFound []string, err error) {
 
 	// Clean dots ("." or "..")
 	path = filepath.Clean(path)
-
-	// Expand env vars
-	path, notFound = expandEnv(path)
-	if len(notFound) > 0 {
-		err = ErrEnvVarNotSet
-		return
-	}
 
 	// (linux) Replace tilde
 	path, err = expandTilde(path)

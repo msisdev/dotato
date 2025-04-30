@@ -118,18 +118,23 @@ func (t RuleTree) IsIgnoredWithBaseDir(baseDir gp.GardenPath, path gp.GardenPath
 	return t.IsIgnoredWithBase(GetBaseFrom(baseDir), path)
 }
 
+// 
 func (t RuleTree) IsIgnoredWithBase(base int, path gp.GardenPath) bool {
 	// Some edge cases
 	if t.head == nil {
 		return false
 	}
-	if len(path) == 0 {
+	if path == nil {
 		return false
+	}
+	if base >= len(path) {
+		// Invalid case
+		return true
 	}
 
 	node := t.head
 	
-	if parent := path.Parent(); len(parent) > base {
+	if parent := path.Parent(); base < len(parent) {
 		for i, nextName := range parent[base:] {
 			if node.IsIgnored(path[i:].Abs()) {
 				return true

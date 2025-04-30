@@ -139,6 +139,13 @@ func (c Config) GetGroupBase(group, resolver string) (base gp.GardenPath, notFou
 		return
 	}
 
+	// Expand env vars
+	rawPath, notFound = expandEnv(rawPath)
+	if len(notFound) > 0 {
+		err = fmt.Errorf("env var is not set in %s", rawPath)
+		return
+	}
+
 	base, notFound, err = gp.NewCheckEnv(rawPath)
 	return
 }

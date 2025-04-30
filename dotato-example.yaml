@@ -11,11 +11,22 @@ plans:
 groups:
   alacritty:
     win:
-    lin:  "~/.config/alacritty"
-  
-  bash:       "~"
-  fish:       "~/.config/fish"
-  kde:        "~"
-  konsole:    "~/.config"
-  waybar:     "~/.config/waybar"
-  zsh:        "~"
+    nux: "~/.config/alacritty"
+
+  bash:
+    nux: "~"
+
+  fish:
+    nux: "~/.config/fish"
+
+  kde:
+    nux: "~"
+
+  konsole:
+    nux: "~/.config"
+
+  waybar:
+    nux: "~/.config/waybar"
+    
+  zsh:
+    nux: "~"
