@@ -129,8 +129,8 @@ func (t RuleTree) IsIgnoredWithBase(base int, path gp.GardenPath) bool {
 
 	node := t.head
 
-	for idx, nextName := range path[base : len(path)-1] {
-		if node.IsIgnored(path[idx:].Abs()) {
+	for i, nextName := range path[base : len(path)-1] {
+		if node.IsIgnored(path[i:].Abs()) {
 			return true
 		}
 
@@ -153,5 +153,5 @@ func (t *RuleTree) SetBaseFromDir(dir gp.GardenPath) {
 }
 
 func GetBaseFrom(dir gp.GardenPath) int {
-	return len(dir) - 1
+	return len(dir)
 }
