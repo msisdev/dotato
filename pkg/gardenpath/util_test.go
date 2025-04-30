@@ -36,6 +36,3 @@ func TestExpandTilde(t *testing.T) {
 	}
 }
 
-func TestExpandEnv(t *testing.T) {
-	
-}

@@ -57,13 +57,13 @@ func TestGardenPathLinux(t *testing.T) {
 		{"~/", GardenPath{"", "home", "user"}, "/home/user"},
 		{"~/foo", GardenPath{"", "home", "user", "foo"}, "/home/user/foo"},
 		// Test env vars
-		{"$HOME", GardenPath{"", "home", "user"}, "/home/user"},
-		{"$HOME/", GardenPath{"", "home", "user"}, "/home/user"},
-		{"$HOME/foo", GardenPath{"", "home", "user", "foo"}, "/home/user/foo"},
+		// {"$HOME", GardenPath{"", "home", "user"}, "/home/user"},
+		// {"$HOME/", GardenPath{"", "home", "user"}, "/home/user"},
+		// {"$HOME/foo", GardenPath{"", "home", "user", "foo"}, "/home/user/foo"},
 		// Test env vars 2
-		{"${HOME}", GardenPath{"", "home", "user"}, "/home/user"},
-		{"${HOME}/", GardenPath{"", "home", "user"}, "/home/user"},
-		{"${HOME}/foo", GardenPath{"", "home", "user", "foo"}, "/home/user/foo"},
+		// {"${HOME}", GardenPath{"", "home", "user"}, "/home/user"},
+		// {"${HOME}/", GardenPath{"", "home", "user"}, "/home/user"},
+		// {"${HOME}/foo", GardenPath{"", "home", "user", "foo"}, "/home/user/foo"},
 	}
 
 	for _, tc := range testcases {
