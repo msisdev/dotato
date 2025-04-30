@@ -128,17 +128,19 @@ func (t RuleTree) IsIgnoredWithBase(base int, path gp.GardenPath) bool {
 	}
 
 	node := t.head
-
-	for i, nextName := range path[base : len(path)-1] {
-		if node.IsIgnored(path[i:].Abs()) {
-			return true
+	
+	if parent := path.Parent(); len(parent) > base {
+		for i, nextName := range parent[base:] {
+			if node.IsIgnored(path[i:].Abs()) {
+				return true
+			}
+	
+			nextNode, ok := node.dirs[nextName]
+			if !ok {
+				return false
+			}
+			node = nextNode
 		}
-
-		nextNode, ok := node.dirs[nextName]
-		if !ok {
-			return false
-		}
-		node = nextNode
 	}
 
 	return node.IsIgnored(path.Last())
