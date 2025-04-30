@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
 
 	"github.com/go-git/go-billy/v5"
 	"github.com/msisdev/dotato/pkg/config"
@@ -15,30 +16,43 @@ import (
 
 const (
 	// Location of user-wide config directory
-	DotatoDirPathEnv 			= "DOTATO_DIRECTORY"
-	DotatoDirName					= "dotato"
+	DotatoDirPathEnv 					= "DOTATO_DIRECTORY"
+	DotatoDirName							= "dotato"
 
 	// State file name
-	StateFileNameEnv 			= "DOTATO_STATE"
-	StateFileNameDefault 	= "dotatostate.sqlite"
+	StateFileNameEnv 					= "DOTATO_STATE"
+	StateFileNameDefault 			= "dotatostate.sqlite"
 
 	// Config file name
-	ConfigFileNameEnv 		= "DOTATO_CONFIG"
-	ConfigFileNameDefault = "dotato.yaml"
+	ConfigFileNameEnv 				= "DOTATO_CONFIG"
+	ConfigFileNameDefault 		= "dotato.yaml"
 	
 	// Ignore file name
-	IgnoreFileNameEnv 		= "DOTATO_IGNORE"
-	IgnoreFileNameDefault = ".dotatoignore"
+	IgnoreFileNameEnv 				= "DOTATO_IGNORE"
+	IgnoreFileNameDefault 		= ".dotatoignore"
+
+	MaxFileSystemIterEnv 			= "DOTATO_MAX_FS_ITER"
+	MaxFileSystemIterDefault	= 10000
 )
 
 var (
 	ErrConfigNotFound = fmt.Errorf("config file not found")
+	ErrMaxIterExceeded = fmt.Errorf("max iteration exceeded")
 )
 
 // Loop up in the env var or use default value
 func useEnvOrDefault(envVar, defaultValue string) string {
 	if val, ok := os.LookupEnv(envVar); ok {
 		return val
+	}
+	return defaultValue
+}
+
+func useEnvOrDefaultInt(envVar string, defaultValue int) int {
+	if val, ok := os.LookupEnv(envVar); ok {
+		if i, err := strconv.Atoi(val); err == nil {
+			return i
+		}
 	}
 	return defaultValue
 }
