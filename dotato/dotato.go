@@ -84,7 +84,7 @@ func (d Dotato) GetConfigVersion() (string, error) {
 	return d.cfg.Version, nil
 }
 
-func (d Dotato) GetConfigMode() (config.Mode, error) {
+func (d Dotato) GetConfigMode() (string, error) {
 	if err := d.setConfig(); err != nil {
 		return "", err
 	}

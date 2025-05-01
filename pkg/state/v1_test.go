@@ -9,8 +9,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-
-
 func TestV1_GetAllByMode(t *testing.T) {
 	fs := memfs.New()
 	state, err := New(fs, PathInMemory)
@@ -18,10 +16,10 @@ func TestV1_GetAllByMode(t *testing.T) {
 
 	now := time.Now()
 	hs := []History{
-		{ "t1", "s1", config.ModeFile, now, now, "h1"},
-		{ "t2", "s2", config.ModeLink, now, now, "h2"},
-		{ "t3", "s3", config.ModeFile, now, now, "h3"},
-		{ "t4", "s4", config.ModeLink, now, now, "h4"},
+		{"t1", "s1", config.ModeFile, now, now},
+		{"t2", "s2", config.ModeLink, now, now},
+		{"t3", "s3", config.ModeFile, now, now},
+		{"t4", "s4", config.ModeLink, now, now},
 	}
 
 	// Insert
@@ -37,13 +35,13 @@ func TestV1_GetAllByMode(t *testing.T) {
 		all, err := state.v1_getAllByMode(config.ModeFile)
 		assert.NoError(t, err)
 		assert.Equal(t, len(all), 2)
-		assert.Equal(t, all[0].TargetPath, hs[0].TargetPath)
-		assert.Equal(t, all[1].TargetPath, hs[2].TargetPath)
+		assert.Equal(t, all[0].RemotePath, hs[0].RemotePath)
+		assert.Equal(t, all[1].RemotePath, hs[2].RemotePath)
 
 		all, err = state.v1_getAllByMode(config.ModeLink)
 		assert.NoError(t, err)
 		assert.Equal(t, len(all), 2)
-		assert.Equal(t, all[0].TargetPath, hs[1].TargetPath)
-		assert.Equal(t, all[1].TargetPath, hs[3].TargetPath)
+		assert.Equal(t, all[0].RemotePath, hs[1].RemotePath)
+		assert.Equal(t, all[1].RemotePath, hs[3].RemotePath)
 	}
 }

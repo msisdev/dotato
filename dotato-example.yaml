@@ -10,7 +10,6 @@ plans:
 
 groups:
   alacritty:
-    win:
     nux: "~/.config/alacritty"
 
   bash:

@@ -14,23 +14,24 @@ var (
 	ErrResolverNotFound = fmt.Errorf("resolver not found")
 )
 
-type Mode string
 const (
-	ModeFile Mode = "file"
-	ModeLink Mode = "link"
-	ModeDefault Mode = ModeFile
+	ModeFile = "file"
+	ModeLink = "link"
+	ModeDefault = ModeFile
+
+	Version1 = "1.0.0"
 )
 
 type Config struct {
 	Version string               					`yaml:"version"`
-	Mode		Mode               						`yaml:"mode"`
+	Mode		string               					`yaml:"mode"`
 	Plans   map[string][]string						`yaml:"plans"`
 	Groups  map[string]map[string]string	`yaml:"groups"`
 }
 
 func New() *Config {
 	return &Config{
-		Version:	DotatoVersion(),
+		Version:	Version1,
 		Mode:			ModeDefault,
 		Plans:   	map[string][]string{},
 		Groups:  	map[string]map[string]string{},

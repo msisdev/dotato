@@ -8,14 +8,15 @@ import (
 
 func TestSampleConfig(t *testing.T) {
 	cfg := &Config{
-		Version: DotatoVersion(),
+		Version: Version1,
 		Mode:	ModeFile,
 		Plans: map[string][]string{
 			"all": nil,
 		},
 		Groups: map[string]map[string]string{
-			"home": {
+			"bash": {
 				"nux": "~",
+				"mac": "$HOME",
 			},
 		},
 	}

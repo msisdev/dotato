@@ -8,14 +8,14 @@ mode: file # file or link
 
 plans:
   all: # empty plan means all groups
-  # arch: [home] # select groups with list
+  # my-pc: [home] # select groups with list
 
 groups:
-  home:
+  bash:
     nux: "~" # base directory for home group in linux
-  # macos: "$HOME" # you may use env vars
+    mac: "$HOME" # you may use env vars
 `
 
 func GetExample() string {
-	return fmt.Sprintf(configFormat, DotatoVersion())
+	return fmt.Sprintf(configFormat, Version1)
 }

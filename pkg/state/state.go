@@ -4,7 +4,6 @@ import (
 	"path/filepath"
 
 	"github.com/go-git/go-billy/v5"
-	"github.com/msisdev/dotato/pkg/config"
 	"gorm.io/gorm"
 )
 
@@ -48,8 +47,8 @@ func New(fs billy.Filesystem, statePath string) (*State, error) {
 
 ///////////////////////////////////////////////////////////
 
-func (s State) GetAllLink() ([]History, error) {
-	return s.v1_getAllByMode(config.ModeLink)
+func (s State) GetAllByMode(mode string) ([]History, error) {
+	return s.v1_getAllByMode(mode)
 }
 
 func (s State) UpsertOne(h History) error {
