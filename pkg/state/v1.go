@@ -7,8 +7,8 @@ import (
 )
 
 type HistoryV1 struct {
-	RemotePath			string			`gorm:"primaryKey"`
-	LocalPath				string			`gorm:"uniqueIndex"`
+	DotfilePath			string			`gorm:"primaryKey"`		// file path that is in use for system
+	DotatoPath			string			`gorm:"uniqueIndex"`	// file path that is in your dotato repository
 	Mode						string			`gorm:"not null"`
 	CreatedAt				time.Time		`gorm:"autoCreateTime"`
 	UpdatedAt				time.Time		`gorm:"autoUpdateTime"`

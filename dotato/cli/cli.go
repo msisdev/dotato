@@ -75,13 +75,13 @@ func Run() {
 	}
 
 	if args.Version != nil {
-		printVersion()
+		printVersion(logger)
 		return
 	}
 }
 
-func printVersion() {
-	panic("unimplemented")
+func printVersion(logger *log.Logger) {
+	logger.Info("Dotato version: " + dotatoVersion())
 }
 
 func unlinkGroup(logger *log.Logger, unlinkGroupArgs *UnlinkGroupArgs) {

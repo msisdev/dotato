@@ -1,25 +1,7 @@
 package main
 
-import (
-	"fmt"
-
-	"github.com/msisdev/dotato/dotato"
-)
+import "github.com/msisdev/dotato/dotato/cli"
 
 func main() {
-	dtt := dotato.New()
-
-	base, _, err := dtt.GetGroupBase("example", "nux")
-	if err != nil {
-		panic(err)
-	}
-
-	es, err := dtt.GetImportPaths("example", base)
-	if err != nil {
-		panic(err)
-	}
-
-	for _, e := range es {
-		fmt.Printf("%s\n", e.Path.Abs())
-	}
+	cli.Run()
 }

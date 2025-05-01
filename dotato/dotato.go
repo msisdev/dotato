@@ -156,8 +156,14 @@ func (d Dotato) GetExportPaths(group string) (es []Entity, err error) {
 
 /////////////////////////////////////////////////
 
+func (d Dotato) GetAllHistoryByMode(mode string) ([]state.History, error) {
+	if err := d.setState(); err != nil { return nil, err }
+	
+	return d.state.GetAllByMode(mode)
+}
+
 func (d Dotato) PutHistory(h state.History) (err error) {
 	if err = d.setState(); err != nil { return }
 
-	panic("Not implemented")
+	return d.state.UpsertOne(h)
 }

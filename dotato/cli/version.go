@@ -6,7 +6,7 @@ const (
 	DotatoVersionUnknown = "unknown"
 )
 
-func DotatoVersion() string {
+func dotatoVersion() string {
 	info, ok := debug.ReadBuildInfo()
 	if !ok {
 		return DotatoVersionUnknown

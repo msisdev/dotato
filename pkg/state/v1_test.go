@@ -35,13 +35,13 @@ func TestV1_GetAllByMode(t *testing.T) {
 		all, err := state.v1_getAllByMode(config.ModeFile)
 		assert.NoError(t, err)
 		assert.Equal(t, len(all), 2)
-		assert.Equal(t, all[0].RemotePath, hs[0].RemotePath)
-		assert.Equal(t, all[1].RemotePath, hs[2].RemotePath)
+		assert.Equal(t, all[0].DotfilePath, hs[0].DotfilePath)
+		assert.Equal(t, all[1].DotfilePath, hs[2].DotfilePath)
 
 		all, err = state.v1_getAllByMode(config.ModeLink)
 		assert.NoError(t, err)
 		assert.Equal(t, len(all), 2)
-		assert.Equal(t, all[0].RemotePath, hs[1].RemotePath)
-		assert.Equal(t, all[1].RemotePath, hs[3].RemotePath)
+		assert.Equal(t, all[0].DotfilePath, hs[1].DotfilePath)
+		assert.Equal(t, all[1].DotfilePath, hs[3].DotfilePath)
 	}
 }
