@@ -3,13 +3,15 @@ package importgroup
 import (
 	"github.com/charmbracelet/log"
 	"github.com/go-git/go-billy/v5/osfs"
-	"github.com/msisdev/dotato/internal/cli"
-	"github.com/msisdev/dotato/internal/ui/chspinner"
+	"github.com/msisdev/dotato/internal/cli/args"
+	"github.com/msisdev/dotato/internal/lib/store"
+	"github.com/msisdev/dotato/internal/ui/mxspinner"
+	"github.com/msisdev/dotato/pkg/config"
 	"github.com/msisdev/dotato/pkg/dotato"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 
-func Run(logger *log.Logger, args cli.ImportGroupArgs) {
+func Run(logger *log.Logger, args *args.ImportGroupArgs) {
 	var (
 		fs 	= osfs.New("/")
 		dtt =	dotato.NewWithFS(fs, false)
@@ -20,48 +22,56 @@ func Run(logger *log.Logger, args cli.ImportGroupArgs) {
 		var err error
 
 		// Get mode
-		modeTask := func(up chan<- string, _ <-chan bool) error {
+		modeTask := func(store *store.Store[string], _ <-chan bool) error {
 			// Get mode
 			mode, err = dtt.GetConfigMode()
 			if err != nil {
-				up <- "Error loading config mode"
+				store.Set("Error loading config mode")
 				return err
 			}
 
-			up <- "Config mode: " + mode
+			store.Set("Config mode: " + mode)
 			return nil
 		}
-		err = chspinner.Run("Loading config mode...", modeTask)
+		err = mxspinner.Run("Loading config mode...", modeTask)
 		if err != nil {
 			logger.Fatal(err)
 			return
 		}
 
 		// Get base
-		baseTask := func(up chan<- string, quit <-chan bool) error {
+		baseTask := func(store *store.Store[string], quit <-chan bool) error {
 			// Get base
 			var notFound []string
 			base, notFound, err = dtt.GetConfigGroupBase(args.Group, args.Resolver)
 			if err != nil {
 				// Env vars not set
 				if notFound != nil {
-					up <- "Env vars not set: " + args.Group
+					store.Set("Env vars not set: " + args.Group)
 					return nil
 				}
 
 				// general error
-				up <- "Error loading config group base"
+				store.Set("Error loading config group base")
 				return err
 			}
 
+			store.Set("Config group base: " + base.Abs())
+
 			return nil
 		}
-		err = chspinner.Run("Loading config group base...", baseTask)
+		err = mxspinner.Run("Loading config group base...", baseTask)
 		if err != nil {
 			logger.Fatal(err)
 			return
 		}
 	}
 
-	
+	// Import
+	switch mode {
+	case config.ModeFile:
+		importGroupFile(logger, args, fs, dtt, base)
+	case config.ModeLink:
+		importGroupLink(logger, args, fs, dtt, base)
+	}
 }

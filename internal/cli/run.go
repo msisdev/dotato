@@ -5,10 +5,12 @@ import (
 
 	"github.com/alexflint/go-arg"
 	"github.com/charmbracelet/log"
+	"github.com/msisdev/dotato/internal/cli/args"
+	"github.com/msisdev/dotato/internal/cli/pages/importgroup"
 )
 
-func parse() (Args, error) {
-	var args Args
+func parse() (args.Args, error) {
+	var args args.Args
 	err := arg.Parse(&args)
 	return args, err
 }
@@ -53,7 +55,7 @@ func Run() {
 			return
 		}
 		if args.Import.Group != nil {
-			importGroup(logger, args.Import.Group)
+			importgroup.Run(logger, args.Import.Group)
 			return
 		}
 	}
@@ -91,26 +93,26 @@ func printVersion(logger *log.Logger) {
 	logger.Info("Dotato version: " + dotatoVersion())
 }
 
-func dangerUnlink(logger *log.Logger, args *DangerUnlinkArgs) {
+func dangerUnlink(logger *log.Logger, args *args.DangerUnlinkArgs) {
 	panic("unimplemented")	
 }
 
-func unlinkGroup(logger *log.Logger, unlinkGroupArgs *UnlinkGroupArgs) {
+func unlinkGroup(logger *log.Logger, unlinkGroupArgs *args.UnlinkGroupArgs) {
 	panic("unimplemented")
 }
 
-func unlinkPlan(logger *log.Logger, unlinkPlanArgs *UnlinkPlanArgs) {
+func unlinkPlan(logger *log.Logger, unlinkPlanArgs *args.UnlinkPlanArgs) {
 	panic("unimplemented")
 }
 
-func importPlan(logger *log.Logger, importPlanArgs *ImportPlanArgs) {
+func importPlan(logger *log.Logger, importPlanArgs *args.ImportPlanArgs) {
 	panic("unimplemented")
 }
 
-func exportGroup(logger *log.Logger, exportGroupArgs *ExportGroupArgs) {
+func exportGroup(logger *log.Logger, exportGroupArgs *args.ExportGroupArgs) {
 	panic("unimplemented")
 }
 
-func exportPlan(logger *log.Logger, exportPlanArgs *ExportPlanArgs) {
+func exportPlan(logger *log.Logger, exportPlanArgs *args.ExportPlanArgs) {
 	panic("unimplemented")
 }

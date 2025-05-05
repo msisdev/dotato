@@ -18,7 +18,7 @@ type endMsg struct {
 type Task func(up chan<- string, quit <-chan bool) error
 
 type taskMsg struct {
-	Text string	// text to show
+	text string	// text to show
 }
 
 type Spinner struct {
@@ -81,7 +81,7 @@ func (m Spinner) work() tea.Msg {
 func (m Spinner) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case taskMsg:
-		m.text = msg.Text	// Update state
+		m.text = msg.text	// Update state
 		return m, m.wait	// Run another wait
 
 	case spinner.TickMsg:

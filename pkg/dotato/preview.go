@@ -34,7 +34,7 @@ func (d Dotato) PreviewImportFile(
 		abs := dot.Abs()
 
 		// Get real path
-		realPath, err := filepath.EvalSymlinks(abs)
+		// realPath, err := filepath.EvalSymlinks(abs)
 		if err != nil {
 			return nil, err
 		}

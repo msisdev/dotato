@@ -38,8 +38,11 @@ var (
 // What NewDB does not do:
 //  - Migrate History table
 func NewDB(path string) (*gorm.DB, Version, error) {
-	// Open db
-	db, err := gorm.Open(sqlite.Open(path), &gorm.Config{})
+	// Open dbt
+	config := gorm.Config{
+		// Logger: nil,
+	}
+	db, err := gorm.Open(sqlite.Open(path), &config)
 	if err != nil {
 		return nil, VersionUnknown, err
 	}

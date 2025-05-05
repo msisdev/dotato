@@ -1,4 +1,4 @@
-package cli
+package args
 
 type Args struct {
 	Danger			*DangerArgs		`arg:"subcommand:danger|!"`

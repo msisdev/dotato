@@ -14,6 +14,7 @@ func (d Dotato) GetGroupIgnore(group string) (*ignore.Ignore, error) {
 	return readIgnoreRecur(d.fs, append(d.cdir, group))
 }
 
+// Return true if file contents are equal
 func (d Dotato) compareFile(a string, b string) (bool, error) {
 	// Compare file sizes
 	var size int64
