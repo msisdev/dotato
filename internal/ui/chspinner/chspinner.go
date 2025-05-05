@@ -1,4 +1,4 @@
-package chanspinner
+package chspinner
 
 import (
 	"fmt"
@@ -17,7 +17,7 @@ type endMsg struct {
 // Interactive work procedure.
 type Task func(up chan<- string, quit <-chan bool) error
 
-type State struct {
+type taskMsg struct {
 	Text string	// text to show
 }
 
@@ -63,7 +63,7 @@ func (m Spinner) wait() tea.Msg {
 	select {
 	case text, ok := <-m.up:
 		if ok {
-			return State{text}
+			return taskMsg{text}
 		} else {
 			return nil
 		}
@@ -80,7 +80,7 @@ func (m Spinner) work() tea.Msg {
 
 func (m Spinner) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case State:
+	case taskMsg:
 		m.text = msg.Text	// Update state
 		return m, m.wait	// Run another wait
 

@@ -4,7 +4,7 @@ import (
 	"github.com/charmbracelet/log"
 	"github.com/go-git/go-billy/v5/osfs"
 	"github.com/msisdev/dotato/internal/cli"
-	"github.com/msisdev/dotato/internal/ui/chanspinner"
+	"github.com/msisdev/dotato/internal/ui/chspinner"
 	"github.com/msisdev/dotato/pkg/dotato"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
@@ -31,7 +31,7 @@ func Run(logger *log.Logger, args cli.ImportGroupArgs) {
 			up <- "Config mode: " + mode
 			return nil
 		}
-		err = chanspinner.Run("Loading config mode...", modeTask)
+		err = chspinner.Run("Loading config mode...", modeTask)
 		if err != nil {
 			logger.Fatal(err)
 			return
@@ -56,7 +56,7 @@ func Run(logger *log.Logger, args cli.ImportGroupArgs) {
 
 			return nil
 		}
-		err = chanspinner.Run("Loading config group base...", baseTask)
+		err = chspinner.Run("Loading config group base...", baseTask)
 		if err != nil {
 			logger.Fatal(err)
 			return
