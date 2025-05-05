@@ -41,7 +41,7 @@ func TestIgnore(t *testing.T) {
 	}
 
 	// Create a new Ignore instance
-	base := gp.Root
+	base := gp.GardenPath{""}
 	ig := NewWithFS(fs, base, IgnoreFileName)
 	err := ig.ReadRecur(base)
 	assert.NoError(t, err)

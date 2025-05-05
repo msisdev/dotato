@@ -1,8 +1,6 @@
 package dotato
 
 import (
-	"io/fs"
-
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/go-git/go-billy/v5/osfs"
@@ -30,7 +28,10 @@ func New() *Dotato {
 	return &Dotato{
 		fs:    osfs.New("/"),
 		isMem: false,
-		maxIter: useEnvOrDefaultInt(MaxFileSystemIterEnv, MaxFileSystemIterDefault),
+		maxIter: useEnvOrDefaultInt(
+			MaxFileSystemIterEnv,
+			MaxFileSystemIterDefault,
+		),
 	}
 }
 
@@ -38,7 +39,21 @@ func NewMemfs() *Dotato {
 	return &Dotato{
 		fs:    memfs.New(),
 		isMem: true,
-		maxIter: useEnvOrDefaultInt(MaxFileSystemIterEnv, MaxFileSystemIterDefault),
+		maxIter: useEnvOrDefaultInt(
+			MaxFileSystemIterEnv,
+			MaxFileSystemIterDefault,
+		),
+	}
+}
+
+func NewWithFS(fs billy.Filesystem, isMem bool) *Dotato {
+	return &Dotato{
+		fs:    fs,
+		isMem: isMem,
+		maxIter: useEnvOrDefaultInt(
+			MaxFileSystemIterEnv,
+			MaxFileSystemIterDefault,
+		),
 	}
 }
 
@@ -47,7 +62,6 @@ func (d *Dotato) setConfig() (err error) {
 		return
 	}
 
-	// Config
 	d.cfg, d.cdir, err = readConfig(d.fs)
 	return
 }
@@ -65,15 +79,22 @@ func (d *Dotato) setIgnore() (err error) {
 	if d.ig != nil {
 		return
 	}
-
-	// base is required
-	err = d.setConfig()
-	if err != nil {
+	if err = d.setConfig(); err != nil {
 		return
 	}
 
 	d.ig, err = readIgnore(d.fs, d.cdir)
 	return
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+func (d Dotato) GetConfigDir() (gp.GardenPath, error) {
+	if err := d.setConfig(); err != nil {
+		return nil, err
+	}
+
+	return d.cdir, nil
 }
 
 func (d Dotato) GetConfigVersion() (string, error) {
@@ -101,7 +122,12 @@ func (d Dotato) GetConfigPlans() (map[string][]string, error) {
 	return d.cfg.Plans, nil
 }
 
-func (d Dotato) GetConfigGroups(plan string) (groups map[string]bool, err error) {
+func (d Dotato) GetConfigGroups(
+	plan string,
+) (
+	groups map[string]bool,
+	err error,
+) {
 	if err = d.setConfig(); err != nil {
 		return
 	}
@@ -111,7 +137,13 @@ func (d Dotato) GetConfigGroups(plan string) (groups map[string]bool, err error)
 	return
 }
 
-func (d Dotato) GetConfigGroupBase(group, resolver string) (base gp.GardenPath, notFound []string, err error) {
+func (d Dotato) GetConfigGroupBase(
+	group, resolver string,
+) (
+	base gp.GardenPath,
+	notFound []string,
+	err error,
+) {
 	if err = d.setConfig(); err != nil {
 		return
 	}
@@ -121,40 +153,26 @@ func (d Dotato) GetConfigGroupBase(group, resolver string) (base gp.GardenPath, 
 	return
 }
 
-/////////////////////////////////////////////////
-
-// A type for both file and directory
-type Entity struct {
-	Path gp.GardenPath
-	Info fs.FileInfo
-}
-
-// Scan which files will be imported
-func (d Dotato) GetImportPaths(group string, base gp.GardenPath) (es []Entity, err error) {
-	if err = d.setConfig(); err != nil { return }
-	if err = d.setIgnore(); err != nil { return }
-
-	ig, err := readIgnoreRecur(d.fs, append(d.cdir, group))
-	if err != nil {
+func (d Dotato) GetConfigResolvers() (rs map[string]string, err error) {
+	if err = d.setConfig(); err != nil {
 		return
 	}
 
-	return d.walk(base, ig)
-}
+	rs = make(map[string]string)
 
-func (d Dotato) GetExportPaths(group string) (es []Entity, err error) {
-	if err = d.setConfig(); err != nil { return }
-	if err = d.setIgnore(); err != nil { return }
-
-	ig, err := readIgnoreRecur(d.fs, append(d.cdir, group))
-	if err != nil {
-		return
+	// For each group
+	for _, resolvers := range d.cfg.Groups {
+		// For each resolver
+		for name, resolver := range resolvers {
+			// Collect resolver
+			rs[name] = resolver
+		}
 	}
 
-	return d.walk(append(d.cdir, group), ig)
+	return
 }
 
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 func (d Dotato) GetAllHistoryByMode(mode string) ([]state.History, error) {
 	if err := d.setState(); err != nil { return nil, err }

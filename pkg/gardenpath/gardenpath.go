@@ -7,7 +7,6 @@ import (
 	"strings"
 )
 
-var Root = GardenPath{""}
 var ErrEnvVarNotSet = fmt.Errorf("env var not set")
 
 // GardenPath is a smart path representation.

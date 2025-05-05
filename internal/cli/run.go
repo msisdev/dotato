@@ -3,8 +3,15 @@ package cli
 import (
 	"os"
 
+	"github.com/alexflint/go-arg"
 	"github.com/charmbracelet/log"
 )
+
+func parse() (Args, error) {
+	var args Args
+	err := arg.Parse(&args)
+	return args, err
+}
 
 func setLogLevel(logger *log.Logger, level log.Level) {
 	// Set level
@@ -84,11 +91,19 @@ func printVersion(logger *log.Logger) {
 	logger.Info("Dotato version: " + dotatoVersion())
 }
 
+func dangerUnlink(logger *log.Logger, args *DangerUnlinkArgs) {
+	panic("unimplemented")	
+}
+
 func unlinkGroup(logger *log.Logger, unlinkGroupArgs *UnlinkGroupArgs) {
 	panic("unimplemented")
 }
 
 func unlinkPlan(logger *log.Logger, unlinkPlanArgs *UnlinkPlanArgs) {
+	panic("unimplemented")
+}
+
+func importPlan(logger *log.Logger, importPlanArgs *ImportPlanArgs) {
 	panic("unimplemented")
 }
 
@@ -99,5 +114,3 @@ func exportGroup(logger *log.Logger, exportGroupArgs *ExportGroupArgs) {
 func exportPlan(logger *log.Logger, exportPlanArgs *ExportPlanArgs) {
 	panic("unimplemented")
 }
-
-

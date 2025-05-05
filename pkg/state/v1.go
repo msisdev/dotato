@@ -7,11 +7,11 @@ import (
 )
 
 type HistoryV1 struct {
-	DotfilePath			string			`gorm:"primaryKey"`		// file path that is in use for system
-	DotatoPath			string			`gorm:"uniqueIndex"`	// file path that is in your dotato repository
-	Mode						string			`gorm:"not null"`
-	CreatedAt				time.Time		`gorm:"autoCreateTime"`
-	UpdatedAt				time.Time		`gorm:"autoUpdateTime"`
+	DotPath		string		`gorm:"primaryKey"`		// file path that is in use for system
+	DttPath		string		`gorm:"uniqueIndex"`	// file path that is in your dotato repository
+	Mode			string		`gorm:"not null"`
+	CreatedAt	time.Time	`gorm:"autoCreateTime"`
+	UpdatedAt	time.Time	`gorm:"autoUpdateTime"`
 }
 
 func v1_migrate(db *gorm.DB) error {

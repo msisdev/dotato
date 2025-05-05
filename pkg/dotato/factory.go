@@ -74,7 +74,9 @@ func getDotatoDirUnsafe() (string) {
 	switch runtime.GOOS {
 	}
 
-	panic("Oops, dotato doesn't know your OS. Please provide a user-wide directory with DOTATO_DIR env var to let dotato save some files")
+	panic(`Oops! Dotato doesn't know your OS.
+Please provide a user-wide directory with DOTATO_DIR env var
+to let dotato save some files.`)
 }
 
 func readStateUnsafe(fs billy.Filesystem, isMem bool) (*state.State, error) {
@@ -90,7 +92,11 @@ func readStateUnsafe(fs billy.Filesystem, isMem bool) (*state.State, error) {
 	return state.New(fs, path)
 }
 
-func readConfig(fs billy.Filesystem) (cfg *config.Config, cdir gp.GardenPath, err error) {
+func readConfig(
+	fs billy.Filesystem,
+) (
+	cfg *config.Config, cdir gp.GardenPath, err error,
+) {
 	// directory
 	dir, err := gp.New(".")
 	if err != nil {
@@ -104,7 +110,11 @@ func readConfig(fs billy.Filesystem) (cfg *config.Config, cdir gp.GardenPath, er
 	return
 }
 
-func readIgnore(fs billy.Filesystem, dir gp.GardenPath) (ig *ignore.Ignore, err error) {
+func readIgnore(
+	fs billy.Filesystem, dir gp.GardenPath,
+) (
+	ig *ignore.Ignore, err error,
+) {
 	// ignore file name
 	filename := useEnvOrDefault(IgnoreFileNameEnv, IgnoreFileNameDefault)
 
@@ -120,7 +130,11 @@ func readIgnore(fs billy.Filesystem, dir gp.GardenPath) (ig *ignore.Ignore, err 
 	return
 }
 
-func readIgnoreRecur(fs billy.Filesystem, dir gp.GardenPath) (ig *ignore.Ignore, err error) {
+func readIgnoreRecur(
+	fs billy.Filesystem, dir gp.GardenPath,
+) (
+	ig *ignore.Ignore, err error,
+) {
 	// ignore file name
 	filename := useEnvOrDefault(IgnoreFileNameEnv, IgnoreFileNameDefault)
 
