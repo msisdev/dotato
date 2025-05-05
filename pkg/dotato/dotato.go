@@ -137,6 +137,7 @@ func (d Dotato) GetConfigGroups(
 	return
 }
 
+// May return not found env vars
 func (d Dotato) GetConfigGroupBase(
 	group, resolver string,
 ) (
