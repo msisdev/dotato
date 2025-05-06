@@ -84,11 +84,13 @@ func (d Dotato) WalkNonIgnored(
 	return d.Walk(root, ig, false, onNonIgnored)
 }
 
+// Walk dot or dtt ////////////////////////////////////////////////////////////
+
 // Scan dotfiles that is not ignored
 func (d Dotato) WalkDotfile(
 	group string,
 	base gp.GardenPath,
-	onDotfile func(gp.GardenPath, os.FileInfo) error,
+	onDot func(gp.GardenPath, os.FileInfo) error,
 ) (err error) {
 	if err = d.setConfig(); err != nil { return }
 	if err = d.setIgnore(); err != nil { return }
@@ -99,13 +101,13 @@ func (d Dotato) WalkDotfile(
 		return
 	}
 
-	return d.WalkNonIgnored(base, ig, onDotfile)
+	return d.WalkNonIgnored(base, ig, onDot)
 }
 
 // Scan group dotato files that is not ignored
 func (d Dotato) WalkDotato(
 	group string,
-	onDttfile func(gp.GardenPath, os.FileInfo) error,
+	onDtt func(gp.GardenPath, os.FileInfo) error,
 ) (err error) {
 	if err = d.setConfig(); err != nil { return }
 	if err = d.setIgnore(); err != nil { return }
@@ -116,10 +118,13 @@ func (d Dotato) WalkDotato(
 		return
 	}
 
-	return d.WalkNonIgnored(append(d.cdir, group), ig, onDttfile)
+	base := append(d.cdir, group)
+	return d.WalkNonIgnored(base, ig, onDtt)
 }
 
-func (d Dotato) WalkAndPreviewImportFile(
+// Walk and Preview ///////////////////////////////////////////////////////////
+
+func (d Dotato) WalkImportFile(
 	group string,
 	base gp.GardenPath,
 	onPreview func(Preview) error,
@@ -127,7 +132,7 @@ func (d Dotato) WalkAndPreviewImportFile(
 	if err = d.setConfig(); err != nil { return }
 	if err = d.setIgnore(); err != nil { return }
 
-	onDotfile := func(dot gp.GardenPath, fi os.FileInfo) error {
+	onDot := func(dot gp.GardenPath, fi os.FileInfo) error {
 		// Get dtt path
 		dtt := d.DotToDtt(base, dot, group)
 
@@ -140,5 +145,103 @@ func (d Dotato) WalkAndPreviewImportFile(
 		return onPreview(*pre)
 	}
 
-	return d.WalkDotfile(group, base, onDotfile)
+	return d.WalkDotfile(group, base, onDot)
+}
+
+func (d Dotato) WalkImportLink(
+	group string,
+	base gp.GardenPath,
+	onPreview func(Preview) error,
+) (err error) {
+	if err = d.setConfig(); err != nil { return }
+	if err = d.setIgnore(); err != nil { return }
+
+	onDot := func(dot gp.GardenPath, fi os.FileInfo) error {
+		// Get dtt path
+		dtt := d.DotToDtt(base, dot, group)
+
+		// Get preview
+		pre, err := d.PreviewImportLink(dot, dtt)
+		if err != nil {
+			return err
+		}
+
+		return onPreview(*pre)
+	}
+
+	return d.WalkDotfile(group, base, onDot)
+}
+
+func (d Dotato) WalkExportFile(
+	group string,
+	onPreview func(Preview) error,
+) (err error) {
+	if err = d.setConfig(); err != nil { return }
+	if err = d.setIgnore(); err != nil { return }
+
+	base := append(d.cdir, group)
+
+	onDot := func(dtt gp.GardenPath, fi os.FileInfo) error {
+		// Get dot path
+		dot := d.DttToDot(dtt, base)
+
+		// Get preview
+		pre, err := d.PreviewExportFile(dot, dtt)
+		if err != nil {
+			return err
+		}
+
+		return onPreview(*pre)
+	}
+
+	return d.WalkDotato(group, onDot)
+}
+
+func (d Dotato) WalkExportLink(
+	group string,
+	onPreview func(Preview) error,
+) (err error) {
+	if err = d.setConfig(); err != nil { return }
+	if err = d.setIgnore(); err != nil { return }
+
+	base := append(d.cdir, group)
+
+	onDot := func(dtt gp.GardenPath, fi os.FileInfo) error {
+		// Get dot path
+		dot := d.DttToDot(dtt, base)
+
+		// Get preview
+		pre, err := d.PreviewExportLink(dot, dtt)
+		if err != nil {
+			return err
+		}
+
+		return onPreview(*pre)
+	}
+
+	return d.WalkDotato(group, onDot)
+}
+
+func (d Dotato) WalkUnlink(
+	group string,
+	base gp.GardenPath,
+	onPreview func(Preview) error,
+) (err error) {
+	if err = d.setConfig(); err != nil { return }
+	if err = d.setIgnore(); err != nil { return }
+
+	onDot := func(dot gp.GardenPath, fi os.FileInfo) error {
+		// Get dtt path
+		dtt := d.DotToDtt(base, dot, group)
+
+		// Get preview
+		pre, err := d.PreviewUnlink(dot, dtt)
+		if err != nil {
+			return err
+		}
+
+		return onPreview(*pre)
+	}
+
+	return d.WalkDotfile(group, base, onDot)
 }

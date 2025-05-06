@@ -44,4 +44,19 @@ func TestV1_GetAllByMode(t *testing.T) {
 		assert.Equal(t, all[0].DotPath, hs[1].DotPath)
 		assert.Equal(t, all[1].DotPath, hs[3].DotPath)
 	}
+
+	// Delete
+	{
+		for _, h := range hs {
+			err := state.v1_deleteOne(h)
+			assert.NoError(t, err)
+		}
+
+		all, err := state.v1_getAllByMode(config.ModeFile)
+		assert.NoError(t, err)
+		assert.Equal(t, len(all), 0)
+		all, err = state.v1_getAllByMode(config.ModeLink)
+		assert.NoError(t, err)
+		assert.Equal(t, len(all), 0)
+	}
 }

@@ -8,9 +8,9 @@ import (
 )
 
 func ImportFile(
-    fs billy.Filesystem,
-    dtt *dotato.Dotato,
-    pre dotato.Preview,
+  fs billy.Filesystem,
+  dtt *dotato.Dotato,
+  pre dotato.Preview,
 ) error {
   if pre.DttOp == dotato.FileOpNone {
     return nil
@@ -185,6 +185,7 @@ func ExportLink(
     dttabs = pre.Dtt.Path.Abs()
   )
 
+  // Handle dot first
   if pre.DotOp == dotato.FileOpOverwrite {
     // Remove dot
     err := fs.Remove(dotabs)
@@ -210,6 +211,44 @@ func ExportLink(
     DotPath: dotabs,
     DttPath: dttabs,
     Mode:    config.ModeLink,
+  })
+  if err != nil {
+    return err
+  }
+
+  return nil
+}
+
+func Unlink(
+  fs billy.Filesystem,
+  dtt *dotato.Dotato,
+  pre dotato.Preview,
+) error {
+  if pre.DotOp == dotato.FileOpNone ||
+    pre.DotOp == dotato.FileOpCreate {
+    return nil
+  }
+
+  var (
+    dotabs = pre.Dot.Path.Abs()
+    dttabs = pre.Dtt.Path.Abs()
+  )
+
+  // Remove dot
+  err := fs.Remove(dotabs)
+  if err != nil {
+    return err
+  }
+
+  // Copy file
+  err = dtt.CreateAndCopyFile(dttabs, dotabs)
+  if err != nil {
+    return err
+  }
+
+  // Delete history
+  err = dtt.DeleteHistory(state.History{
+    DotPath: dotabs,
   })
   if err != nil {
     return err

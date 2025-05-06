@@ -30,3 +30,7 @@ func (s State) v1_getAllByMode(mode string) (hs []HistoryV1, err error) {
 	
 	return
 }
+
+func (s State) v1_deleteOne(h HistoryV1) error {
+	return s.DB.Delete(&h).Error
+}

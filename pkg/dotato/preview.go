@@ -284,3 +284,29 @@ func (d Dotato) PreviewExportLink(
 
 	return p, nil
 }
+
+// Preview Unlink /////////////////////////////////////////////////////////////
+
+func (d Dotato) PreviewUnlink(
+	dot gp.GardenPath,
+	dtt gp.GardenPath,
+) (*Preview, error) {
+	p, err := d.newPreview(dot, dtt)
+	if err != nil {
+		return nil, err
+	}
+
+	// Dot file operation
+	if !p.Dot.Exists {
+		return nil, fmt.Errorf("dotfile %s does not exist", p.Dot.Path)
+	}
+	p.DotOp = FileOpOverwrite
+
+	// Dtt file operation
+	if !p.Dtt.Exists {
+		return nil, fmt.Errorf("dotato file %s does not exist", p.Dtt.Path)
+	}
+	p.DttOp = FileOpNone
+
+	return p, nil
+}

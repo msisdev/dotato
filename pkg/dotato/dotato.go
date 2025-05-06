@@ -186,3 +186,9 @@ func (d Dotato) PutHistory(h state.History) (err error) {
 
 	return d.state.UpsertOne(h)
 }
+
+func (d Dotato) DeleteHistory(h state.History) (err error) {
+	if err = d.setState(); err != nil { return }
+
+	return d.state.DeleteOne(h)
+}

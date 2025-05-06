@@ -54,3 +54,7 @@ func (s State) GetAllByMode(mode string) ([]History, error) {
 func (s State) UpsertOne(h History) error {
 	return s.v1_upsertOne(h)
 }
+
+func (s State) DeleteOne(h History) error {
+	return s.v1_deleteOne(h)
+}
