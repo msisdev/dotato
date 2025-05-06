@@ -1,11 +1,18 @@
 package dotato
 
 import (
+	"fmt"
 	"io"
-	
+	"os"
+	"path/filepath"
+
 	"github.com/go-git/go-billy/v5"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 	"github.com/msisdev/dotato/pkg/ignore"
+)
+
+var (
+	ErrTooManySymlinks = fmt.Errorf("too many levels of symbolic links")
 )
 
 func (d Dotato) GetGroupIgnore(group string) (*ignore.Ignore, error) {
@@ -112,7 +119,8 @@ func (d Dotato) DttToDot(
 	return append(base, dtt[len(d.cdir)+1:]...)
 }
 
-func (d Dotato) CopyFile(src string, dst string) error {
+// Overwrite is allowed
+func (d Dotato) CreateAndCopyFile(src string, dst string) error {
 	srcFile, err := d.fs.Open(src)
 	if err != nil {
 		return err
@@ -131,4 +139,50 @@ func (d Dotato) CopyFile(src string, dst string) error {
 	}
 
 	return nil
+}
+
+const maxSymlinkDepth = 10	// prevent infinite loop
+
+func evalSymlinksRecur(fs billy.Filesystem, path string, depth int) (string, error) {
+	if depth > maxSymlinkDepth {
+		return "", ErrTooManySymlinks
+	}
+
+	// Lstat
+	fi, err := fs.Lstat(path)
+	if err != nil {
+		return "", err
+	}
+
+	// Not symlink ?
+	if fi.Mode()&os.ModeSymlink == 0 {
+		return path, nil
+	}
+
+	// Symlink, read the target
+	target, err := fs.Readlink(path)
+	if err != nil {
+		return "", err
+	}
+
+	// Make absolute path
+	resolved := target
+	if !filepath.IsAbs(target) {
+		dir := filepath.Dir(path)
+		
+		resolved = fs.Join(dir, target)
+
+		// fs.Join() calls filepath.Clean() internally,
+		// so we don't need to call it again.
+		// 
+		// resolved = filepath.Clean(resolved)
+	}
+
+	// Recursion
+	return evalSymlinksRecur(fs, resolved, depth+1)
+}
+
+
+func (d Dotato) evalSymlinks(path string) (string, error) {
+	return evalSymlinksRecur(d.fs, path, 0)
 }

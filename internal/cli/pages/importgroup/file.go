@@ -27,13 +27,13 @@ func importGroupFile(
 ) {
 	// Preview
 	var (
-		pres []dotato.PreviewImportFile
+		pres []dotato.Preview
 		createCount = 0
 		overwriteCount = 0
 	)
 	{
 		task := func(s *store.Store[string], quit <-chan bool) error {
-			return dtt.WalkAndPreviewImportFile(args.Group, base, func(pre dotato.PreviewImportFile) error {
+			return dtt.WalkAndPreviewImportFile(args.Group, base, func(pre dotato.Preview) error {
 				select {
 				case <-quit:
 					return errQuit
@@ -41,12 +41,13 @@ func importGroupFile(
 				}
 
 				pres = append(pres, pre)
-				if pre.DttExists {
-					if !pre.Equal {
-						overwriteCount++
-					}
-				} else {
+				switch pre.DttOp {
+				case dotato.FileOpNone:
+					// do nothing
+				case dotato.FileOpCreate:
 					createCount++
+				case dotato.FileOpOverwrite:
+					overwriteCount++
 				}
 					
 				s.TrySet(fmt.Sprintf("create %d, overwrite %d, total %d", createCount, overwriteCount, len(pres)))
@@ -73,17 +74,18 @@ func importGroupFile(
 	fmt.Print("\n🔎 Preview\n\n")
 	for _, pre := range pres {
 		var symbol string
-		if pre.DttExists {
-			if pre.Equal {
-				symbol = "✔"
-			} else {
-				symbol = "!"
-			}
-		} else {
+		switch pre.DttOp {
+		case dotato.FileOpNone:
+			symbol = "✔"
+		case dotato.FileOpCreate:
 			symbol = "+"
+		case dotato.FileOpOverwrite:
+			symbol = "!"
+		default:
+			symbol = "?"
 		}
 
-		fmt.Printf("%s %s -> %s\n", symbol, pre.Dot.Abs(), pre.Dtt.Abs())
+		fmt.Printf("%s %s -> %s\n", symbol, pre.Dot.Path.Abs(), pre.Dtt.Path.Abs())
 	}
 	fmt.Println()
 
@@ -113,7 +115,7 @@ func importGroupFile(
 					return err
 				}
 
-				s.TrySet(pre.Dot.Abs())
+				s.TrySet(pre.Dot.Path.Abs())
 			}
 
 			s.TrySet("Done")

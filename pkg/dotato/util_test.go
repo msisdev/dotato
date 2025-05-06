@@ -120,3 +120,75 @@ func TestCompareFile(t *testing.T) {
 		assert.False(t, equal)
 	}
 }
+
+func TestMemfs(t *testing.T) {
+	var (
+		fs = memfs.New()
+	)
+
+	assert.Equal(t, "/", fs.Root())
+	fs.MkdirAll("/home/user", os.ModePerm)
+	fs.Create("/home/user/file.txt")
+	fs.Chroot("/home/user")
+	assert.Equal(t, "/", fs.Root())
+	
+	_, err := fs.Open("/file.txt")
+	assert.Error(t, err)
+}
+
+func TestEvalSymlinks(t *testing.T) {
+	var (
+		fs = memfs.New()
+		d = Dotato{fs: fs, isMem: true}
+		path1 = "/link1"
+		path2 = "/link2"
+		path3 = "/link3"
+		path3Alt = "./link3"
+		path4 = "/link4"
+	)
+	
+	// No symlink
+	{
+		// Create a file
+		file, err := fs.Create(path1)
+		assert.NoError(t, err)
+		assert.NoError(t, file.Close())
+
+		path, err := d.evalSymlinks(path1)
+		assert.NoError(t, err)
+		assert.Equal(t, path1, path)
+	}
+
+	// 1 symlink
+	{
+		// Create a symlink
+		err := fs.Symlink(path1, path2)
+		assert.NoError(t, err)
+
+		path, err := d.evalSymlinks(path2)
+		assert.NoError(t, err)
+		assert.Equal(t, path1, path)
+	}
+
+	// 2 symlinks
+	{
+		// Create a symlink
+		err := fs.Symlink(path2, path3)
+		assert.NoError(t, err)
+
+		path, err := d.evalSymlinks(path3)
+		assert.NoError(t, err)
+		assert.Equal(t, path1, path)
+	}
+
+	// 3 symlinks, test with relative path
+	{
+		// Create a symlink
+		err := fs.Symlink(path3Alt, path4)
+		assert.NoError(t, err)
+
+		path, err := d.evalSymlinks(path4)
+		assert.NoError(t, err)
+		assert.Equal(t, path1, path)
+	}
+}

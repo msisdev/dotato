@@ -122,7 +122,7 @@ func (d Dotato) WalkDotato(
 func (d Dotato) WalkAndPreviewImportFile(
 	group string,
 	base gp.GardenPath,
-	onPreview func(PreviewImportFile) error,
+	onPreview func(Preview) error,
 ) (err error) {
 	if err = d.setConfig(); err != nil { return }
 	if err = d.setIgnore(); err != nil { return }

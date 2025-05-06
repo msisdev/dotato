@@ -3,39 +3,469 @@ package dotato
 import (
 	"testing"
 
-	"github.com/go-git/go-billy/v5/memfs"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPreviewImportFile(t *testing.T) {
 	var (
-		fs = memfs.New()
-		d = Dotato{fs: fs, isMem: true}
 		dot = gp.GardenPath{"", "home", "user", ".bashrc"}
 		dtt = gp.GardenPath{"", "home", "user", "Documents", "dotato", "bash", ".bashrc"}
-		content = []byte("test content")
 	)
-	
+
 	// Dot: file / Dtt: not exists
 	{
-		// Create file
-		err := fs.MkdirAll(dot.Parent().Abs(), 0755)
-		assert.NoError(t, err)
-		f, err := fs.Create(dot.Abs())
-		assert.NoError(t, err)
-
-		_, err = f.Write(content)
-		assert.NoError(t, err)
-		assert.NoError(t, f.Close())
+		d := requestDotato(dot, FirstReq_File, dtt, SecondReq_Empty)
 
 		// Preview
 		p, err := d.PreviewImportFile(dot, dtt)
 		assert.NoError(t, err)
-		assert.Equal(t, dot, p.Dot)
-		assert.Nil(t, p.DotReal)
-		assert.Equal(t, dtt, p.Dtt)
-		assert.False(t, p.DttExists)
-		assert.False(t, p.Equal)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpCreate, p.DttOp)
+	}
+
+	// Dot: file / Dtt: file, not equal
+	{
+		d := requestDotato(dot, FirstReq_File, dtt, SecondReq_File_NotEq)
+
+		// Preview
+		p, err := d.PreviewImportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpOverwrite, p.DttOp)
+	}
+
+	// Dot: file / Dtt: file, equal
+	{
+		d := requestDotato(dot, FirstReq_File, dtt, SecondReq_File_Eq)
+
+		// Preview
+		p, err := d.PreviewImportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: file / Dtt: symlink, at diff
+	{
+		d := requestDotato(dot, FirstReq_File, dtt, SecondReq_Link_Diff_NotEq)
+
+		// Preview
+		p, err := d.PreviewImportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpOverwrite, p.DttOp)
+	}
+
+	// Dot: file / Dtt: symlink, at same
+	{
+		d := requestDotato(dot, FirstReq_File, dtt, SecondReq_Link_Same)
+
+		// Preview
+		p, err := d.PreviewImportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpOverwrite, p.DttOp)
+	}
+
+	// Dot: symlink at diff / Dtt: not exists
+	{
+		d := requestDotato(dot, FirstReq_Link_Diff, dtt, SecondReq_Empty)
+
+		// Preview
+		p, err := d.PreviewImportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpCreate, p.DttOp)
+	}
+
+	// Dot: symlink at diff / Dtt: file, not equal
+	{
+		d := requestDotato(dot, FirstReq_Link_Diff, dtt, SecondReq_File_NotEq)
+
+		// Preview
+		p, err := d.PreviewImportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpOverwrite, p.DttOp)
+	}
+
+	// Dot: symlink at diff / Dtt: file, equal
+	{
+		d := requestDotato(dot, FirstReq_Link_Diff, dtt, SecondReq_File_Eq)
+
+		// Preview
+		p, err := d.PreviewImportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: symlink at diff / Dtt: symlink, diff
+	{
+		d := requestDotato(dot, FirstReq_Link_Diff, dtt, SecondReq_Link_Diff_NotEq)
+
+		// Preview
+		p, err := d.PreviewImportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpOverwrite, p.DttOp)
+	}
+
+	// Dot: symlink at diff / Dtt: symlink, same
+	{
+		d := requestDotato(dot, FirstReq_Link_Diff, dtt, SecondReq_Link_Same)
+
+		// Preview
+		p, err := d.PreviewImportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpOverwrite, p.DttOp)
+	}
+}
+
+func TestPreviewImportLink(t *testing.T) {
+	var (
+		dot = gp.GardenPath{"", "home", "user", ".bashrc"}
+		dtt = gp.GardenPath{"", "home", "user", "Documents", "dotato", "bash", ".bashrc"}
+	)
+	
+	// Dot: file / Dtt: file, not exists
+	{
+		d := requestDotato(dot, FirstReq_File, dtt, SecondReq_Empty)
+
+		// Preview
+		p, err := d.PreviewImportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpCreate, p.DttOp)
+	}
+
+	// Dot: file / Dtt: file, not equal
+	{
+		d := requestDotato(dot, FirstReq_File, dtt, SecondReq_File_NotEq)
+
+		// Preview
+		p, err := d.PreviewImportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpOverwrite, p.DttOp)
+	}
+
+	// Dot: file / Dtt: file, equal
+	{
+		d := requestDotato(dot, FirstReq_File, dtt, SecondReq_File_Eq)
+
+		// Preview
+		p, err := d.PreviewImportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: file / Dtt: link, at diff
+	{
+		d := requestDotato(dot, FirstReq_File, dtt, SecondReq_Link_Diff_NotEq)
+
+		p, err := d.PreviewImportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpOverwrite, p.DttOp)
+	}
+
+	// Dot: file / Dtt: link, at same
+	{
+		d := requestDotato(dot, FirstReq_File, dtt, SecondReq_Link_Same)
+
+		p, err := d.PreviewImportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpOverwrite, p.DttOp)
+	}
+
+	// Dot: link at diff / Dtt: empty
+	{
+		d := requestDotato(dot, FirstReq_Link_Diff, dtt, SecondReq_Empty)
+
+		p, err := d.PreviewImportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpCreate, p.DttOp)
+	}
+
+	// Dot: link at diff / Dtt: file, not equal
+	{
+		d := requestDotato(dot, FirstReq_Link_Diff, dtt, SecondReq_File_NotEq)
+
+		p, err := d.PreviewImportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpOverwrite, p.DttOp)
+	}
+
+	// Dot: link at diff / Dtt: file, equal
+	{
+		d := requestDotato(dot, FirstReq_Link_Diff, dtt, SecondReq_File_Eq)
+		p, err := d.PreviewImportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: link at diff / Dtt: link, diff, not equal
+	{
+		d := requestDotato(dot, FirstReq_Link_Diff, dtt, SecondReq_Link_Diff_NotEq)
+		p, err := d.PreviewImportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpOverwrite, p.DttOp)
+	}
+
+	// Dot: link at diff / Dtt: link, diff, equal
+	{
+		d := requestDotato(dot, FirstReq_Link_Diff, dtt, SecondReq_Link_Diff_Eq)
+		p, err := d.PreviewImportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpOverwrite, p.DttOp)
+	}
+
+	// Dot: link at diff / Dtt: link, same
+	{
+		d := requestDotato(dot, FirstReq_Link_Diff, dtt, SecondReq_Link_Same)
+		p, err := d.PreviewImportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpOverwrite, p.DttOp)
+	}
+}
+
+func TestPreviewExportFile(t *testing.T) {
+	var (
+		dot = gp.GardenPath{"", "home", "user", ".bashrc"}
+		dtt = gp.GardenPath{"", "home", "user", "Documents", "dotato", "bash", ".bashrc"}
+	)
+
+	// Dot: empty / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_Empty)
+		p, err := d.PreviewExportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpCreate, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: file, not equal / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_File_NotEq)
+		p, err := d.PreviewExportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: file, equal / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_File_Eq)
+		p, err := d.PreviewExportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: link, at diff, not equal / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_Link_Diff_NotEq)
+		p, err := d.PreviewExportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: link, at diff, equal / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_Link_Diff_Eq)
+		p, err := d.PreviewExportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: link, at same / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_Link_Same)
+		p, err := d.PreviewExportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: empty / Dtt: link, at diff
+	{
+		d := requestDotato(dtt, FirstReq_Link_Diff, dot, SecondReq_Empty)
+		p, err := d.PreviewExportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpCreate, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: file, not equal / Dtt: link, at diff
+	{
+		d := requestDotato(dtt, FirstReq_Link_Diff, dot, SecondReq_File_NotEq)
+		p, err := d.PreviewExportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: file, equal / Dtt: link, at diff
+	{
+		d := requestDotato(dtt, FirstReq_Link_Diff, dot, SecondReq_File_Eq)
+		p, err := d.PreviewExportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: link, at diff, not eq / Dtt: link, at diff
+	{
+		d := requestDotato(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Diff_NotEq)
+		p, err := d.PreviewExportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: link, at diff, eq / Dtt: link, at diff
+	{
+		d := requestDotato(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Diff_Eq)
+		p, err := d.PreviewExportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: link, at same / Dtt: link, at diff
+	{
+		d := requestDotato(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Same)
+		p, err := d.PreviewExportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+}
+
+func TestPreviewExportLink(t *testing.T) {
+	var (
+		dot = gp.GardenPath{"", "home", "user", ".bashrc"}
+		dtt = gp.GardenPath{"", "home", "user", "Documents", "dotato", "bash", ".bashrc"}
+	)
+
+	// Dot: empty / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_Empty)
+		p, err := d.PreviewExportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpCreate, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: file, not equal / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_File_NotEq)
+		p, err := d.PreviewExportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: file, equal / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_File_Eq)
+		p, err := d.PreviewExportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: link, at diff, not equal / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_Link_Diff_NotEq)
+		p, err := d.PreviewExportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: link, at diff, equal / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_Link_Diff_Eq)
+		p, err := d.PreviewExportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: link, at same / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_Link_Same)
+		p, err := d.PreviewExportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: empty / Dtt: link, at diff
+	{
+		d := requestDotato(dtt, FirstReq_Link_Diff, dot, SecondReq_Empty)
+		p, err := d.PreviewExportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpCreate, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: file, not equal / Dtt: link, at diff
+	{
+		d := requestDotato(dtt, FirstReq_Link_Diff, dot, SecondReq_File_NotEq)
+		p, err := d.PreviewExportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: file, equal / Dtt: link, at diff
+	{
+		d := requestDotato(dtt, FirstReq_Link_Diff, dot, SecondReq_File_Eq)
+		p, err := d.PreviewExportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: link, at diff, not eq / Dtt: link, at diff
+	{
+		d := requestDotato(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Diff_NotEq)
+		p, err := d.PreviewExportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: link, at diff, eq / Dtt: link, at diff
+	{
+		d := requestDotato(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Diff_Eq)
+		p, err := d.PreviewExportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: link, at same / Dtt: link, at diff
+	{
+		d := requestDotato(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Same)
+		p, err := d.PreviewExportLink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
 	}
 }

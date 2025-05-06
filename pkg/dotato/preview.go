@@ -1,79 +1,286 @@
 package dotato
 
 import (
+	"fmt"
 	"os"
-	"path/filepath"
 
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 
-type PreviewImportFile struct {
-	Dot 			gp.GardenPath
-	DotReal 	gp.GardenPath	// nil if dotfile is not symlink
-	Dtt 			gp.GardenPath
-	DttExists	bool
-	Equal			bool
+type FileOp int
+const (
+	FileOpNone FileOp = iota
+	FileOpCreate
+	FileOpOverwrite
+)
+
+type PathStat struct {
+	Path gp.GardenPath
+	Real gp.GardenPath	// this value is either same with path or different
+	IsFile bool
+	Exists bool
 }
 
-// Analyze current state of dotfile and dotato file
-func (d Dotato) PreviewImportFile(
-	dot gp.GardenPath,
-	dtt gp.GardenPath,
-) (*PreviewImportFile, error) {
-	p := &PreviewImportFile{
-		Dot: dot,
-		DotReal: nil,
-		Dtt: dtt,
-		DttExists: false,
-		Equal: false,
+func (d Dotato) newPathStat(path gp.GardenPath) (*PathStat, error) {
+	s := PathStat{
+		Path: path,
+		Real: nil,
 	}
 
-	// Check dotfile
-	var dotPath string	// should be real path
-	{
-		abs := dot.Abs()
+	abs := path.Abs()
 
-		// Get real path
-		// realPath, err := filepath.EvalSymlinks(abs)
+	// Check if file exists
+	info, err := d.fs.Lstat(abs)
+	if err != nil {
+		if os.IsNotExist(err) {
+			s.Exists = false
+			return &s, nil
+		}
+		return nil, err
+	}
+	s.Exists = true
+
+	// Check if file is a symlink
+	if info.Mode().Type()&os.ModeSymlink == 0 {
+		s.IsFile = true
+		s.Real = s.Path
+	} else {
+		s.IsFile = false
+
+		// Find real path
+		realPath, err := d.evalSymlinks(abs)
 		if err != nil {
 			return nil, err
 		}
-
-		if realPath == abs {
-			p.DotReal = nil
-			dotPath = abs
-		} else {
-			p.DotReal, err = gp.New(realPath)
-			if err != nil {
-				return nil, err
-			}
-			dotPath = realPath
-		}
-	}
-
-	// Check dotato file
-	var dttPath = dtt.Abs()
-	{
-		if _, err := d.fs.Stat(dttPath); err != nil {
-			if os.IsNotExist(err) {
-				p.DttExists = false
-				return p, nil
-			}
-
+		s.Real, err = gp.New(realPath)
+		if err != nil {
 			return nil, err
 		}
 	}
+	
+	return &s, nil
+}
 
-	// Compare
-	if dotPath == dttPath {
-		p.Equal = true
-		return p, nil
+type Preview struct {
+	Dot 	PathStat
+	DotOp	FileOp
+	Dtt 	PathStat
+	DttOp FileOp
+}
+
+func (d Dotato) newPreview(
+	dot gp.GardenPath,
+	dtt gp.GardenPath,
+) (*Preview, error) {
+	var p = Preview{}
+	{
+		dotStat, err := d.newPathStat(dot)
+		if err != nil {
+			return nil, err
+		}
+		p.Dot = *dotStat
+
+		dttStat, err := d.newPathStat(dtt)
+		if err != nil {
+			return nil, err
+		}
+		p.Dtt = *dttStat
 	}
-	equal, err := d.compareFile(dotPath, dttPath)
+
+	return &p, nil
+}
+
+// Preview Import File ////////////////////////////////////////////////////////
+
+func (d Dotato) PreviewImportFile(
+	dot gp.GardenPath,
+	dtt gp.GardenPath,
+) (*Preview, error) {
+	p, err := d.newPreview(dot, dtt)
 	if err != nil {
 		return nil, err
 	}
-	p.Equal = equal
+
+	// Dot file operation
+	if !p.Dot.Exists {
+		return nil, fmt.Errorf("dotfile %s does not exist", p.Dot.Path)
+	}
+	p.DotOp = FileOpNone
+
+	// Dtt file operation
+	if p.Dtt.Exists {
+		if p.Dtt.IsFile {
+			// Compare files
+			equal, err := d.compareFile(p.Dot.Path.Abs(), p.Dtt.Path.Abs())
+			if err != nil {
+				return nil, err
+			}
+
+			if equal {
+				p.DttOp = FileOpNone
+			} else {
+				p.DttOp = FileOpOverwrite
+			}
+		} else {
+			p.DttOp = FileOpOverwrite
+		}
+	} else {
+		p.DttOp = FileOpCreate
+	}
+
+	return p, nil
+}
+
+// Preview Import Link ////////////////////////////////////////////////////////
+
+// Dot should be link and dtt should be file.
+func (d Dotato) PreviewImportLink(
+	dot gp.GardenPath,
+	dtt gp.GardenPath,
+) (*Preview, error) {
+	p, err := d.newPreview(dot, dtt)
+	if err != nil {
+		return nil, err
+	}
+
+	if !p.Dot.Exists {
+		return nil, fmt.Errorf("dotfile %s does not exist", p.Dot.Path)
+	}
+
+	// Case 1: dotfile is a file
+	if p.Dot.IsFile {
+		// dot op
+		p.DotOp = FileOpOverwrite
+
+		// dtt op
+		if !p.Dtt.Exists {
+			p.DttOp = FileOpCreate
+		} else if p.Dtt.IsFile {
+			// Compare files
+			equal, err := d.compareFile(p.Dot.Path.Abs(), p.Dtt.Path.Abs())
+			if err != nil {
+				return nil, err
+			}
+			if equal {
+				p.DttOp = FileOpNone
+			} else {
+				p.DttOp = FileOpOverwrite
+			}
+		} else {
+			p.DttOp = FileOpOverwrite
+		}
+		
+		return p, nil
+	}
+
+	// Case 2: dotfile is a symlink
+
+	// Dotfile operation
+	if p.Dot.Real.IsEqual(p.Dtt.Path) {
+		p.DotOp = FileOpNone
+		p.DttOp = FileOpNone
+		return p, nil
+	}
+	p.DotOp = FileOpOverwrite
+
+	// Dotato operation
+	if !p.Dtt.Exists {
+		p.DttOp = FileOpCreate
+	} else {
+		if p.Dtt.IsFile {
+		 	equal, err := d.compareFile(p.Dot.Path.Abs(), p.Dtt.Path.Abs())
+			if err != nil {
+				return nil, err
+			}
+			if equal {
+				p.DttOp = FileOpNone
+			} else {
+				p.DttOp = FileOpOverwrite
+			}
+		} else {
+			p.DttOp = FileOpOverwrite
+		}
+	}
+
+	return p, nil
+}
+
+// Preview Export File ////////////////////////////////////////////////////////
+
+func (d Dotato) PreviewExportFile(
+	dot gp.GardenPath,
+	dtt gp.GardenPath,
+) (*Preview, error) {
+	p, err := d.newPreview(dot, dtt)
+	if err != nil {
+		return nil, err
+	}
+
+	// Dtt file operation
+	if !p.Dtt.Exists {
+		return nil, fmt.Errorf("dotato file %s does not exist", p.Dtt.Path)
+	}
+	p.DttOp = FileOpNone
+
+	// Dot file operation
+	if p.Dot.Exists {
+		if p.Dot.IsFile {
+			// Compare files
+			equal, err := d.compareFile(p.Dot.Path.Abs(), p.Dtt.Real.Abs())
+			if err != nil {
+				return nil, err
+			}
+
+			if equal {
+				p.DotOp = FileOpNone
+			} else {
+				p.DotOp = FileOpOverwrite
+			}
+		} else {
+			p.DotOp = FileOpOverwrite
+		}
+	} else {
+		p.DotOp = FileOpCreate
+	}
+
+	return p, nil
+}
+
+// Preview Export Link ////////////////////////////////////////////////////////
+
+func (d Dotato) PreviewExportLink(
+	dot gp.GardenPath,
+	dtt gp.GardenPath,
+) (*Preview, error) {
+	p, err := d.newPreview(dot, dtt)
+	if err != nil {
+		return nil, err
+	}
+
+	// Dtt file operation
+	if !p.Dtt.Exists {
+		return nil, fmt.Errorf("dotato file %s does not exist", p.Dtt.Path)
+	}
+	p.DttOp = FileOpNone
+
+	// Dot file operation
+	if p.Dot.Exists {
+		if p.Dot.IsFile {
+			p.DotOp = FileOpOverwrite
+		} else {
+			link, err := d.fs.Readlink(p.Dot.Path.Abs())
+			if err != nil {
+				return nil, err
+			}
+			if link == p.Dtt.Path.Abs() {
+				p.DotOp = FileOpNone
+			} else {
+				p.DotOp = FileOpOverwrite
+			}
+		}
+	} else {
+		p.DotOp = FileOpCreate
+	}
 
 	return p, nil
 }
