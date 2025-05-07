@@ -21,7 +21,7 @@ Dotato is written in pure go.
 ## Quickstart
 Your dotato repository will look like this.
 ```
-my-dtt
+.
 ├── bash
 │   └── .dotatoignore
 ├── .dotatoignore
@@ -46,8 +46,8 @@ groups:
 Configure `bash/.dotatoignore` to tell which files to ignore or grab.
 ```
 #.dotatoignore
-*
-!.bashrc
+*         # ignore all
+!.bashrc  # but .bashrc
 ```
 
 Now you are ready to use dotato.
