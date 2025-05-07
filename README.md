@@ -2,6 +2,14 @@
 Dotato is a dotfile manager.
 
 
+![import](./example/import.gif)
+
+![export](./example/export.gif)
+
+(UI is not stable 😅)
+
+
+
 ## Installation
 ### With Go
 Dotato is written in pure go.
@@ -11,7 +19,7 @@ Dotato is written in pure go.
 
 
 ## Quickstart
-Your dotato repository should look like this.
+Your dotato repository will look like this.
 ```
 my-dtt
 ├── bash
@@ -42,8 +50,14 @@ Configure `bash/.dotatoignore` to tell which files to ignore or grab.
 !.bashrc
 ```
 
-Now you can order/deliver your files!
+Now you are ready to use dotato.
+
+Copy files into dotato directory:
 ```
-> dotato import group all nux
-> dotato export group all nux
+> dotato import group bash nux
+```
+
+Copy dotato files to remote directory:
+```
+> dotato export group bash nux
 ```
