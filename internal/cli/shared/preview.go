@@ -3,23 +3,23 @@ package shared
 import (
 	"fmt"
 
-	"github.com/msisdev/dotato/internal/ui/chspinner"
+	"github.com/msisdev/dotato/internal/cli/ui/chspinner"
 	"github.com/msisdev/dotato/pkg/config"
 	"github.com/msisdev/dotato/pkg/dotato"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 
-func (s Shared) PreviewDangerUnlink() ([]dotato.Preview, error) {
+func (s Shared) PreviewDangerUnlink() ([]dotato.Preview, int, error) {
 	hs, err := s.d.GetAllHistoryByMode(config.ModeLink)
 	if err != nil {
 		s.logger.Fatal(err)
-		return nil, err
+		return nil, 0, err
 	}
 
 	var (
-		ps []dotato.Preview
+		ps        []dotato.Preview
 		overwrite int
-		title = "Scanning files ..."
+		title     = "Scanning files ..."
 	)
 	err = chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
 		for _, h := range hs {
@@ -68,26 +68,26 @@ func (s Shared) PreviewDangerUnlink() ([]dotato.Preview, error) {
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return ps, nil
+	return ps, overwrite, nil
 }
 
 func (s Shared) PreviewImportGroupFile(
 	group, resolver string,
-) ([]dotato.Preview, error) {
+) ([]dotato.Preview, int, error) {
 	base, err := s.GetGroupBase(group, resolver)
 	if err != nil {
 		s.logger.Fatal(err)
-		return nil, err
+		return nil, 0, err
 	}
 
 	var (
-		ps []dotato.Preview
-		create int
+		ps        []dotato.Preview
+		create    int
 		overwrite int
-		title = fmt.Sprintf("Scanning files of group %s...", group)
+		title     = fmt.Sprintf("Scanning files of group %s...", group)
 	)
 	err = chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
 		return s.d.WalkImportFile(group, base, func(p dotato.Preview) error {
@@ -119,26 +119,27 @@ func (s Shared) PreviewImportGroupFile(
 		})
 	})
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return ps, nil
+	return ps, create + overwrite, nil
 }
 
 func (s Shared) PreviewImportGroupLink(
 	group, resolver string,
-) ([]dotato.Preview, error) {
+) ([]dotato.Preview, int, error) {
 	base, err := s.GetGroupBase(group, resolver)
 	if err != nil {
 		s.logger.Fatal(err)
-		return nil, err
+		return nil, 0, err
 	}
 
 	var (
-		ps []dotato.Preview
+		ps    []dotato.Preview
 		dotOW int
 		dttCR int
 		dttOW int
+		totalMod int
 		title = fmt.Sprintf("Scanning files of group %s...", group)
 	)
 	err = chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
@@ -153,6 +154,8 @@ func (s Shared) PreviewImportGroupLink(
 			// Add preview
 			ps = append(ps, p)
 
+			isMod := false
+
 			// Count operations
 			switch p.DotOp {
 			case dotato.FileOpNone:
@@ -161,6 +164,7 @@ func (s Shared) PreviewImportGroupLink(
 				return fmt.Errorf("dot file %s doesn't exist", p.Dot.Path.Abs())
 			case dotato.FileOpOverwrite:
 				dotOW++
+				isMod = true
 			}
 
 			switch p.DttOp {
@@ -168,8 +172,14 @@ func (s Shared) PreviewImportGroupLink(
 				// do nothing
 			case dotato.FileOpCreate:
 				dttCR++
+				isMod = true
 			case dotato.FileOpOverwrite:
 				dttOW++
+				isMod = true
+			}
+
+			if isMod {
+				totalMod++
 			}
 
 			// Update spinner
@@ -182,20 +192,20 @@ func (s Shared) PreviewImportGroupLink(
 		})
 	})
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return ps, nil
+	return ps, totalMod, nil
 }
 
 func (s Shared) PreviewExportGroupFile(
 	group, resolver string,
-) ([]dotato.Preview, error) {
+) ([]dotato.Preview, int, error) {
 	var (
-		ps []dotato.Preview
-		create int
+		ps        []dotato.Preview
+		create    int
 		overwrite int
-		title = fmt.Sprintf("Scanning files of group %s...", group)
+		title     = fmt.Sprintf("Scanning files of group %s...", group)
 	)
 	err := chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
 		return s.d.WalkExportFile(group, func(p dotato.Preview) error {
@@ -229,20 +239,20 @@ func (s Shared) PreviewExportGroupFile(
 		})
 	})
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return ps, nil
+	return ps, create + overwrite, nil
 }
 
 func (s Shared) PreviewExportGroupLink(
 	group, resolver string,
-) ([]dotato.Preview, error) {
+) ([]dotato.Preview, int, error) {
 	var (
-		ps []dotato.Preview
-		create int
+		ps        []dotato.Preview
+		create    int
 		overwrite int
-		title = fmt.Sprintf("Scanning files of group %s...", group)
+		title     = fmt.Sprintf("Scanning files of group %s...", group)
 	)
 	err := chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
 		return s.d.WalkExportLink(group, func(p dotato.Preview) error {
@@ -276,25 +286,25 @@ func (s Shared) PreviewExportGroupLink(
 		})
 	})
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return ps, nil
+	return ps, 0, nil
 }
 
 func (s Shared) PreviewUnlinkGroup(
 	group, resolver string,
-) ([]dotato.Preview, error) {
+) ([]dotato.Preview, int, error) {
 	base, err := s.GetGroupBase(group, resolver)
 	if err != nil {
 		s.logger.Fatal(err)
-		return nil, err
+		return nil, 0, err
 	}
 
 	var (
-		ps []dotato.Preview
+		ps        []dotato.Preview
 		overwrite int
-		title = fmt.Sprintf("Scanning files of group %s...", group)
+		title     = fmt.Sprintf("Scanning files of group %s...", group)
 	)
 	err = chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
 		return s.d.WalkUnlink(group, base, func(p dotato.Preview) error {
@@ -328,8 +338,8 @@ func (s Shared) PreviewUnlinkGroup(
 		})
 	})
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return ps, nil
+	return ps, overwrite, nil
 }

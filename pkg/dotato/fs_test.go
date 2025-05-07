@@ -75,11 +75,9 @@ func TestFS_Stat(t *testing.T) {
 		assert.Equal(t, info.Mode().Type()&os.ModeType, os.ModeSymlink)
 	}
 
-	// Conlusion: if a <- b <- c ...
-	//  - Stat(b):	name b, content	a
-	//  - Lstat(b): name b, target	a
-	//  - Stat(c):	name c, content	a
-	//  - Lstat(c): name c, target	b
+	// Conlusion:
+	//  - fs.Stat() name: itself, content: final target
+	//  - fs.Lstat() name: itself, content: itself
 }
 
 func TestFS_Open(t *testing.T) {
@@ -175,4 +173,6 @@ func TestFS_Symlink(t *testing.T) {
 		err := fs.Symlink(filepath, linkpath)
 		assert.Error(t, err)
 	}
+
+	// Conclusion: fs.Symlink() doesn't allow overwriting any existing file
 }

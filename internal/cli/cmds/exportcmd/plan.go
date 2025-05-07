@@ -5,9 +5,9 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/msisdev/dotato/internal/cli/args"
-	"github.com/msisdev/dotato/internal/lib/shared"
-	"github.com/msisdev/dotato/internal/ui/chspinner"
-	"github.com/msisdev/dotato/internal/ui/inputconfirm"
+	"github.com/msisdev/dotato/internal/cli/shared"
+	"github.com/msisdev/dotato/internal/cli/ui/chspinner"
+	"github.com/msisdev/dotato/internal/cli/ui/inputconfirm"
 	"github.com/msisdev/dotato/pkg/config"
 	"github.com/msisdev/dotato/pkg/dotato"
 )
@@ -27,45 +27,47 @@ func ExportPlan(logger *log.Logger, args *args.ExportPlanArgs) {
 	}
 
 	// Preview
-	var ps []dotato.Preview
+	var (
+		ps []dotato.Preview
+		mods int
+	)
 	if s.GetMode() == config.ModeFile {
 		for group := range groups {
-			temp, err := s.PreviewExportGroupFile(group, args.Resolver)
+			temp, m, err := s.PreviewExportGroupFile(group, args.Resolver)
 			if err != nil {
 				logger.Fatal(err)
 				return
 			}
 			ps = append(ps, temp...)
+			mods += m
 		}
 	} else {
 		for group := range groups {
-			temp, err := s.PreviewExportGroupLink(group, args.Resolver)
+			temp, m, err := s.PreviewExportGroupLink(group, args.Resolver)
 			if err != nil {
 				logger.Fatal(err)
 				return
 			}
 			ps = append(ps, temp...)
+			mods += m
 		}
 	}
 
 	// Print preview list
 	fmt.Print("\n🔎 Preview\n\n")
 	for _, p := range ps {
-		var symbol string
-		switch p.DttOp {
-		case dotato.FileOpNone:
-			symbol = "✔"
-		case dotato.FileOpCreate:
-			symbol = "+"
-		case dotato.FileOpOverwrite:
-			symbol = "!"
-		default:
-			symbol = "?"
+		if s.GetMode() == config.ModeFile {
+			println(shared.SprintPreviewExportFile(p))
+		} else {
+			println(shared.SprintPreviewExportLink(p))
 		}
-
-		fmt.Printf("%s %s -> %s\n", symbol, p.Dot.Path.Abs(), p.Dtt.Path.Abs())
 	}
 	fmt.Println()
+
+	if mods == 0 {
+		fmt.Println("No files to export.")
+		return
+	}
 
 	// Confirm
 	if !args.Yes {

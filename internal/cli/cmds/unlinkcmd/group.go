@@ -5,11 +5,10 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/msisdev/dotato/internal/cli/args"
-	"github.com/msisdev/dotato/internal/lib/shared"
-	"github.com/msisdev/dotato/internal/ui/chspinner"
-	"github.com/msisdev/dotato/internal/ui/inputconfirm"
+	"github.com/msisdev/dotato/internal/cli/shared"
+	"github.com/msisdev/dotato/internal/cli/ui/chspinner"
+	"github.com/msisdev/dotato/internal/cli/ui/inputconfirm"
 	"github.com/msisdev/dotato/pkg/config"
-	"github.com/msisdev/dotato/pkg/dotato"
 )
 
 func UnlinkGroup(logger *log.Logger, args *args.UnlinkGroupArgs) {
@@ -20,11 +19,11 @@ func UnlinkGroup(logger *log.Logger, args *args.UnlinkGroupArgs) {
 	}
 	if s.GetMode() == config.ModeFile {
 		logger.Fatal("unlink group not supported in file mode")
-		return	
+		return
 	}
 
 	// Preview
-	ps, err := s.PreviewUnlinkGroup(args.Group, args.Resolver)
+	ps, mods, err := s.PreviewUnlinkGroup(args.Group, args.Resolver)
 	if err != nil {
 		logger.Fatal(err)
 		return
@@ -33,21 +32,14 @@ func UnlinkGroup(logger *log.Logger, args *args.UnlinkGroupArgs) {
 	// Print preview list
 	fmt.Print("\n🔎 Preview\n\n")
 	for _, p := range ps {
-		var symbol string
-		switch p.DttOp {
-		case dotato.FileOpNone:
-			symbol = "✔"
-		case dotato.FileOpCreate:
-			symbol = "?"
-		case dotato.FileOpOverwrite:
-			symbol = "!"
-		default:
-			symbol = "?"
-		}
-
-		fmt.Printf("%s %s -> %s\n", symbol, p.Dot.Path.Abs(), p.Dtt.Path.Abs())
+		fmt.Println(shared.SprintPreviewUnlink(p))
 	}
 	fmt.Println()
+
+	if mods == 0 {
+		fmt.Println("No changes to be made.")
+		return
+	}
 
 	// Confirm
 	if !args.Yes {

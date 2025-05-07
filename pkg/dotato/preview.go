@@ -298,9 +298,20 @@ func (d Dotato) PreviewUnlink(
 
 	// Dot file operation
 	if !p.Dot.Exists {
-		return nil, fmt.Errorf("dotfile %s does not exist", p.Dot.Path)
+		p.DotOp = FileOpNone
+	} else if p.Dot.IsFile {
+		p.DotOp = FileOpNone
+	} else {
+		link, err := d.fs.Readlink(p.Dot.Path.Abs())
+		if err != nil {
+			return nil, err
+		}
+		if link == p.Dtt.Path.Abs() {
+			p.DotOp = FileOpOverwrite
+		} else {
+			p.DotOp = FileOpNone
+		}
 	}
-	p.DotOp = FileOpOverwrite
 
 	// Dtt file operation
 	if !p.Dtt.Exists {

@@ -6,7 +6,7 @@ import (
 	"github.com/charmbracelet/log"
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/osfs"
-	"github.com/msisdev/dotato/internal/ui/chspinner"
+	"github.com/msisdev/dotato/internal/cli/ui/chspinner"
 	"github.com/msisdev/dotato/pkg/dotato"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
@@ -16,16 +16,16 @@ var (
 )
 
 type Shared struct {
-	logger	*log.Logger
-	fs 			billy.Filesystem
-	d 			*dotato.Dotato
-	mode 		string
+	logger *log.Logger
+	fs     billy.Filesystem
+	d      *dotato.Dotato
+	mode   string
 }
 
 func New(logger *log.Logger) (*Shared, error) {
 	s := &Shared{
 		logger: logger,
-		fs: osfs.New("/"),
+		fs:     osfs.New("/"),
 	}
 	s.d = dotato.NewWithFS(s.fs, false)
 

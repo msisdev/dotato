@@ -5,9 +5,9 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/msisdev/dotato/internal/cli/args"
-	"github.com/msisdev/dotato/internal/lib/shared"
-	"github.com/msisdev/dotato/internal/ui/chspinner"
-	"github.com/msisdev/dotato/internal/ui/inputconfirm"
+	"github.com/msisdev/dotato/internal/cli/shared"
+	"github.com/msisdev/dotato/internal/cli/ui/chspinner"
+	"github.com/msisdev/dotato/internal/cli/ui/inputconfirm"
 	"github.com/msisdev/dotato/pkg/config"
 	"github.com/msisdev/dotato/pkg/dotato"
 )
@@ -20,15 +20,18 @@ func ImportGroup(logger *log.Logger, args *args.ImportGroupArgs) {
 	}
 
 	// Preview
-	var ps []dotato.Preview
+	var (
+		ps []dotato.Preview
+		mods int
+	)
 	if s.GetMode() == config.ModeFile {
-		ps, err = s.PreviewImportGroupFile(args.Group, args.Resolver)
+		ps, mods, err = s.PreviewImportGroupFile(args.Group, args.Resolver)
 		if err != nil {
 			logger.Fatal(err)
 			return
 		}
 	} else {
-		ps, err = s.PreviewImportGroupLink(args.Group, args.Resolver)
+		ps, mods, err = s.PreviewImportGroupLink(args.Group, args.Resolver)
 		if err != nil {
 			logger.Fatal(err)
 			return
@@ -38,21 +41,18 @@ func ImportGroup(logger *log.Logger, args *args.ImportGroupArgs) {
 	// Print preview list
 	fmt.Print("\n🔎 Preview\n\n")
 	for _, p := range ps {
-		var symbol string
-		switch p.DttOp {
-		case dotato.FileOpNone:
-			symbol = "✔"
-		case dotato.FileOpCreate:
-			symbol = "+"
-		case dotato.FileOpOverwrite:
-			symbol = "!"
-		default:
-			symbol = "?"
+		if s.GetMode() == config.ModeFile {
+			fmt.Println(shared.SprintPreviewImportFile(p))
+		} else {
+			fmt.Println(shared.SprintPreviewImportLink(p))
 		}
-
-		fmt.Printf("%s %s -> %s\n", symbol, p.Dot.Path.Abs(), p.Dtt.Path.Abs())
 	}
 	fmt.Println()
+
+	if mods == 0 {
+		fmt.Println("No files to import.")
+		return
+	}
 
 	// Confirm
 	if !args.Yes {

@@ -469,3 +469,64 @@ func TestPreviewExportLink(t *testing.T) {
 		assert.Equal(t, FileOpNone, p.DttOp)
 	}
 }
+
+func TestPreviewUnlink(t *testing.T) {
+	var (
+		dot = gp.GardenPath{"", "home", "user", ".bashrc"}
+		dtt = gp.GardenPath{"", "home", "user", "Documents", "dotato", "bash", ".bashrc"}
+	)
+
+	// Dot: empty / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_Empty)
+		p, err := d.PreviewUnlink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: file, not equal / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_File_NotEq)
+		p, err := d.PreviewUnlink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: file, equal / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_File_Eq)
+		p, err := d.PreviewUnlink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: link, at diff, not equal / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_Link_Diff_NotEq)
+		p, err := d.PreviewUnlink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: link, at diff, equal / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_Link_Diff_Eq)
+		p, err := d.PreviewUnlink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+
+	// Dot: link, at same / Dtt: file
+	{
+		d := requestDotato(dtt, FirstReq_File, dot, SecondReq_Link_Same)
+		p, err := d.PreviewUnlink(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpOverwrite, p.DotOp)
+		assert.Equal(t, FileOpNone, p.DttOp)
+	}
+}
