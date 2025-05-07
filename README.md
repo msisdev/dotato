@@ -1,53 +1,49 @@
 # dotato
-A dotfile or symlink manager.
-
-## In strategy
-| state   | symlink mode | file mode |
-|---------|--------------|-----------|
-| symlink | 원본파일 추적, 새로운 링크 | 원본파일 추적, 링크는 그대로 |
-| file    | stow 처럼     | 복사해서 가져오기 |
+Dotato is a dotfile manager.
 
 
-## Out strategy
-| state   | symlink mode | file mode |
-|---------|--------------|-----------|
-| symlink | state 확인, overwrite | overwrite |
-| file    | overwrite   | state확인, 덮어쓰기 |
-
-## Cases
+## Installation
+### With Go
+Dotato is written in pure go.
 ```
-[import file]
-dot     dtt
-
-file    not exists
-file    file, diff
-file    file, same
-link    not exists
-link    file, diff
-link    file, same
+> go install github.com/msisdev/dotato@latest
+```
 
 
-[import link]
-dot     dtt
+## Quickstart
+Your dotato repository should look like this.
+```
+my-dtt
+├── bash
+│   └── .dotatoignore
+├── .dotatoignore
+└── dotato.yaml
+```
 
-file    not exists
-file    file, diff
-file    file, diff
-link    not exists
-link    file, wrong
-link    file, correct
+Configure `dotato.yaml` to tell dotato where to order/deliver files from/to.
+```yaml
+# dotato.yaml
+version: 1.0.0
 
+mode: file
 
-[export file]
-dot         dtt
+plans:
+  all:  # empty plan means all groups
 
-not exists  file
-exists      file
+groups:
+  bash:
+    nux: "~"
+```
 
+Configure `bash/.dotatoignore` to tell which files to ignore or grab.
+```
+#.dotatoignore
+*
+!.bashrc
+```
 
-[export link]
-dot         dtt
-
-not exists  file
-exists      file
+Now you can order/deliver your files!
+```
+> dotato import group all nux
+> dotato export group all nux
 ```

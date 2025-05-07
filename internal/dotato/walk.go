@@ -25,8 +25,9 @@ func (d Dotato) Walk(
 
 	var dfs func(dir gp.GardenPath) (err error)
 	dfs = func(dir gp.GardenPath) (err error) {
-		// max iter exceeded ?
 		iter++
+		
+		// max iter exceeded ?
 		if iter > d.maxIter {
 			return ErrMaxIterExceeded
 		}

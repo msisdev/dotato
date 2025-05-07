@@ -32,7 +32,7 @@ const (
 	IgnoreFileNameDefault = ".dotatoignore"
 
 	MaxFileSystemIterEnv     = "DOTATO_MAX_FS_ITER"
-	MaxFileSystemIterDefault = 10000
+	MaxFileSystemIterDefault = 1000
 )
 
 var (
@@ -48,7 +48,7 @@ var (
 
 var (
 	ErrConfigNotFound  = fmt.Errorf("config file not found")
-	ErrMaxIterExceeded = fmt.Errorf("max iteration exceeded")
+	ErrMaxIterExceeded = fmt.Errorf("max iteration exceeded. please check your ignore file")
 )
 
 // Loop up in the env var or use default value
