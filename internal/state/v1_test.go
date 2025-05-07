@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/go-git/go-billy/v5/memfs"
-	"github.com/msisdev/dotato/pkg/config"
+	"github.com/msisdev/dotato/internal/config"
 	"github.com/stretchr/testify/assert"
 )
 

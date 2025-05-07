@@ -24,7 +24,7 @@ type PathStat struct {
 func (d Dotato) newPathStat(path gp.GardenPath) (*PathStat, error) {
 	s := PathStat{
 		Path: path,
-		Real: nil,
+		Real: path,
 	}
 
 	abs := path.Abs()
@@ -42,8 +42,10 @@ func (d Dotato) newPathStat(path gp.GardenPath) (*PathStat, error) {
 
 	// Check if file is a symlink
 	if info.Mode().Type()&os.ModeSymlink == 0 {
+		// Not a symlink
 		s.IsFile = true
-		s.Real = s.Path
+		s.Real = make(gp.GardenPath, len(s.Path))
+		copy(s.Real, s.Path)
 	} else {
 		s.IsFile = false
 
@@ -62,9 +64,9 @@ func (d Dotato) newPathStat(path gp.GardenPath) (*PathStat, error) {
 }
 
 type Preview struct {
-	Dot 	PathStat
+	Dot 	*PathStat
 	DotOp	FileOp
-	Dtt 	PathStat
+	Dtt 	*PathStat
 	DttOp FileOp
 }
 
@@ -78,13 +80,13 @@ func (d Dotato) newPreview(
 		if err != nil {
 			return nil, err
 		}
-		p.Dot = *dotStat
+		p.Dot = dotStat
 
 		dttStat, err := d.newPathStat(dtt)
 		if err != nil {
 			return nil, err
 		}
-		p.Dtt = *dttStat
+		p.Dtt = dttStat
 	}
 
 	return &p, nil
@@ -257,13 +259,13 @@ func (d Dotato) PreviewExportLink(
 		return nil, err
 	}
 
-	// Dtt file operation
+	// Dtt operation
 	if !p.Dtt.Exists {
 		return nil, fmt.Errorf("dotato file %s does not exist", p.Dtt.Path)
 	}
 	p.DttOp = FileOpNone
 
-	// Dot file operation
+	// Dot operation
 	if p.Dot.Exists {
 		if p.Dot.IsFile {
 			p.DotOp = FileOpOverwrite

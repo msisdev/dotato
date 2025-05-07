@@ -8,8 +8,8 @@ import (
 	"github.com/msisdev/dotato/internal/cli/shared"
 	"github.com/msisdev/dotato/internal/cli/ui/chspinner"
 	"github.com/msisdev/dotato/internal/cli/ui/inputconfirm"
-	"github.com/msisdev/dotato/pkg/config"
-	"github.com/msisdev/dotato/pkg/dotato"
+	"github.com/msisdev/dotato/internal/config"
+	"github.com/msisdev/dotato/internal/dotato"
 )
 
 func UnlinkPlan(logger *log.Logger, args *args.UnlinkPlanArgs) {
@@ -32,7 +32,7 @@ func UnlinkPlan(logger *log.Logger, args *args.UnlinkPlanArgs) {
 
 	// Preview
 	var (
-		ps []dotato.Preview
+		ps   []dotato.Preview
 		mods int
 	)
 	for group := range groups {

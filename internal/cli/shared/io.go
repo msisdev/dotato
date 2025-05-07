@@ -1,8 +1,8 @@
 package shared
 
 import (
+	"github.com/msisdev/dotato/internal/dotato"
 	"github.com/msisdev/dotato/internal/lib/io"
-	"github.com/msisdev/dotato/pkg/dotato"
 )
 
 func (s Shared) ImportFile(pre dotato.Preview) error {

@@ -8,7 +8,7 @@ import (
 	"github.com/msisdev/dotato/internal/cli/shared"
 	"github.com/msisdev/dotato/internal/cli/ui/chspinner"
 	"github.com/msisdev/dotato/internal/cli/ui/inputconfirm"
-	"github.com/msisdev/dotato/pkg/config"
+	"github.com/msisdev/dotato/internal/config"
 )
 
 func UnlinkGroup(logger *log.Logger, args *args.UnlinkGroupArgs) {

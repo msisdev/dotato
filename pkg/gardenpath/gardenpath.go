@@ -111,3 +111,9 @@ func (p GardenPath) IsEqual(other GardenPath) bool {
 	}
 	return true
 }
+
+func (p GardenPath) Copy() GardenPath {
+	cp := make(GardenPath, len(p))
+	copy(cp, p)
+	return cp
+}

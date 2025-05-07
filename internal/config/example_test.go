@@ -12,11 +12,11 @@ func TestSampleConfig(t *testing.T) {
 		Mode:	ModeFile,
 		Plans: map[string][]string{
 			"all": nil,
+			"mypc": {"bash"},
 		},
 		Groups: map[string]map[string]string{
 			"bash": {
 				"nux": "~",
-				"mac": "$HOME",
 			},
 		},
 	}

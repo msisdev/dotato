@@ -1,5 +1,9 @@
-# dotato.yaml
-version: 1.0.0
+package config
+
+import "fmt"
+
+const configFormat = `# dotato.yaml
+version: %s
 
 # Mode is either file or link.
 mode: file
@@ -23,3 +27,8 @@ plans:
 groups:
   bash:
     nux: "~"
+`
+
+func GetExample() string {
+	return fmt.Sprintf(configFormat, Version1)
+}

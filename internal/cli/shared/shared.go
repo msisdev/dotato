@@ -7,7 +7,9 @@ import (
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/osfs"
 	"github.com/msisdev/dotato/internal/cli/ui/chspinner"
-	"github.com/msisdev/dotato/pkg/dotato"
+	"github.com/msisdev/dotato/internal/cli/ui/mxspinner"
+	"github.com/msisdev/dotato/internal/dotato"
+	"github.com/msisdev/dotato/internal/lib/store"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 
@@ -31,16 +33,26 @@ func New(logger *log.Logger) (*Shared, error) {
 
 	// Get mode
 	text := "Loading config mode..."
-	err := chspinner.Run(text, func(up chan<- string, quit <-chan bool) error {
+	err := mxspinner.Run(text, func(store *store.Store[string], quit <-chan bool) error {
 		var err error
 		s.mode, err = s.d.GetConfigMode()
 		if err != nil {
-			up <- "Error loading config mode"
+			store.Set("Error loading config mode")
 			return err
 		}
-		up <- "Config mode: " + s.mode
+		store.Set("Config mode: " + s.mode)
 		return nil
 	})
+	// err := chspinner.Run(text, func(up chan<- string, quit <-chan bool) error {
+	// 	var err error
+	// 	s.mode, err = s.d.GetConfigMode()
+	// 	if err != nil {
+	// 		up <- "Error loading config mode"
+	// 		return err
+	// 	}
+	// 	up <- "Config mode: " + s.mode
+	// 	return nil
+	// })
 	if err != nil {
 		logger.Fatal(err)
 		return nil, err

@@ -9,6 +9,7 @@ import (
 	"github.com/msisdev/dotato/internal/cli/cmds/dangercmd"
 	"github.com/msisdev/dotato/internal/cli/cmds/exportcmd"
 	"github.com/msisdev/dotato/internal/cli/cmds/importcmd"
+	"github.com/msisdev/dotato/internal/cli/cmds/initcmd"
 	"github.com/msisdev/dotato/internal/cli/cmds/unlinkcmd"
 )
 
@@ -61,6 +62,11 @@ func Run() {
 			importcmd.ImportGroup(logger, args.Import.Group)
 			return
 		}
+	}
+
+	if args.Init != nil {
+		initcmd.Init(logger, args.Init)
+		return
 	}
 
 	if args.Export != nil {

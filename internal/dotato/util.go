@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-git/go-billy/v5"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
-	"github.com/msisdev/dotato/pkg/ignore"
+	"github.com/msisdev/dotato/internal/ignore"
 )
 
 var (

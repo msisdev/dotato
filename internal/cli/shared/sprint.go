@@ -3,14 +3,14 @@ package shared
 import (
 	"fmt"
 
-	"github.com/msisdev/dotato/pkg/dotato"
+	"github.com/msisdev/dotato/internal/dotato"
 )
 
 const (
-	symbolNone = "✔"
-	symbolCreate = "+"
+	symbolNone      = "✔"
+	symbolCreate    = "+"
 	symbolOverwrite = "!"
-	symbolUnknown = "?"
+	symbolUnknown   = "?"
 )
 
 func getSymbol(op dotato.FileOp) string {

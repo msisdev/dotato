@@ -3,21 +3,23 @@ package dotato
 import (
 	"os"
 
+	"github.com/msisdev/dotato/internal/ignore"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
-	"github.com/msisdev/dotato/pkg/ignore"
 )
 
 // Run `onSelect` selectively and recursively on files
 //
-//  - If selectIgnored = true, you are calling onSelect on ignored files.
-//  - If selectIgnored = false, you are calling onSelect on non-ignored files.
+//   - If selectIgnored = true, you are calling onSelect on ignored files.
+//   - If selectIgnored = false, you are calling onSelect on non-ignored files.
 func (d Dotato) Walk(
 	root gp.GardenPath,
 	ig *ignore.Ignore,
 	selectIgnored bool,
 	onSelect func(gp.GardenPath, os.FileInfo) error,
 ) error {
-	if err := d.setIgnore(); err != nil { return err }
+	if err := d.setIgnore(); err != nil {
+		return err
+	}
 
 	iter := 0
 
@@ -37,13 +39,18 @@ func (d Dotato) Walk(
 
 		// Iterate over file infos
 		for _, fi := range fis {
-			path := append(dir, fi.Name())
+			path := dir.Copy()
+			path = append(path, fi.Name())
 
 			isIgnored :=
-				d.ig.IsIgnoredWithBaseDir(root, path) || 
-				ig.IsIgnoredWithBaseDir(root, path)
+				d.ig.IsIgnoredWithBaseDir(root, path) ||
+					ig.IsIgnoredWithBaseDir(root, path)
 
 			if selectIgnored != isIgnored {
+				continue
+			}
+			// dotato files are always excluded
+			if ok := dotatoFileNames[path.Last()]; ok {
 				continue
 			}
 
@@ -92,8 +99,12 @@ func (d Dotato) WalkDotfile(
 	base gp.GardenPath,
 	onDot func(gp.GardenPath, os.FileInfo) error,
 ) (err error) {
-	if err = d.setConfig(); err != nil { return }
-	if err = d.setIgnore(); err != nil { return }
+	if err = d.setConfig(); err != nil {
+		return
+	}
+	if err = d.setIgnore(); err != nil {
+		return
+	}
 
 	// Get group ignore rules
 	ig, err := d.GetGroupIgnore(group)
@@ -109,8 +120,12 @@ func (d Dotato) WalkDotato(
 	group string,
 	onDtt func(gp.GardenPath, os.FileInfo) error,
 ) (err error) {
-	if err = d.setConfig(); err != nil { return }
-	if err = d.setIgnore(); err != nil { return }
+	if err = d.setConfig(); err != nil {
+		return
+	}
+	if err = d.setIgnore(); err != nil {
+		return
+	}
 
 	// Get group ignore rules
 	ig, err := d.GetGroupIgnore(group)
@@ -129,8 +144,12 @@ func (d Dotato) WalkImportFile(
 	base gp.GardenPath,
 	onPreview func(Preview) error,
 ) (err error) {
-	if err = d.setConfig(); err != nil { return }
-	if err = d.setIgnore(); err != nil { return }
+	if err = d.setConfig(); err != nil {
+		return
+	}
+	if err = d.setIgnore(); err != nil {
+		return
+	}
 
 	onDot := func(dot gp.GardenPath, fi os.FileInfo) error {
 		// Get dtt path
@@ -153,8 +172,12 @@ func (d Dotato) WalkImportLink(
 	base gp.GardenPath,
 	onPreview func(Preview) error,
 ) (err error) {
-	if err = d.setConfig(); err != nil { return }
-	if err = d.setIgnore(); err != nil { return }
+	if err = d.setConfig(); err != nil {
+		return
+	}
+	if err = d.setIgnore(); err != nil {
+		return
+	}
 
 	onDot := func(dot gp.GardenPath, fi os.FileInfo) error {
 		// Get dtt path
@@ -174,24 +197,27 @@ func (d Dotato) WalkImportLink(
 
 func (d Dotato) WalkExportFile(
 	group string,
+	base gp.GardenPath,
 	onPreview func(Preview) error,
 ) (err error) {
-	if err = d.setConfig(); err != nil { return }
-	if err = d.setIgnore(); err != nil { return }
-
-	base := append(d.cdir, group)
+	if err = d.setConfig(); err != nil {
+		return
+	}
+	if err = d.setIgnore(); err != nil {
+		return
+	}
 
 	onDot := func(dtt gp.GardenPath, fi os.FileInfo) error {
 		// Get dot path
 		dot := d.DttToDot(dtt, base)
 
 		// Get preview
-		pre, err := d.PreviewExportFile(dot, dtt)
+		p, err := d.PreviewExportFile(dot, dtt)
 		if err != nil {
 			return err
 		}
 
-		return onPreview(*pre)
+		return onPreview(*p)
 	}
 
 	return d.WalkDotato(group, onDot)
@@ -199,24 +225,27 @@ func (d Dotato) WalkExportFile(
 
 func (d Dotato) WalkExportLink(
 	group string,
+	base gp.GardenPath,
 	onPreview func(Preview) error,
 ) (err error) {
-	if err = d.setConfig(); err != nil { return }
-	if err = d.setIgnore(); err != nil { return }
-
-	base := append(d.cdir, group)
+	if err = d.setConfig(); err != nil {
+		return
+	}
+	if err = d.setIgnore(); err != nil {
+		return
+	}
 
 	onDot := func(dtt gp.GardenPath, fi os.FileInfo) error {
 		// Get dot path
 		dot := d.DttToDot(dtt, base)
 
 		// Get preview
-		pre, err := d.PreviewExportLink(dot, dtt)
+		p, err := d.PreviewExportLink(dot, dtt)
 		if err != nil {
 			return err
 		}
 
-		return onPreview(*pre)
+		return onPreview(*p)
 	}
 
 	return d.WalkDotato(group, onDot)
@@ -227,8 +256,12 @@ func (d Dotato) WalkUnlink(
 	base gp.GardenPath,
 	onPreview func(Preview) error,
 ) (err error) {
-	if err = d.setConfig(); err != nil { return }
-	if err = d.setIgnore(); err != nil { return }
+	if err = d.setConfig(); err != nil {
+		return
+	}
+	if err = d.setIgnore(); err != nil {
+		return
+	}
 
 	onDot := func(dot gp.GardenPath, fi os.FileInfo) error {
 		// Get dtt path

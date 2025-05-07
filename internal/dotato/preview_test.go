@@ -7,6 +7,51 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestNewPathStat(t *testing.T) {
+	path := gp.GardenPath{"", "home", "user", ".bashrc"}
+	real := gp.GardenPath{"", "home", "user", "Documents", "dotato", "bash", ".bashrc"}
+
+	// Path: link / Real: file
+	{
+		d := requestDotato(real, FirstReq_File, path, SecondReq_Link_Same)
+		stat, err := d.newPathStat(path)
+		assert.NoError(t, err)
+		assert.Equal(t, path, stat.Path)
+		assert.Equal(t, real, stat.Real)
+		assert.Equal(t, false, stat.IsFile)
+		assert.Equal(t, true, stat.Exists)
+	}
+
+	// Path: file
+	{
+		d := requestDotato(real, FirstReq_File, path, SecondReq_File_Eq)
+		stat, err := d.newPathStat(path)
+		assert.NoError(t, err)
+		assert.Equal(t, path, stat.Path)
+		assert.Equal(t, path, stat.Real)
+		assert.Equal(t, true, stat.IsFile)
+		assert.Equal(t, true, stat.Exists)
+	}
+}
+
+func TestNewPreview(t *testing.T) {
+	var (
+		dot = gp.GardenPath{"", "home", "user", ".bashrc"}
+		dtt = gp.GardenPath{"", "home", "user", "Documents", "dotato", "bash", ".bashrc"}
+	)
+
+	// Dot: file / Dtt: file
+	{
+		d := requestDotato(dot, FirstReq_File, dtt, SecondReq_File_Eq)
+		p, err := d.newPreview(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, dot, p.Dot.Path)
+		assert.Equal(t, dot, p.Dot.Real)
+		assert.Equal(t, dtt, p.Dtt.Path)
+		assert.Equal(t, dtt, p.Dtt.Real)
+	}
+}
+
 func TestPreviewImportFile(t *testing.T) {
 	var (
 		dot = gp.GardenPath{"", "home", "user", ".bashrc"}

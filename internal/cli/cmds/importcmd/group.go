@@ -8,8 +8,8 @@ import (
 	"github.com/msisdev/dotato/internal/cli/shared"
 	"github.com/msisdev/dotato/internal/cli/ui/chspinner"
 	"github.com/msisdev/dotato/internal/cli/ui/inputconfirm"
-	"github.com/msisdev/dotato/pkg/config"
-	"github.com/msisdev/dotato/pkg/dotato"
+	"github.com/msisdev/dotato/internal/config"
+	"github.com/msisdev/dotato/internal/dotato"
 )
 
 func ImportGroup(logger *log.Logger, args *args.ImportGroupArgs) {
@@ -21,7 +21,7 @@ func ImportGroup(logger *log.Logger, args *args.ImportGroupArgs) {
 
 	// Preview
 	var (
-		ps []dotato.Preview
+		ps   []dotato.Preview
 		mods int
 	)
 	if s.GetMode() == config.ModeFile {

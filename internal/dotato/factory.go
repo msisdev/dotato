@@ -8,35 +8,46 @@ import (
 	"strconv"
 
 	"github.com/go-git/go-billy/v5"
-	"github.com/msisdev/dotato/pkg/config"
+	"github.com/msisdev/dotato/internal/config"
+	"github.com/msisdev/dotato/internal/state"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
-	"github.com/msisdev/dotato/pkg/ignore"
-	"github.com/msisdev/dotato/pkg/state"
+	"github.com/msisdev/dotato/internal/ignore"
 )
 
 const (
 	// Location of user-wide config directory
-	DotatoDirPathEnv 					= "DOTATO_DIRECTORY"
-	DotatoDirName							= "dotato"
+	DotatoDirPathEnv = "DOTATO_DIRECTORY_PATH"
+	DotatoDirName    = "dotato"
 
 	// State file name
-	StateFileNameEnv 					= "DOTATO_STATE"
-	StateFileNameDefault 			= "dotatostate.sqlite"
+	StateFileNameEnv     = "DOTATO_STATE_FILENAME"
+	StateFileNameDefault = "dotatostate.sqlite"
 
 	// Config file name
-	ConfigFileNameEnv 				= "DOTATO_CONFIG"
-	ConfigFileNameDefault 		= "dotato.yaml"
-	
-	// Ignore file name
-	IgnoreFileNameEnv 				= "DOTATO_IGNORE"
-	IgnoreFileNameDefault 		= ".dotatoignore"
+	ConfigFileNameEnv     = "DOTATO_CONFIG_FILENAME"
+	ConfigFileNameDefault = "dotato.yaml"
 
-	MaxFileSystemIterEnv 			= "DOTATO_MAX_FS_ITER"
-	MaxFileSystemIterDefault	= 10000
+	// Ignore file name
+	IgnoreFileNameEnv     = "DOTATO_IGNORE_FILENAME"
+	IgnoreFileNameDefault = ".dotatoignore"
+
+	MaxFileSystemIterEnv     = "DOTATO_MAX_FS_ITER"
+	MaxFileSystemIterDefault = 10000
 )
 
 var (
-	ErrConfigNotFound = fmt.Errorf("config file not found")
+	dotatoFileNameState  = useEnvOrDefault(StateFileNameEnv, StateFileNameDefault)
+	dotatoFileNameConfig = useEnvOrDefault(ConfigFileNameEnv, ConfigFileNameDefault)
+	dotatoFileNameIgnore = useEnvOrDefault(IgnoreFileNameEnv, IgnoreFileNameDefault)
+	dotatoFileNames      = map[string]bool{
+		dotatoFileNameState:  true,
+		dotatoFileNameConfig: true,
+		dotatoFileNameIgnore: true,
+	}
+)
+
+var (
+	ErrConfigNotFound  = fmt.Errorf("config file not found")
 	ErrMaxIterExceeded = fmt.Errorf("max iteration exceeded")
 )
 
@@ -58,7 +69,7 @@ func useEnvOrDefaultInt(envVar string, defaultValue int) int {
 }
 
 // Get state file directory
-func getDotatoDirUnsafe() (string) {
+func getDotatoDirUnsafe() string {
 	// Check env var
 	if val, ok := os.LookupEnv(DotatoDirPathEnv); ok {
 		return val
@@ -86,9 +97,9 @@ func readStateUnsafe(fs billy.Filesystem, isMem bool) (*state.State, error) {
 
 	path := filepath.Join(
 		getDotatoDirUnsafe(),
-		useEnvOrDefault(StateFileNameEnv, StateFileNameDefault),
+		dotatoFileNameState,
 	)
-	
+
 	return state.New(fs, path)
 }
 
@@ -104,7 +115,7 @@ func readConfig(
 	}
 
 	// config file name
-	filename := useEnvOrDefault(ConfigFileNameEnv, ConfigFileNameDefault)
+	filename := dotatoFileNameConfig
 
 	cfg, cdir, err = config.ReadRecur(fs, dir, filename)
 	return
@@ -116,7 +127,7 @@ func readIgnore(
 	ig *ignore.Ignore, err error,
 ) {
 	// ignore file name
-	filename := useEnvOrDefault(IgnoreFileNameEnv, IgnoreFileNameDefault)
+	filename := dotatoFileNameIgnore
 
 	// Init ignore
 	ig = ignore.NewWithFS(fs, dir, filename)
@@ -136,7 +147,7 @@ func readIgnoreRecur(
 	ig *ignore.Ignore, err error,
 ) {
 	// ignore file name
-	filename := useEnvOrDefault(IgnoreFileNameEnv, IgnoreFileNameDefault)
+	filename := dotatoFileNameIgnore
 
 	// Init ignore
 	ig = ignore.NewWithFS(fs, dir, filename)

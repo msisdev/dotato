@@ -1,26 +1,29 @@
 package dotato
 
 import (
+	"os"
+	"path/filepath"
+
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/go-git/go-billy/v5/osfs"
-	"github.com/msisdev/dotato/pkg/config"
+	"github.com/msisdev/dotato/internal/config"
+	"github.com/msisdev/dotato/internal/state"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
-	"github.com/msisdev/dotato/pkg/ignore"
-	"github.com/msisdev/dotato/pkg/state"
+	"github.com/msisdev/dotato/internal/ignore"
 )
 
 // Dotato is a kind of engine.
 // It handles building blocks and exposes high level functions.
 type Dotato struct {
-	fs    	billy.Filesystem
-	isMem 	bool
-	maxIter	int								// max iteration for file system execution
+	fs      billy.Filesystem
+	isMem   bool
+	maxIter int // max iteration for file system execution
 
-	cdir  	gp.GardenPath			// config directory
-	cfg   	*config.Config
-	ig   		*ignore.Ignore 		// ignore file in config directory
-	state 	*state.State
+	cdir  gp.GardenPath // config directory
+	cfg   *config.Config
+	ig    *ignore.Ignore // ignore file in config directory
+	state *state.State
 }
 
 // New Dotato instance with filesystem
@@ -137,6 +140,7 @@ func (d Dotato) GetConfigGroups(
 	return
 }
 
+// Get resolved dotfile base of group.
 // May return not found env vars
 func (d Dotato) GetConfigGroupBase(
 	group, resolver string,
@@ -149,7 +153,7 @@ func (d Dotato) GetConfigGroupBase(
 		return
 	}
 
-	// Get base of group
+	// Get resolved dotfile base of group
 	base, notFound, err = d.cfg.GetGroupBase(group, resolver)
 	return
 }
@@ -176,19 +180,63 @@ func (d Dotato) GetConfigResolvers() (rs map[string]string, err error) {
 ///////////////////////////////////////////////////////////////////////////////
 
 func (d Dotato) GetAllHistoryByMode(mode string) ([]state.History, error) {
-	if err := d.setState(); err != nil { return nil, err }
-	
+	if err := d.setState(); err != nil {
+		return nil, err
+	}
+
 	return d.state.GetAllByMode(mode)
 }
 
 func (d Dotato) PutHistory(h state.History) (err error) {
-	if err = d.setState(); err != nil { return }
+	if err = d.setState(); err != nil {
+		return
+	}
 
 	return d.state.UpsertOne(h)
 }
 
 func (d Dotato) DeleteHistory(h state.History) (err error) {
-	if err = d.setState(); err != nil { return }
+	if err = d.setState(); err != nil {
+		return
+	}
 
 	return d.state.DeleteOne(h)
+}
+
+// Init ///////////////////////////////////////////////////////////////////////
+
+func (d Dotato) Init() (bool, error) {
+	wd, err := os.Getwd()
+	if err != nil {
+		return false, err
+	}
+
+	configPath := filepath.Join(wd, dotatoFileNameConfig)
+
+	// Check if config file exists
+	_, err = d.fs.Open(configPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			// do nothing
+		} else {
+			return false, err
+		}
+	} else {
+		return false, nil
+	}
+
+	// Create config file
+	cf, err := d.fs.Create(configPath)
+	if err != nil {
+		return false, err
+	}
+	defer cf.Close()
+
+	// Write example config
+	_, err = cf.Write([]byte(config.GetExample()))
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }

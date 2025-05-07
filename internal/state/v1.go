@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type HistoryV1 struct {
@@ -22,7 +23,10 @@ func v1_migrate(db *gorm.DB) error {
 }
 
 func (s State) v1_upsertOne(h HistoryV1) error {
-	return s.DB.Save(&h).Error
+	return s.DB.Clauses(clause.OnConflict{
+		Columns: []clause.Column{{Name: "dot_path"}},
+		DoUpdates: clause.AssignmentColumns([]string{"dtt_path", "mode"}),
+	}).Create(&h).Error
 }
 
 func (s State) v1_getAllByMode(mode string) (hs []HistoryV1, err error) {

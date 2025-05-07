@@ -126,14 +126,21 @@ func (c Config) GetGroups(plan string) map[string]bool {
 	return set
 }
 
-func (c Config) GetGroupBase(group, resolver string) (base gp.GardenPath, notFound []string, err error) {
+func (c Config) GetGroupBase(
+	group, resolver string,
+) (
+	base gp.GardenPath,
+	notFound []string,
+	err error,
+) {
+	// Get group resolvers with group name
 	resolverMap, ok := c.Groups[group]
 	if !ok {
 		err = ErrGroupNotFound
 		return
 	}
 
-	// Get path
+	// Get raw path with resolver
 	rawPath, ok := resolverMap[resolver]
 	if !ok {
 		err = ErrResolverNotFound

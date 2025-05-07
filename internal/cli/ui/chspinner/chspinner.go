@@ -115,7 +115,11 @@ func (m Spinner) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		empty := false
 		for !empty {
 			select {
-			case text := <-m.up:
+			case text, ok := <-m.up:
+				if !ok {
+					empty = true
+					break
+				}
 				m.text = text
 			default:
 				empty = true
@@ -131,6 +135,7 @@ func (m Spinner) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Spinner) View() string {
+	// fmt.Println("View():", m.text)
 	return fmt.Sprintf("%s %s\n", m.frame, m.text)
 }
 

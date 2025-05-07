@@ -106,3 +106,9 @@ func TestGardenPathWindows(t *testing.T) {
 		})
 	}
 }
+
+func TestCopy(t *testing.T) {
+	path := GardenPath{"foo", "bar", "baz"}
+	path2 := path.Copy()
+	assert.Equal(t, path, path2, "Expected %v, got %v", path, path2)
+}

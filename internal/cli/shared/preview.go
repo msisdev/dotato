@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/msisdev/dotato/internal/cli/ui/chspinner"
-	"github.com/msisdev/dotato/pkg/config"
-	"github.com/msisdev/dotato/pkg/dotato"
+	"github.com/msisdev/dotato/internal/config"
+	"github.com/msisdev/dotato/internal/dotato"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 
@@ -135,12 +135,12 @@ func (s Shared) PreviewImportGroupLink(
 	}
 
 	var (
-		ps    []dotato.Preview
-		dotOW int
-		dttCR int
-		dttOW int
+		ps       []dotato.Preview
+		dotOW    int
+		dttCR    int
+		dttOW    int
 		totalMod int
-		title = fmt.Sprintf("Scanning files of group %s...", group)
+		title    = fmt.Sprintf("Scanning files of group %s...", group)
 	)
 	err = chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
 		return s.d.WalkImportLink(group, base, func(p dotato.Preview) error {
@@ -201,14 +201,20 @@ func (s Shared) PreviewImportGroupLink(
 func (s Shared) PreviewExportGroupFile(
 	group, resolver string,
 ) ([]dotato.Preview, int, error) {
+	base, err := s.GetGroupBase(group, resolver)
+	if err != nil {
+		s.logger.Fatal(err)
+		return nil, 0, err
+	}
+
 	var (
 		ps        []dotato.Preview
 		create    int
 		overwrite int
 		title     = fmt.Sprintf("Scanning files of group %s...", group)
 	)
-	err := chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
-		return s.d.WalkExportFile(group, func(p dotato.Preview) error {
+	err = chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
+		return s.d.WalkExportFile(group, base, func(p dotato.Preview) error {
 			// Check quit
 			select {
 			case <-quit:
@@ -248,14 +254,20 @@ func (s Shared) PreviewExportGroupFile(
 func (s Shared) PreviewExportGroupLink(
 	group, resolver string,
 ) ([]dotato.Preview, int, error) {
+	base, err := s.GetGroupBase(group, resolver)
+	if err != nil {
+		s.logger.Fatal(err)
+		return nil, 0, err
+	}
+
 	var (
 		ps        []dotato.Preview
 		create    int
 		overwrite int
 		title     = fmt.Sprintf("Scanning files of group %s...", group)
 	)
-	err := chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
-		return s.d.WalkExportLink(group, func(p dotato.Preview) error {
+	err = chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
+		return s.d.WalkExportLink(group, base, func(p dotato.Preview) error {
 			// Check quit
 			select {
 			case <-quit:
@@ -289,7 +301,7 @@ func (s Shared) PreviewExportGroupLink(
 		return nil, 0, err
 	}
 
-	return ps, 0, nil
+	return ps, create + overwrite, nil
 }
 
 func (s Shared) PreviewUnlinkGroup(

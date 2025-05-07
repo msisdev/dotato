@@ -3,6 +3,7 @@ package args
 type Args struct {
 	Danger			*DangerArgs		`arg:"subcommand:danger|!"`
 	Import			*ImportArgs		`arg:"subcommand:import|im"`
+	Init				*InitArgs			`arg:"subcommand:init"`
 	Export			*ExportArgs		`arg:"subcommand:export|ex"`
 	Unlink 			*UnlinkArgs 	`arg:"subcommand:unlink|un"`
 	Version 		*VersionArgs	`arg:"subcommand:version|v" help:"Show version"`
@@ -54,6 +55,10 @@ type ImportGroupArgs struct {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+type InitArgs struct {}
+
+/////////////////////////////////////////////////////////////////////////////////
 
 type UnlinkArgs struct {
 	Plan 		*UnlinkPlanArgs		`arg:"subcommand:plan|p"`
