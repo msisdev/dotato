@@ -34,7 +34,7 @@ func _new(fs billy.Filesystem, base gp.GardenPath, filename string) *Ignore {
 
 // Create an Ignore instance.
 func New(base gp.GardenPath, ignoreFileName string) *Ignore {
-	return _new(osfs.New("/"), base, ignoreFileName)
+	return _new(osfs.New(""), base, ignoreFileName)
 }
 
 func NewWithFS(fs billy.Filesystem, base gp.GardenPath, ignoreFileName string) *Ignore {

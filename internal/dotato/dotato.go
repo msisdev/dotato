@@ -29,7 +29,7 @@ type Dotato struct {
 // New Dotato instance with filesystem
 func New() *Dotato {
 	return &Dotato{
-		fs:    osfs.New("/"),
+		fs:    osfs.New(""),
 		isMem: false,
 		maxIter: useEnvOrDefaultInt(
 			MaxFileSystemIterEnv,

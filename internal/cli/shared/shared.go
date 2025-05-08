@@ -26,7 +26,7 @@ type Shared struct {
 func New(logger *log.Logger) (*Shared, error) {
 	s := &Shared{
 		logger: logger,
-		fs:     osfs.New("/"),
+		fs:     osfs.New(""),
 	}
 	s.d = dotato.NewWithFS(s.fs, false)
 
