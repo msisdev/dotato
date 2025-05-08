@@ -60,7 +60,10 @@ func NewCheckEnv(path string) (gp GardenPath, notFound []string, err error) {
 	if vol := filepath.VolumeName(path); vol != "" {
 		path = strings.TrimPrefix(path, vol)	// remove volume name
 		path = strings.TrimPrefix(path, sep)	// remove leading separator
-		gp = append(GardenPath{vol}, strings.Split(path, sep)...)
+		gp = GardenPath{vol}
+		if path != "" {
+			gp = append(gp, strings.Split(path, sep)...)
+		}
 		return
 	}
 
@@ -75,9 +78,15 @@ func (p GardenPath) Abs() string {
 		return ""
 	}
 
-	// (linux) handle root directory
-	if len(p) == 1 && p[0] == "" {
-		return "/"
+	
+	if len(p) == 1 {
+		if p[0] == "" {
+			// (linux) handle root directory
+			return "/"
+		} else {
+			// (windows) handle volume name
+			return p[0] + string(os.PathSeparator)
+		}
 	}
 	
 	return strings.Join(p, string(os.PathSeparator))

@@ -35,18 +35,3 @@ func expandTilde(rawPath string) (string, error) {
 	}
 	return strings.Replace(rawPath, rawPath[:end], u.HomeDir, 1), nil
 }
-
-// Returns the expanded string and a list of
-// missing env vars.
-func expandEnv(s string) (expanded string, notFound []string) {
-	expanded = os.Expand(s, func(env string) string {
-		val, ok := os.LookupEnv(env)
-		if !ok {
-			notFound = append(notFound, env)
-		}
-		
-		return val
-	})
-
-	return
-}

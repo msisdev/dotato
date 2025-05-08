@@ -2,12 +2,18 @@ package gardenpath
 
 import (
 	"os"
-	"path/filepath"
 	"runtime"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func test(t *testing.T, path string, expected GardenPath, expectedAbs string) {
+	gp, err := New(path)
+	assert.NoError(t, err, "New(%s): %v", path, err)
+	assert.Equal(t, expected, gp, "New(%s): expected %v, got %v", path, expected, gp)
+	assert.Equal(t, expectedAbs, gp.Abs(), "New(%s): expected Abs() %s, got %s", path, expectedAbs, gp.Abs())
+}
 
 func TestGardenPathLinux(t *testing.T) {
 	if runtime.GOOS != "linux" {
@@ -15,65 +21,32 @@ func TestGardenPathLinux(t *testing.T) {
 		return
 	}
 
-	type Testcase struct {
-		path 	string
-		gp		GardenPath
-		abs		string
-	}
-
-	// HOME
-	os.Setenv("HOME", "/home/user")
-
 	// Get WD
 	wdStr, err := os.Getwd()
 	if err != nil {
 		panic("Failed to get current working directory: " + err.Error())
 	}
-	wd, err := New(wdStr)
+	wdgp, err := New(wdStr)
 	if err != nil {
 		panic("Failed to create GardenPath from PWD: " + err.Error())
 	}
-	assert.Equal(t, "", wd[0])
-	assert.Equal(t, wdStr, wd.Abs(), "Expected %s, got %s", wdStr, wd.Abs())
+	assert.Equal(t, "", wdgp[0])
+	assert.Equal(t, wdStr, wdgp.Abs(), "Expected %s, got %s", wdStr, wdgp.Abs())
 
-	testcases := []Testcase{
-		// Test empty path
-		{"", nil, ""},
-		// Test wd
-		{".", wd, wdStr},
-		{"./", wd, wdStr},
-		{"./foo", append(wd, "foo"), filepath.Join(wdStr, "foo")},
-		{"foo", append(wd, "foo"), filepath.Join(wdStr, "foo")},
-		{"foo/", append(wd, "foo"), filepath.Join(wdStr, "foo")},
-		{"foo/bar", append(wd, "foo", "bar"), filepath.Join(wdStr, "foo", "bar")},
-		// Test root path
-		{"/", GardenPath{""}, "/"},
-		// Test normal paths
-		{"/home", GardenPath{"", "home"}, "/home"},
-		{"/home/", GardenPath{"", "home"}, "/home"},
-		{"/home/user", GardenPath{"", "home", "user"}, "/home/user"},
-		// Test tilde
-		{"~", GardenPath{"", "home", "user"}, "/home/user"},
-		{"~/", GardenPath{"", "home", "user"}, "/home/user"},
-		{"~/foo", GardenPath{"", "home", "user", "foo"}, "/home/user/foo"},
-		// Test env vars
-		// {"$HOME", GardenPath{"", "home", "user"}, "/home/user"},
-		// {"$HOME/", GardenPath{"", "home", "user"}, "/home/user"},
-		// {"$HOME/foo", GardenPath{"", "home", "user", "foo"}, "/home/user/foo"},
-		// Test env vars 2
-		// {"${HOME}", GardenPath{"", "home", "user"}, "/home/user"},
-		// {"${HOME}/", GardenPath{"", "home", "user"}, "/home/user"},
-		// {"${HOME}/foo", GardenPath{"", "home", "user", "foo"}, "/home/user/foo"},
-	}
-
-	for _, tc := range testcases {
-		t.Run(tc.path, func(t *testing.T) {
-			gp, err := New(tc.path)
-			assert.NoError(t, err)
-			assert.Equal(t, tc.gp, gp, "New(%s): expected %v, got %v", tc.path, tc.gp, gp)
-			assert.Equal(t, tc.abs, gp.Abs(), "Abs(%s): expected %s, got %s", tc.path, tc.abs, gp.Abs())
-		})
-	}
+	test(t, "", nil, "")
+	test(t, ".", wdgp, wdStr)
+	test(t, "./", wdgp, wdStr)
+	test(t, "./foo", append(wdgp.Copy(), "foo"), wdStr+"/foo")
+	test(t, "foo", append(wdgp.Copy(), "foo"), wdStr+"/foo")
+	test(t, "foo/", append(wdgp.Copy(), "foo"), wdStr+"/foo")
+	test(t, "foo/bar", append(wdgp.Copy(), "foo", "bar"), wdStr+"/foo/bar")
+	test(t, "/", GardenPath{""}, "/")
+	test(t, "/home", GardenPath{"", "home"}, "/home")
+	test(t, "/home/", GardenPath{"", "home"}, "/home")
+	test(t, "/home/user", GardenPath{"", "home", "user"}, "/home/user")
+	test(t, "~", GardenPath{"", "home", "user"}, "/home/user")
+	test(t, "~/", GardenPath{"", "home", "user"}, "/home/user")
+	test(t, "~/foo", GardenPath{"", "home", "user", "foo"}, "/home/user/foo")
 }
 
 func TestGardenPathWindows(t *testing.T) {
@@ -82,29 +55,24 @@ func TestGardenPathWindows(t *testing.T) {
 		return
 	}
 
-	type Testcase struct {
-		path 	string
-		gp		GardenPath
+	// Get WD
+	wdStr, err := os.Getwd()
+	if err != nil {
+		panic("Failed to get current working directory: " + err.Error())
 	}
+	wdgp, err := New(wdStr)
+	if err != nil {
+		panic("Failed to create GardenPath from PWD: " + err.Error())
+	}
+	assert.Equal(t, wdStr, wdgp.Abs(), "Expected %s, got %s", wdStr, wdgp.Abs())
 
-	testcases := []Testcase{
-		// Test empty path
-		{"", nil},
-		// Test root path
-		{"C:\\", GardenPath{""}},
-		// Test normal paths
-		{"C:\\home", GardenPath{"", "home"}},
-		{"C:\\home\\", GardenPath{"", "home"}},
-		{"C:\\home\\user", GardenPath{"", "home", "user"}},
-	}
-
-	for _, tc := range testcases {
-		t.Run(tc.path, func(t *testing.T) {
-			gp, err := New(tc.path)
-			assert.NoError(t, err)
-			assert.Equal(t, tc.gp, gp, "New(%s): expected %v, got %v", tc.path, tc.gp, gp)
-		})
-	}
+	test(t, "", nil, "")
+	test(t, "C:", wdgp, wdStr)
+	test(t, ".", wdgp, wdStr)
+	test(t, "C:\\", GardenPath{"C:"}, "C:\\")
+	test(t, "C:\\home", GardenPath{"C:", "home"}, "C:\\home")
+	test(t, "C:\\home\\", GardenPath{"C:", "home"}, "C:\\home")
+	test(t, "C:\\home\\user", GardenPath{"C:", "home", "user"}, "C:\\home\\user")
 }
 
 func TestCopy(t *testing.T) {
