@@ -42,7 +42,9 @@ func ReadRecur(fs billy.Filesystem, dir gp.GardenPath, filename string) (*Config
 		return nil, nil, nil
 	}
 
-	filepath := append(dir, filename)
+	// filepath := append(dir, filename)
+	filepath := dir.Copy()
+	filepath = append(filepath, filename)
 
 	cfg, ok, err := Read(fs, filepath.Abs())
 	if err != nil {
@@ -50,6 +52,11 @@ func ReadRecur(fs billy.Filesystem, dir gp.GardenPath, filename string) (*Config
 	}
 	if ok {
 		return cfg, dir, nil
+	}
+
+	if len(dir) == 1 {
+		// dir is root.
+		return nil, nil, nil
 	}
 
 	return ReadRecur(fs, dir.Parent(), filename)

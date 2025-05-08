@@ -134,7 +134,8 @@ func (d Dotato) WalkDotato(
 		return
 	}
 
-	base := append(d.cdir, group)
+	base := d.cdir.Copy()
+	base = append(base, group)
 	return d.WalkNonIgnored(base, ig, onDtt)
 }
 

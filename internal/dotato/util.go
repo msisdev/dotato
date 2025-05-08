@@ -18,7 +18,9 @@ var (
 func (d Dotato) GetGroupIgnore(group string) (*ignore.Ignore, error) {
 	if err := d.setConfig(); err != nil { return nil, err }
 
-	return readIgnoreRecur(d.fs, append(d.cdir, group))
+	dir := d.cdir.Copy()
+	dir = append(dir, group)
+	return readIgnoreRecur(d.fs, dir)
 }
 
 // Return true if file contents are equal
@@ -106,7 +108,8 @@ func (d Dotato) DotToDtt(
 	dot gp.GardenPath,
 	group string,
 ) (path gp.GardenPath) {
-	path = append(d.cdir, group)
+	path = d.cdir.Copy()
+	path = append(path, group)
 	path = append(path, dot[len(base):]...)
 	return
 }
@@ -116,7 +119,11 @@ func (d Dotato) DttToDot(
 	dtt gp.GardenPath,
 	base gp.GardenPath,
 ) gp.GardenPath {
-	return append(base, dtt[len(d.cdir)+1:]...)
+	path := base.Copy()
+	for i := len(d.cdir)+1; i < len(dtt); i++ {
+		path = append(path, dtt[i])
+	}
+	return path
 }
 
 // Overwrite is allowed
