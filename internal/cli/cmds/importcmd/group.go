@@ -6,10 +6,11 @@ import (
 	"github.com/charmbracelet/log"
 	"github.com/msisdev/dotato/internal/cli/args"
 	"github.com/msisdev/dotato/internal/cli/shared"
-	"github.com/msisdev/dotato/internal/cli/ui/chspinner"
 	"github.com/msisdev/dotato/internal/cli/ui/inputconfirm"
+	"github.com/msisdev/dotato/internal/cli/ui/mxspinner"
 	"github.com/msisdev/dotato/internal/config"
 	"github.com/msisdev/dotato/internal/dotato"
+	"github.com/msisdev/dotato/internal/lib/store"
 )
 
 func ImportGroup(logger *log.Logger, args *args.ImportGroupArgs) {
@@ -75,7 +76,7 @@ func ImportGroup(logger *log.Logger, args *args.ImportGroupArgs) {
 	} else {
 		title = "Importing links..."
 	}
-	err = chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
+	err = mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
 		for _, pre := range ps {
 			// Check quit
 			select {
@@ -97,10 +98,10 @@ func ImportGroup(logger *log.Logger, args *args.ImportGroupArgs) {
 				}
 			}
 
-			up <- pre.Dot.Path.Abs()
+			store.TrySet(pre.Dot.Path.Abs())
 		}
 
-		up <- "Done"
+		store.Set("Done")
 
 		return nil
 	})

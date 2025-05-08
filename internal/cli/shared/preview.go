@@ -3,9 +3,10 @@ package shared
 import (
 	"fmt"
 
-	"github.com/msisdev/dotato/internal/cli/ui/chspinner"
+	"github.com/msisdev/dotato/internal/cli/ui/mxspinner"
 	"github.com/msisdev/dotato/internal/config"
 	"github.com/msisdev/dotato/internal/dotato"
+	"github.com/msisdev/dotato/internal/lib/store"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 
@@ -21,7 +22,7 @@ func (s Shared) PreviewDangerUnlink() ([]dotato.Preview, int, error) {
 		overwrite int
 		title     = "Scanning files ..."
 	)
-	err = chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
+	err = mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
 		for _, h := range hs {
 			// Check quit
 			select {
@@ -30,16 +31,17 @@ func (s Shared) PreviewDangerUnlink() ([]dotato.Preview, int, error) {
 			default:
 			}
 
+			// Make path from history
 			dot, err := gp.New(h.DotPath)
 			if err != nil {
 				return err
 			}
-
 			dtt, err := gp.New(h.DttPath)
 			if err != nil {
 				return err
 			}
 
+			// Get preview
 			p, err := s.d.PreviewUnlink(dot, dtt)
 			if err != nil {
 				return err
@@ -59,13 +61,13 @@ func (s Shared) PreviewDangerUnlink() ([]dotato.Preview, int, error) {
 			}
 
 			// Update spinner
-			up <- fmt.Sprintf(
+			store.Set(fmt.Sprintf(
 				"overwrite %d, total %d",
 				overwrite, len(ps),
-			)
+			))
 		}
 
-		return nil
+		return nil		
 	})
 	if err != nil {
 		return nil, 0, err
@@ -85,11 +87,11 @@ func (s Shared) PreviewImportGroupFile(
 
 	var (
 		ps        []dotato.Preview
-		create    int
-		overwrite int
+		create    = 0
+		overwrite = 0
 		title     = fmt.Sprintf("Scanning files of group %s...", group)
 	)
-	err = chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
+	err = mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
 		return s.d.WalkImportFile(group, base, func(p dotato.Preview) error {
 			// Check quit
 			select {
@@ -100,9 +102,11 @@ func (s Shared) PreviewImportGroupFile(
 
 			// Add preview
 			ps = append(ps, p)
+
+			// Count operations
 			switch p.DttOp {
 			case dotato.FileOpNone:
-				// do nothing
+				// Do nothing
 			case dotato.FileOpCreate:
 				create++
 			case dotato.FileOpOverwrite:
@@ -110,10 +114,10 @@ func (s Shared) PreviewImportGroupFile(
 			}
 
 			// Update spinner
-			up <- fmt.Sprintf(
+			store.Set(fmt.Sprintf(
 				"group %s: create %d, overwrite %d, total %d",
 				group, create, overwrite, len(ps),
-			)
+			))
 
 			return nil
 		})
@@ -142,7 +146,7 @@ func (s Shared) PreviewImportGroupLink(
 		totalMod int
 		title    = fmt.Sprintf("Scanning files of group %s...", group)
 	)
-	err = chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
+	err = mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
 		return s.d.WalkImportLink(group, base, func(p dotato.Preview) error {
 			// Check quit
 			select {
@@ -183,10 +187,10 @@ func (s Shared) PreviewImportGroupLink(
 			}
 
 			// Update spinner
-			up <- fmt.Sprintf(
+			store.Set(fmt.Sprintf(
 				"group %s: dot overwrite %d, dtt create %d, dtt overwrite %d, total %d",
 				group, dotOW, dttCR, dttOW, len(ps),
-			)
+			))
 
 			return nil
 		})
@@ -213,7 +217,7 @@ func (s Shared) PreviewExportGroupFile(
 		overwrite int
 		title     = fmt.Sprintf("Scanning files of group %s...", group)
 	)
-	err = chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
+	err = mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
 		return s.d.WalkExportFile(group, base, func(p dotato.Preview) error {
 			// Check quit
 			select {
@@ -236,10 +240,10 @@ func (s Shared) PreviewExportGroupFile(
 			}
 
 			// Update spinner
-			up <- fmt.Sprintf(
+			store.Set(fmt.Sprintf(
 				"group %s: create %d, overwrite %d, total %d",
 				group, create, overwrite, len(ps),
-			)
+			))
 
 			return nil
 		})
@@ -266,7 +270,7 @@ func (s Shared) PreviewExportGroupLink(
 		overwrite int
 		title     = fmt.Sprintf("Scanning files of group %s...", group)
 	)
-	err = chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
+	err = mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
 		return s.d.WalkExportLink(group, base, func(p dotato.Preview) error {
 			// Check quit
 			select {
@@ -289,10 +293,10 @@ func (s Shared) PreviewExportGroupLink(
 			}
 
 			// Update spinner
-			up <- fmt.Sprintf(
+			store.Set(fmt.Sprintf(
 				"group %s: create %d, overwrite %d, total %d",
 				group, create, overwrite, len(ps),
-			)
+			))
 
 			return nil
 		})
@@ -318,7 +322,7 @@ func (s Shared) PreviewUnlinkGroup(
 		overwrite int
 		title     = fmt.Sprintf("Scanning files of group %s...", group)
 	)
-	err = chspinner.Run(title, func(up chan<- string, quit <-chan bool) error {
+	err = mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
 		return s.d.WalkUnlink(group, base, func(p dotato.Preview) error {
 			// Check quit
 			select {
@@ -341,10 +345,10 @@ func (s Shared) PreviewUnlinkGroup(
 			}
 
 			// Update spinner
-			up <- fmt.Sprintf(
+			store.Set(fmt.Sprintf(
 				"group %s: overwrite %d, total %d",
 				group, overwrite, len(ps),
-			)
+			))
 
 			return nil
 		})
