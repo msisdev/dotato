@@ -7,8 +7,8 @@ type Args struct {
 	Export			*ExportArgs		`arg:"subcommand:export|ex"`
 	Unlink 			*UnlinkArgs 	`arg:"subcommand:unlink|un"`
 	Version 		*VersionArgs	`arg:"subcommand:version|v" help:"Show version"`
-	Verbose 		bool					`arg:"-v,--verbose" help:"Verbose output"`
-	Interactive	bool					`arg:"-i,--interactive" help:"Interactive mode"`
+	// Verbose 		bool					`arg:"-v,--verbose" help:"Verbose output"`
+	// Interactive	bool					`arg:"-i,--interactive" help:"Interactive mode"`
 }
 
 ///////////////////////////////////////////////////////////////////////////////
