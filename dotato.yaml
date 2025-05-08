@@ -2,7 +2,7 @@
 version: 1.0.0
 
 # Mode is either file or link.
-mode: link
+mode: file
 
 # Plans are used to select multiple groups. No other purposes.
 #  - There is no reserved plan name.
