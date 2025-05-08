@@ -1,6 +1,8 @@
 package config
 
 import (
+	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/go-git/go-billy/v5/memfs"
@@ -48,6 +50,11 @@ func TestConfigFile(t *testing.T) {
 }
 
 func TestReadRecur(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Skipping Linux path test on non-Linux OS")
+		return
+	}
+
 	const filename = "dotato.yaml"
 	fs := memfs.New()
 
@@ -65,4 +72,34 @@ func TestReadRecur(t *testing.T) {
 	assert.Equal(t, root, dir, "Directory should be equal")
 	assert.Equal(t, testcase1Config.Version, genCfg.Version, "Version should be equal")
 	assert.True(t, genCfg.IsEqual(testcase1Config), "Generated config should be equal to the expected config")
+}
+
+func TestReadRecurWindows(t *testing.T) {
+	if runtime.GOOS != "windows" {
+		t.Skip("Skipping Windows path test on non-Windows OS")
+		return
+	}
+
+	const filename = "dotato.yaml"
+	fs := memfs.New()
+
+	// Read config file recursively
+	wd, err := gp.New(".")
+	if err != nil {
+		panic(err)
+	}
+
+	// Write config file in the root directory
+	root := wd[0] + "\\"
+	configPath := filepath.Join(root, filename)
+	err = Write(fs, configPath, testcase1Config)
+	assert.NoError(t, err, "Write should not return an error")
+	
+	// ReadRecur
+	genCfg, dir, err := ReadRecur(fs, wd, filename)
+	assert.NoError(t, err, "ReadRecur should not return an error")
+	assert.Equal(t, wd[:1], dir, "Directory should be equal")
+	assert.Equal(t, testcase1Config.Version, genCfg.Version, "Version should be equal")
+	assert.True(t, genCfg.IsEqual(testcase1Config), "Generated config should be equal to the expected config")
+
 }
