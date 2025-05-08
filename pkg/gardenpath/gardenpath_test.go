@@ -16,7 +16,7 @@ func test(t *testing.T, path string, expected GardenPath, expectedAbs string) {
 }
 
 func TestGardenPathLinux(t *testing.T) {
-	if runtime.GOOS != "linux" {
+	if runtime.GOOS == "windows" {
 		t.Skip("Skipping Linux path test on non-Linux OS")
 		return
 	}

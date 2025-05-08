@@ -1,6 +1,7 @@
 package ignore
 
 import (
+	"runtime"
 	"testing"
 
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
@@ -19,12 +20,17 @@ func testRuleTree(t *testing.T, rt *RuleTree, fs []FileEntry) {
 
 		// test IsIgnoredWithBase
 		remotePath := append(gp.GardenPath{"dummy"}, path...)
-		ignored = rt.IsIgnoredWithBase(rt.base + 1, remotePath)
+		ignored = rt.IsIgnoredWithBase(rt.base+1, remotePath)
 		assert.Equal(t, f.isIgnored, ignored, "path: %s", f.path)
 	}
 }
 
 func TestRuleTree1_Base0(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Skipping Linux path test on non-Linux OS")
+		return
+	}
+
 	rt := &RuleTree{
 		base: 0,
 		head: &ruleNode{
@@ -49,6 +55,11 @@ func TestRuleTree1_Base0(t *testing.T) {
 }
 
 func TestRuleTree1_Base1(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Skipping Linux path test on non-Linux OS")
+		return
+	}
+
 	rt := &RuleTree{
 		base: 1,
 		head: &ruleNode{
@@ -68,6 +79,11 @@ func TestRuleTree1_Base1(t *testing.T) {
 }
 
 func TestRuleTree1_Base2(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Skipping Linux path test on non-Linux OS")
+		return
+	}
+
 	rt := &RuleTree{
 		base: 2,
 		head: &ruleNode{
@@ -82,6 +98,11 @@ func TestRuleTree1_Base2(t *testing.T) {
 }
 
 func TestRuleTree2_Base0(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Skipping Linux path test on non-Linux OS")
+		return
+	}
+
 	rt := &RuleTree{
 		base: 0,
 		head: testcase2Rule,
