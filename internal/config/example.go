@@ -30,5 +30,5 @@ groups:
 `
 
 func GetExample() string {
-	return fmt.Sprintf(configFormat, Version1)
+	return fmt.Sprintf(configFormat, ConfigVersion)
 }

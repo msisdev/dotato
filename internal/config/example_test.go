@@ -8,7 +8,7 @@ import (
 
 func TestSampleConfig(t *testing.T) {
 	cfg := &Config{
-		Version: Version1,
+		Version: ConfigVersion,
 		Mode:	ModeFile,
 		Plans: map[string][]string{
 			"all": nil,

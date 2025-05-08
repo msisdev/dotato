@@ -1,5 +1,5 @@
 # dotato.yaml
-version: 1.0.0
+version: v1
 
 # Mode is either file or link.
 mode: file

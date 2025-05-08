@@ -19,7 +19,8 @@ const (
 	ModeLink = "link"
 	ModeDefault = ModeFile
 
-	Version1 = "1.0.0"
+	Version1 = "v1"
+	ConfigVersion = Version1
 )
 
 type Config struct {
@@ -31,7 +32,7 @@ type Config struct {
 
 func New() *Config {
 	return &Config{
-		Version:	Version1,
+		Version:	ConfigVersion,
 		Mode:			ModeDefault,
 		Plans:   	map[string][]string{},
 		Groups:  	map[string]map[string]string{},

@@ -20,6 +20,7 @@ const (
 	KeyVersion							= "version"
 	VersionUnknown	Version = "unknown"
 	Version1 				Version = "v1"
+	DBVersion	Version = Version1
 )
 
 const (
@@ -66,7 +67,7 @@ func NewDB(path string) (*gorm.DB, Version, error) {
 		}
 	}
 
-	return db, Version1, nil
+	return db, DBVersion, nil
 }
 
 // Select version from db
@@ -85,8 +86,8 @@ func GetVersion(db *gorm.DB) (Version, bool, error) {
 
 	// Map value to version
 	switch store.Value {
-	case string(Version1):
-		return Version1, true, nil
+	case string(DBVersion):
+		return DBVersion, true, nil
 	default:
 		return VersionUnknown, true, nil
 	}
