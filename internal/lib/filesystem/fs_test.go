@@ -1,9 +1,10 @@
 // This file tests behavior of the external library go-billy
 
-package dotato
+package filesystem
 
 import (
 	"os"
+	"runtime"
 	"testing"
 
 	"github.com/go-git/go-billy/v5/memfs"
@@ -175,4 +176,23 @@ func TestFS_Symlink(t *testing.T) {
 	}
 
 	// Conclusion: fs.Symlink() doesn't allow overwriting any existing file
+}
+
+func TestWindows(t *testing.T) {
+	if runtime.GOOS != "windows" {
+		t.Skip("skipping test on non-windows platform")
+		return
+	}
+
+	fs := NewOSFS()
+
+	// Create a file
+	file, err := fs.Create("testfile.txt")
+	assert.NoError(t, err)
+	_, err = file.Write([]byte("Hello, World!"))
+	assert.NoError(t, err)
+
+	// Create a symlink
+	err = fs.Symlink("testfile.txt", "testlink")
+	assert.NoError(t, err)
 }

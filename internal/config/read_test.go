@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/go-git/go-billy/v5/memfs"
+	"github.com/msisdev/dotato/internal/lib/filesystem"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 	"github.com/stretchr/testify/assert"
 )
@@ -74,6 +75,21 @@ func TestReadRecur(t *testing.T) {
 	assert.True(t, genCfg.IsEqual(testcase1Config), "Generated config should be equal to the expected config")
 }
 
+func TestReadWindows(t *testing.T) {
+	if runtime.GOOS != "windows" {
+		t.Skip("Skipping Windows path test on non-Windows OS")
+		return
+	}
+
+	filepath := "C:\\Users\\mslit\\Work\\GitHub\\dotato\\dotato.yaml"
+	fs := filesystem.NewOSFS()
+
+	cfg, ok, err := Read(fs, filepath)
+	assert.NoError(t, err, "Read should not return an error")
+	assert.True(t, ok, "File should exist")
+	assert.NotNil(t, cfg, "Config should not be nil")
+}
+
 func TestReadRecurWindows(t *testing.T) {
 	if runtime.GOOS != "windows" {
 		t.Skip("Skipping Windows path test on non-Windows OS")
@@ -101,5 +117,4 @@ func TestReadRecurWindows(t *testing.T) {
 	assert.Equal(t, wd[:1], dir, "Directory should be equal")
 	assert.Equal(t, testcase1Config.Version, genCfg.Version, "Version should be equal")
 	assert.True(t, genCfg.IsEqual(testcase1Config), "Generated config should be equal to the expected config")
-
 }

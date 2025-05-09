@@ -45,7 +45,6 @@ func ReadRecur(fs billy.Filesystem, dir gp.GardenPath, filename string) (*Config
 	// filepath := append(dir, filename)
 	filepath := dir.Copy()
 	filepath = append(filepath, filename)
-
 	cfg, ok, err := Read(fs, filepath.Abs())
 	if err != nil {
 		return nil, nil, err

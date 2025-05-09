@@ -1,15 +1,26 @@
 package dotato
 
 import (
+	"os"
+	"runtime"
 	"testing"
 
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 	"github.com/stretchr/testify/assert"
 )
 
+func getGardenPathFirstEl() string {
+	if runtime.GOOS == "windows" {
+		return os.Getenv("SystemDrive")
+	}
+	return ""
+}
+
 func TestNewPathStat(t *testing.T) {
-	path := gp.GardenPath{"", "home", "user", ".bashrc"}
-	real := gp.GardenPath{"", "home", "user", "Documents", "dotato", "bash", ".bashrc"}
+	var el = getGardenPathFirstEl()
+
+	path := gp.GardenPath{el, "home", "user", ".bashrc"}
+	real := gp.GardenPath{el, "home", "user", "Documents", "dotato", "bash", ".bashrc"}
 
 	// Path: link / Real: file
 	{

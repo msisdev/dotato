@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/go-git/go-billy/v5"
-	"github.com/go-git/go-billy/v5/osfs"
 	"github.com/msisdev/dotato/internal/lib/filesystem"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
@@ -35,7 +34,7 @@ func _new(fs billy.Filesystem, base gp.GardenPath, filename string) *Ignore {
 
 // Create an Ignore instance.
 func New(base gp.GardenPath, ignoreFileName string) *Ignore {
-	return _new(osfs.New(filesystem.GetRootDir()), base, ignoreFileName)
+	return _new(filesystem.NewOSFS(), base, ignoreFileName)
 }
 
 func NewWithFS(fs billy.Filesystem, base gp.GardenPath, ignoreFileName string) *Ignore {

@@ -5,7 +5,6 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/go-git/go-billy/v5"
-	"github.com/go-git/go-billy/v5/osfs"
 	"github.com/msisdev/dotato/internal/cli/ui/mxspinner"
 	"github.com/msisdev/dotato/internal/dotato"
 	"github.com/msisdev/dotato/internal/lib/filesystem"
@@ -27,7 +26,7 @@ type Shared struct {
 func New(logger *log.Logger) (*Shared, error) {
 	s := &Shared{
 		logger: logger,
-		fs:     osfs.New(filesystem.GetRootDir()),
+		fs:     filesystem.NewOSFS(),
 	}
 	s.d = dotato.NewWithFS(s.fs, false)
 
