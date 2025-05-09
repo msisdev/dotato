@@ -76,7 +76,7 @@ func (m Spinner) watch() tea.Cmd {
 		}
 
 		// Check store
-		text, ok := m.store.Get()
+		text, ok := m.store.Pop()
 		return taskMsg{text, ok}
 	})
 }
@@ -123,7 +123,7 @@ func (m Spinner) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		// Drain store
-		if text, ok := m.store.Get(); ok {
+		if text, ok := m.store.Pop(); ok {
 			m.text = text
 		}
 		
