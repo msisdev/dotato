@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 
 	"github.com/go-git/go-billy/v5"
-	gp "github.com/msisdev/dotato/pkg/gardenpath"
 	"github.com/msisdev/dotato/internal/ignore"
+	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 
 var (
@@ -167,6 +167,7 @@ func evalSymlinksRecur(fs billy.Filesystem, path string, depth int) (string, err
 	}
 
 	// Symlink, read the target
+	// var target string
 	target, err := fs.Readlink(path)
 	if err != nil {
 		return "", err

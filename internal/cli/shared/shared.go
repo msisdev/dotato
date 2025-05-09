@@ -8,6 +8,7 @@ import (
 	"github.com/go-git/go-billy/v5/osfs"
 	"github.com/msisdev/dotato/internal/cli/ui/mxspinner"
 	"github.com/msisdev/dotato/internal/dotato"
+	"github.com/msisdev/dotato/internal/lib/filesystem"
 	"github.com/msisdev/dotato/internal/lib/store"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
@@ -26,7 +27,7 @@ type Shared struct {
 func New(logger *log.Logger) (*Shared, error) {
 	s := &Shared{
 		logger: logger,
-		fs:     osfs.New(""),
+		fs:     osfs.New(filesystem.GetRootDir()),
 	}
 	s.d = dotato.NewWithFS(s.fs, false)
 

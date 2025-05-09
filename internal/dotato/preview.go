@@ -87,6 +87,7 @@ func (d Dotato) newPreview(
 			return nil, err
 		}
 		p.Dtt = dttStat
+		
 	}
 
 	return &p, nil
@@ -300,17 +301,23 @@ func (d Dotato) PreviewUnlink(
 
 	// Dot file operation
 	if !p.Dot.Exists {
+		// Dot file does not exist.
 		p.DotOp = FileOpNone
 	} else if p.Dot.IsFile {
+		// Dot file is a file.
 		p.DotOp = FileOpNone
 	} else {
-		link, err := d.fs.Readlink(p.Dot.Path.Abs())
+		// Dot file is a symlink.
+		target, err := d.fs.Readlink(p.Dot.Path.Abs())
 		if err != nil {
 			return nil, err
 		}
-		if link == p.Dtt.Path.Abs() {
+
+		if target == p.Dtt.Path.Abs() {
+			// Dot file is a symlink to dtt.
 			p.DotOp = FileOpOverwrite
 		} else {
+			// Dot file is a symlink to another file.
 			p.DotOp = FileOpNone
 		}
 	}
