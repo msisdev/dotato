@@ -128,8 +128,8 @@ func (t RuleTree) IsIgnoredWithBase(base int, path gp.GardenPath) bool {
 		return false
 	}
 	if base >= len(path) {
-		// Invalid case
-		return true
+		// this path is same with or above the base
+		return false
 	}
 
 	node := t.head
