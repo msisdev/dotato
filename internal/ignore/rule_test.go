@@ -16,7 +16,7 @@ func testRuleTree(t *testing.T, rt *RuleTree, fs []FileEntry) {
 
 		// test IsIgnored
 		ignored := rt.IsIgnored(path)
-		assert.Equal(t, f.isIgnored, ignored, "path: %s", f.path)
+		assert.Equal(t, f.isIgnored, ignored, "path: %s, isIgnored: %v", f.path, f.isIgnored)
 
 		// test IsIgnoredWithBase
 		remotePath := append(gp.GardenPath{"dummy"}, path...)
@@ -109,4 +109,72 @@ func TestRuleTree2_Base0(t *testing.T) {
 	}
 
 	testRuleTree(t, rt, testcase2Files)
+}
+
+func TestRuleTree3(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Skipping Linux path test on non-Linux OS")
+		return
+	}
+
+	dir, err := gp.New("/home/user/.config/alacritty")
+	assert.NoError(t, err)
+
+	rt := &RuleTree{
+		base: GetBaseFrom(dir),
+		head: &ruleNode{
+			rules: newRules(
+				"*",
+				"!alacritty.yml",
+				"!themes/acme.toml",
+			),
+			dirs: map[string]*ruleNode{},
+		},
+	}
+
+	{
+		raw := "/home/user/.config/alacritty"
+		expected := NotIgnored
+		path, err := gp.New(raw)
+		assert.NoError(t, err)
+
+		ignored := rt.IsIgnored(path)
+		assert.Equal(t, expected, ignored, "path: %s, isIgnored: %v", raw, expected)
+	}
+
+	{
+		raw := "/home/user/.config/alacritty/alacritty.yml"
+		expected := NotIgnored
+		path, err := gp.New(raw)
+		assert.NoError(t, err)
+		ignored := rt.IsIgnored(path)
+		assert.Equal(t, expected, ignored, "path: %s, isIgnored: %v", raw, expected)
+	}
+
+	{
+		raw := "/home/user/.config/alacritty/themes"
+		expected := Ignored
+		path, err := gp.New(raw)
+		assert.NoError(t, err)
+		ignored := rt.IsIgnored(path)
+		assert.Equal(t, expected, ignored, "path: %s, isIgnored: %v", raw, expected)
+	}
+
+	{
+		raw := "/home/user/.config/alacritty/themes/acme.toml"
+		expected := NotIgnored
+		path, err := gp.New(raw)
+		assert.NoError(t, err)
+		ignored := rt.IsIgnored(path)
+		assert.Equal(t, expected, ignored, "path: %s, isIgnored: %v", raw, expected)
+	}
+
+	{
+		raw := "/home/user/.config/alacritty/themes/afterglow.toml"
+		expected := Ignored
+		path, err := gp.New(raw)
+		assert.NoError(t, err)
+		ignored := rt.IsIgnored(path)
+		assert.Equal(t, expected, ignored, "path: %s, isIgnored: %v", raw, expected)
+	}
 }
