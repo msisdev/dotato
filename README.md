@@ -1,23 +1,23 @@
-# dotato
-🥔dotato is a lightweight dotfile manager.
+<div align="center">
 
+# 🥔 dotato
+dotato is a lightweight dotfile manager.
 
-![import](./example/import.gif)
-
-![export](./example/export.gif)
-
+<img src="./example/import.gif" alt="import" width="80%">
+<img src="./example/export.gif" alt="export" width="80%">
+</div>
 
 
 ## Introduction
-🥔dotato is simple.
+🥔 dotato is simple.
 - Select dotfiles with config file
 - Move dotfiles to your directory
 
-Config files are clear:
+📝 Config files are clear:
 - `dotato.yaml` - declare original path of dotfiles
 - `.dotatoignore` - select files that you are interested
 
-Choose move behavior:
+🔄 Choose move behavior:
 - file mode - copy dotfiles into your directory (like snapshot)
 - link mode - move dotfiles into your directory and leave symlink instead. (like [stow](https://www.gnu.org/software/stow/))
 
@@ -26,7 +26,7 @@ Choose move behavior:
 ## Installation
 ### With Go
 dotato is written in pure go. If you have go, it is easy:
-```cmd
+```console
 > go install github.com/msisdev/dotato@latest
 ```
 
@@ -34,11 +34,11 @@ dotato is written in pure go. If you have go, it is easy:
 ## Tutorial (file mode)
 Your dotato directory will look like this.
 ```
-.
-├── bash
-│   └── .dotatoignore
-├── .dotatoignore
-└── dotato.yaml
+📁
+├── 📁bash
+│   └── 📄.dotatoignore
+├── 📄.dotatoignore
+└── 📄dotato.yaml
 ```
 
 Configure `dotato.yaml` to tell dotato where to order/deliver files from/to.
@@ -64,11 +64,45 @@ Configure `bash/.dotatoignore` to tell which files to ignore/grab.
 ```
 
 Copy files into dotato directory:
-```cmd
+```console
 > dotato import group bash nux
+✔ Config mode: file
+✔ Config group base: /home/msisdev
+✔ group bash: create 0, overwrite 1, total 1
+
+🔎 Preview
+
+! /home/msisdev/.bashrc -> /home/msisdev/Documents/GitHub/dotato/example/bash/.bashrc
+
+Do you want to proceed?
+
+> yes 
+
+✔ Done
+```
+```
+📁
+├── 📁bash
+│   ├── ✨.bashrc
+│   └── 📄.dotatoignore
+├── 📄.dotatoignore
+└── 📄dotato.yaml
 ```
 
 Copy dotato files to remote directory:
-```cmd
+```console
 > dotato export group bash nux
+✔ Config mode: file
+✔ Config group base: /home/msisdev
+✔ group bash: create 0, overwrite 1, total 1
+
+🔎 Preview
+
+! /home/msisdev/.bashrc <- /home/msisdev/Documents/GitHub/dotato/example/bash/.bashrc
+
+Do you want to proceed?
+
+> yes 
+
+✔ Done
 ```
