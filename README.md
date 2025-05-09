@@ -89,7 +89,7 @@ Do you want to proceed?
 └── 📄dotato.yaml
 ```
 
-Copy dotato files to remote directory:
+Copy dotato files to their original directory:
 ```console
 > dotato export group bash nux
 ✔ Config mode: file
