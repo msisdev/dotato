@@ -1,25 +1,38 @@
 # dotato
-Dotato is a dotfile manager.
+🥔dotato is a lightweight dotfile manager.
 
 
 ![import](./example/import.gif)
 
 ![export](./example/export.gif)
 
-(UI is not stable 😅)
+
+
+## Introduction
+🥔dotato is simple.
+- Select dotfiles with config file
+- Move dotfiles to your directory
+
+Config files are clear:
+- `dotato.yaml` - declare original path of dotfiles
+- `.dotatoignore` - select files that you are interested
+
+Choose move behavior:
+- file mode - copy dotfiles into your directory (like snapshot)
+- link mode - move dotfiles into your directory and leave symlink instead. (like [stow](https://www.gnu.org/software/stow/))
 
 
 
 ## Installation
 ### With Go
-Dotato is written in pure go.
-```
+dotato is written in pure go. If you have go, it is easy:
+```cmd
 > go install github.com/msisdev/dotato@latest
 ```
 
 
-## Quickstart
-Your dotato repository will look like this.
+## Tutorial (file mode)
+Your dotato directory will look like this.
 ```
 .
 ├── bash
@@ -43,21 +56,19 @@ groups:
     nux: "~"
 ```
 
-Configure `bash/.dotatoignore` to tell which files to ignore or grab.
-```
+Configure `bash/.dotatoignore` to tell which files to ignore/grab.
+```gitignore
 #.dotatoignore
 *         # ignore all
-!.bashrc  # but .bashrc
+!.bashrc  # grab .bashrc
 ```
-
-Now you are ready to use dotato.
 
 Copy files into dotato directory:
-```
+```cmd
 > dotato import group bash nux
 ```
 
 Copy dotato files to remote directory:
-```
+```cmd
 > dotato export group bash nux
 ```
