@@ -33,6 +33,10 @@ func TestGardenPathLinux(t *testing.T) {
 	assert.Equal(t, "", wdgp[0])
 	assert.Equal(t, wdStr, wdgp.Abs(), "Expected %s, got %s", wdStr, wdgp.Abs())
 
+	// Change home
+	err = os.Setenv("HOME", "/home/user")
+	assert.NoError(t, err)
+
 	test(t, "", nil, "")
 	test(t, ".", wdgp, wdStr)
 	test(t, "./", wdgp, wdStr)
