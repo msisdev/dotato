@@ -15,6 +15,7 @@ plans:
 #  - There is no reserved group name nor resolver name.
 #  - You can use multiple resolvers in the same group.
 #  - You can use tilde or env var in a resolver.
+#  - '%FOO%' is not handled. Use '$FOO' or '${FOO}' instead.
 #
 # groups:
 #   bash:
@@ -23,4 +24,4 @@ plans:
 groups:
   bash:
     nux: "~"
-    win: "%USERPROFILE%"
+    win: "$USERPROFILE"
