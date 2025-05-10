@@ -74,6 +74,10 @@ func NewDB(path string) (*gorm.DB, Version, error) {
 func GetVersion(db *gorm.DB) (Version, bool, error) {
 	// Query version
 	store := Store{ Key: KeyVersion }
+
+	// Suppress not found error log
+	db.Statement.RaiseErrorOnNotFound = false
+
 	if err := db.First(&store).Error; err != nil {
 		// not found error?
 		if errors.Is(err, gorm.ErrRecordNotFound) {

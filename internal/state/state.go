@@ -58,3 +58,16 @@ func (s State) UpsertOne(h History) error {
 func (s State) DeleteOne(h History) error {
 	return s.v1_deleteOne(h)
 }
+
+// Doc at https://gorm.io/docs/transactions.html#Transaction
+func (s State) Tx(fn func(tx *gorm.DB) error) error {
+	return s.v1_tx(fn)
+}
+
+func (s State) TxUpsertOne(tx *gorm.DB, h History) error {
+	return s.v1_tx_upsertOne(tx, h)
+}
+
+func (s State) TxDeleteOne(tx *gorm.DB, h History) error {
+	return s.v1_tx_deleteOne(tx, h)
+}

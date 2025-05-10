@@ -7,6 +7,7 @@ type Args struct {
 	Export			*ExportArgs		`arg:"subcommand:export|ex"`
 	Unlink 			*UnlinkArgs 	`arg:"subcommand:unlink|un"`
 	Version 		*VersionArgs	`arg:"subcommand:version|v" help:"Show version"`
+	Where				*WhereArgs		`arg:"subcommand:where|w" help:"Show component location"`
 	// Verbose 		bool					`arg:"-v,--verbose" help:"Verbose output"`
 	// Interactive	bool					`arg:"-i,--interactive" help:"Interactive mode"`
 }
@@ -78,3 +79,8 @@ type UnlinkGroupArgs struct {
 ///////////////////////////////////////////////////////////////////////////////
 
 type VersionArgs struct {}
+
+///////////////////////////////////////////////////////////////////////////////
+type WhereArgs struct {
+	Component string `arg:"positional" help:"Component name"`
+}

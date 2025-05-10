@@ -1,7 +1,6 @@
 package filesystem
 
 import (
-	"os"
 	"runtime"
 
 	"github.com/go-git/go-billy/v5"
@@ -21,14 +20,4 @@ func NewOSFS() billy.Filesystem {
 		return osfs.New("")
 	}
 	return osfs.New("/")
-}
-
-func GetRootDir() string {
-	if runtime.GOOS == "windows" {
-		if drive := os.Getenv("SystemDrive"); drive != "" {
-			return drive + "\\"
-		}
-		panic("Oops! SystemDrive env var is not set. Please set it with your current drive. E.g. 'C:'")
-	}
-	return "/"
 }

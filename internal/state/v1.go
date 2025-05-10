@@ -38,3 +38,18 @@ func (s State) v1_getAllByMode(mode string) (hs []HistoryV1, err error) {
 func (s State) v1_deleteOne(h HistoryV1) error {
 	return s.DB.Delete(&h).Error
 }
+
+func (s State) v1_tx(fn func(tx *gorm.DB) error) error {
+	return s.DB.Transaction(fn)
+}
+
+func (s State) v1_tx_upsertOne(tx *gorm.DB, h HistoryV1) error {
+	return tx.Clauses(clause.OnConflict{
+		Columns: []clause.Column{{Name: "dot_path"}},
+		DoUpdates: clause.AssignmentColumns([]string{"dtt_path", "mode"}),
+	}).Create(&h).Error
+}
+
+func (s State) v1_tx_deleteOne(tx *gorm.DB, h HistoryV1) error {
+	return tx.Delete(&h).Error
+}
