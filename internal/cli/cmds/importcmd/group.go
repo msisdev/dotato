@@ -40,15 +40,11 @@ func ImportGroup(logger *log.Logger, args *args.ImportGroupArgs) {
 	}
 
 	// Print preview list
-	fmt.Print("\n🔎 Preview\n\n")
-	for _, p := range ps {
-		if s.GetMode() == config.ModeFile {
-			fmt.Println(shared.SprintPreviewImportFile(p))
-		} else {
-			fmt.Println(shared.SprintPreviewImportLink(p))
-		}
+	if s.GetMode() == config.ModeFile {
+		shared.PrintPreviewImportFile(ps)
+	} else {
+		shared.PrintPreviewImportLink(ps)
 	}
-	fmt.Println()
 
 	if mods == 0 {
 		fmt.Println("No files to import.")

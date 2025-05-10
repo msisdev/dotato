@@ -31,11 +31,7 @@ func UnlinkGroup(logger *log.Logger, args *args.UnlinkGroupArgs) {
 	}
 
 	// Print preview list
-	fmt.Print("\n🔎 Preview\n\n")
-	for _, p := range ps {
-		fmt.Println(shared.SprintPreviewUnlink(p))
-	}
-	fmt.Println()
+	shared.PrintPreviewUnlink(ps)
 
 	if mods == 0 {
 		fmt.Println("No changes to be made.")

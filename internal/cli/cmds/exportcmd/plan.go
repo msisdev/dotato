@@ -55,15 +55,11 @@ func ExportPlan(logger *log.Logger, args *args.ExportPlanArgs) {
 	}
 
 	// Print preview list
-	fmt.Print("\n🔎 Preview\n\n")
-	for _, p := range ps {
-		if s.GetMode() == config.ModeFile {
-			println(shared.SprintPreviewExportFile(p))
-		} else {
-			println(shared.SprintPreviewExportLink(p))
-		}
+	if s.GetMode() == config.ModeFile {
+		shared.PrintPreviewExportFile(ps)
+	} else {
+		shared.PrintPreviewExportLink(ps)
 	}
-	fmt.Println()
 
 	if mods == 0 {
 		fmt.Println("No files to export.")
