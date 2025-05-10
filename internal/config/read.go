@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/go-git/go-billy/v6"
+	"github.com/go-git/go-billy/v5"
 	"github.com/goccy/go-yaml"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )

@@ -3,7 +3,7 @@ package filesystem
 import (
 	"os"
 
-	"github.com/go-git/go-billy/v6"
+	"github.com/go-git/go-billy/v5"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 

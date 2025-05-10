@@ -37,8 +37,8 @@ github.com/glebarez/sqlite v1.11.0 h1:wSG0irqzP6VurnMEpFGer5Li19RpIRi2qvQz++w0GM
 github.com/glebarez/sqlite v1.11.0/go.mod h1:h8/o8j5wiAsqSPoWELDUdJXhjAhsVliSn7bWZjOhrgQ=
 github.com/go-git/go-billy/v5 v5.6.2 h1:6Q86EsPXMa7c3YZ3aLAQsMA0VlWmy43r6FHqa/UNbRM=
 github.com/go-git/go-billy/v5 v5.6.2/go.mod h1:rcFC2rAsp/erv7CMz9GczHcuD0D32fWzH+MJAU+jaUU=
-github.com/go-git/go-billy/v6 v6.0.0-20250502054819-196770c77962 h1:fVZdrGoMG9oVIo4rIHgqOSHB7MvbSITHEQz04mGa47w=
-github.com/go-git/go-billy/v6 v6.0.0-20250502054819-196770c77962/go.mod h1:L0ftPtopK2IsmEBvSL6Yi0tlw5FQFmfqCGelR4Ds5Uk=
+github.com/go-git/go-billy/v5 v6.0.0-20250502054819-196770c77962 h1:fVZdrGoMG9oVIo4rIHgqOSHB7MvbSITHEQz04mGa47w=
+github.com/go-git/go-billy/v5 v6.0.0-20250502054819-196770c77962/go.mod h1:L0ftPtopK2IsmEBvSL6Yi0tlw5FQFmfqCGelR4Ds5Uk=
 github.com/go-logfmt/logfmt v0.6.0 h1:wGYYu3uicYdqXVgoYbvnkrPVXkuLM1p1ifugDMEdRi4=
 github.com/go-logfmt/logfmt v0.6.0/go.mod h1:WYhtIu8zTZfxdn5+rREduYbwxfcBr/Vr6KEVveWlfTs=
 github.com/goccy/go-yaml v1.17.1 h1:LI34wktB2xEE3ONG/2Ar54+/HJVBriAGJ55PHls4YuY=

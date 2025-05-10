@@ -1,8 +1,8 @@
 package filesystem
 
 import (
-	"github.com/go-git/go-billy/v6"
-	"github.com/go-git/go-billy/v6/memfs"
+	"github.com/go-git/go-billy/v5"
+	"github.com/go-git/go-billy/v5/memfs"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 

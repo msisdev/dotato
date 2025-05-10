@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/go-git/go-billy/v6/memfs"
+	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/msisdev/dotato/internal/lib/filesystem"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 	"github.com/stretchr/testify/assert"

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/charmbracelet/log"
-	"github.com/go-git/go-billy/v6"
+	"github.com/go-git/go-billy/v5"
 	"github.com/msisdev/dotato/internal/cli/ui/mxspinner"
 	"github.com/msisdev/dotato/internal/dotato"
 	"github.com/msisdev/dotato/internal/lib/filesystem"

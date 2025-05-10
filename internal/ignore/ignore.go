@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"os"
 
-	"github.com/go-git/go-billy/v6"
+	"github.com/go-git/go-billy/v5"
 	"github.com/msisdev/dotato/internal/lib/filesystem"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )

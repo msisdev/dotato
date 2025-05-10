@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/go-git/go-billy/v6"
+	"github.com/go-git/go-billy/v5"
 )
 
 func GetRootDir() string {
