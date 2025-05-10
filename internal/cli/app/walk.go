@@ -13,7 +13,7 @@ func (a App) WalkImportFile(
 ) (err error) {
 	onDot := func(dot gp.GardenPath, fi os.FileInfo) error {
 		// Get dtt path
-		dtt := a.e.DotToDtt(base, dot, group)
+		dtt := a.E.DotToDtt(base, dot, group)
 
 		// Get preview
 		pre, err := a.PreviewImportFile(dot, dtt)
@@ -24,7 +24,7 @@ func (a App) WalkImportFile(
 		return onPreview(*pre)
 	}
 
-	return a.e.WalkDotDir(group, base, onDot)
+	return a.E.WalkDotDir(group, base, onDot)
 }
 
 func (a App) WalkImportLink(
@@ -34,7 +34,7 @@ func (a App) WalkImportLink(
 ) (err error) {
 	onDot := func(dot gp.GardenPath, fi os.FileInfo) error {
 		// Get dtt path
-		dtt := a.e.DotToDtt(base, dot, group)
+		dtt := a.E.DotToDtt(base, dot, group)
 
 		// Get preview
 		pre, err := a.PreviewImportLink(dot, dtt)
@@ -45,7 +45,7 @@ func (a App) WalkImportLink(
 		return onPreview(*pre)
 	}
 
-	return a.e.WalkDotDir(group, base, onDot)
+	return a.E.WalkDotDir(group, base, onDot)
 }
 
 func (a App) WalkExportFile(
@@ -55,7 +55,7 @@ func (a App) WalkExportFile(
 ) (err error) {
 	onDtt := func(dtt gp.GardenPath, fi os.FileInfo) error {
 		// Get dot path
-		dot := a.e.DttToDot(base, dtt)
+		dot := a.E.DttToDot(base, dtt)
 
 		// Get preview
 		pre, err := a.PreviewExportFile(dot, dtt)
@@ -66,7 +66,7 @@ func (a App) WalkExportFile(
 		return onPreview(*pre)
 	}
 
-	return a.e.WalkDttDir(group, onDtt)
+	return a.E.WalkDttDir(group, onDtt)
 }
 
 func (a App) WalkExportLink(
@@ -76,7 +76,7 @@ func (a App) WalkExportLink(
 ) (err error) {
 	onDtt := func(dtt gp.GardenPath, fi os.FileInfo) error {
 		// Get dot path
-		dot := a.e.DttToDot(base, dtt)
+		dot := a.E.DttToDot(base, dtt)
 
 		// Get preview
 		pre, err := a.PreviewExportLink(dot, dtt)
@@ -87,7 +87,7 @@ func (a App) WalkExportLink(
 		return onPreview(*pre)
 	}
 
-	return a.e.WalkDttDir(group, onDtt)
+	return a.E.WalkDttDir(group, onDtt)
 }
 
 func (a App) WalkUnlink(
@@ -97,7 +97,7 @@ func (a App) WalkUnlink(
 ) (err error) {
 	onDot := func(dot gp.GardenPath, fi os.FileInfo) error {
 		// Get dtt path
-		dtt := a.e.DotToDtt(base, dot, group)
+		dtt := a.E.DotToDtt(base, dot, group)
 
 		// Get preview
 		pre, err := a.PreviewUnlink(dot, dtt)
@@ -108,5 +108,5 @@ func (a App) WalkUnlink(
 		return onPreview(*pre)
 	}
 
-	return a.e.WalkDotDir(group, base, onDot)
+	return a.E.WalkDotDir(group, base, onDot)
 }

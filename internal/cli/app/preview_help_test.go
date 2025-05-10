@@ -150,5 +150,5 @@ func requestApp(
 		}
 	}
 
-	return App{fs: fs, e: engine.NewWithFS(fs, true)}
+	return App{fs: fs, E: engine.NewWithFS(fs, true)}
 }

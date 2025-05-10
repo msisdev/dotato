@@ -6,8 +6,8 @@ import (
 	"github.com/charmbracelet/log"
 	"github.com/msisdev/dotato/internal/cli/args"
 	"github.com/msisdev/dotato/internal/cli/shared"
-	"github.com/msisdev/dotato/internal/cli/ui/inputconfirm"
-	"github.com/msisdev/dotato/internal/cli/ui/mxspinner"
+	"github.com/msisdev/dotato/internal/cli/ui/component/inputconfirm"
+	"github.com/msisdev/dotato/internal/cli/ui/component/mxspinner"
 	"github.com/msisdev/dotato/internal/config"
 	"github.com/msisdev/dotato/internal/dotato"
 	"github.com/msisdev/dotato/internal/lib/store"
@@ -45,7 +45,6 @@ func ExportGroup(logger *log.Logger, args *args.ExportGroupArgs) {
 	} else {
 		shared.PrintPreviewExportLink(ps)
 	}
-
 
 	if mods == 0 {
 		fmt.Println("No files to export.")

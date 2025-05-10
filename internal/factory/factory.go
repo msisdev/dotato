@@ -96,7 +96,7 @@ func ReadIgnoreRecur(
 	return
 }
 
-func NewState(fs billy.Filesystem, isMem bool) (*state.State, error) {
+func ReadState(fs billy.Filesystem, isMem bool) (*state.State, error) {
 	if isMem {
 		return state.New(fs, state.PathInMemory)
 	}
