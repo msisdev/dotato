@@ -28,6 +28,7 @@ func TestNewPathStat(t *testing.T) {
 		stat, err := d.newPathStat(path)
 		assert.NoError(t, err)
 		assert.Equal(t, path, stat.Path)
+		assert.Equal(t, real, stat.Target)
 		assert.Equal(t, real, stat.Real)
 		assert.Equal(t, false, stat.IsFile)
 		assert.Equal(t, true, stat.Exists)
@@ -39,6 +40,7 @@ func TestNewPathStat(t *testing.T) {
 		stat, err := d.newPathStat(path)
 		assert.NoError(t, err)
 		assert.Equal(t, path, stat.Path)
+		assert.Equal(t, path, stat.Target)
 		assert.Equal(t, path, stat.Real)
 		assert.Equal(t, true, stat.IsFile)
 		assert.Equal(t, true, stat.Exists)
@@ -177,6 +179,49 @@ func TestPreviewImportFile(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpOverwrite, p.DttOp)
+	}
+
+	// Dot: symlink at same / Dtt: not exists
+	{
+		d := requestDotato(dot, FirstReq_Link_Same, dtt, SecondReq_Empty)
+		p, err := d.PreviewImportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpSkip, p.DttOp)
+	}
+
+	// Dot: symlink at same / Dtt: file, not equal
+	{
+		d := requestDotato(dot, FirstReq_Link_Same, dtt, SecondReq_File_NotEq)
+		p, err := d.PreviewImportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpSkip, p.DttOp)
+	}
+
+	// Dot: symlink at same / Dtt: file, equal
+	{
+		d := requestDotato(dot, FirstReq_Link_Same, dtt, SecondReq_File_Eq)
+		p, err := d.PreviewImportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpSkip, p.DttOp)
+	}
+
+	// Dot: symlink at same / Dtt: symlink, diff
+	{
+		d := requestDotato(dot, FirstReq_Link_Same, dtt, SecondReq_Link_Diff_NotEq)
+		p, err := d.PreviewImportFile(dot, dtt)
+		assert.NoError(t, err)
+		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpSkip, p.DttOp)
+	}
+
+	// Dot: symlink at same / Dtt: symlink, same
+	{
+		d := requestDotato(dot, FirstReq_Link_Same, dtt, SecondReq_Link_Same)
+		_, err := d.PreviewImportFile(dot, dtt)
+		assert.Error(t, err)
 	}
 }
 

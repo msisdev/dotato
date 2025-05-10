@@ -54,6 +54,8 @@ func (s Shared) PreviewDangerUnlink() ([]dotato.Preview, int, error) {
 			switch p.DotOp {
 			case dotato.FileOpNone:
 				// Do nothing
+			case dotato.FileOpSkip:
+				// Do nothing
 			case dotato.FileOpCreate:
 				return fmt.Errorf("dot file %s doesn't exist", p.Dot.Path.Abs())
 			case dotato.FileOpOverwrite:
@@ -106,6 +108,8 @@ func (s Shared) PreviewImportGroupFile(
 			// Count operations
 			switch p.DttOp {
 			case dotato.FileOpNone:
+				// Do nothing
+			case dotato.FileOpSkip:
 				// Do nothing
 			case dotato.FileOpCreate:
 				create++
@@ -164,6 +168,8 @@ func (s Shared) PreviewImportGroupLink(
 			switch p.DotOp {
 			case dotato.FileOpNone:
 				// do nothing
+			case dotato.FileOpSkip:
+				// Do nothing
 			case dotato.FileOpCreate:
 				return fmt.Errorf("dot file %s doesn't exist", p.Dot.Path.Abs())
 			case dotato.FileOpOverwrite:
@@ -233,6 +239,8 @@ func (s Shared) PreviewExportGroupFile(
 			switch p.DotOp {
 			case dotato.FileOpNone:
 				// Do nothing
+			case dotato.FileOpSkip:
+				// Do nothing
 			case dotato.FileOpCreate:
 				create++
 			case dotato.FileOpOverwrite:
@@ -286,6 +294,8 @@ func (s Shared) PreviewExportGroupLink(
 			switch p.DotOp {
 			case dotato.FileOpNone:
 				// Do nothing
+			case dotato.FileOpSkip:
+				// Do nothing
 			case dotato.FileOpCreate:
 				create++
 			case dotato.FileOpOverwrite:
@@ -337,6 +347,8 @@ func (s Shared) PreviewUnlinkGroup(
 			// Count operations
 			switch p.DotOp {
 			case dotato.FileOpNone:
+				// Do nothing
+			case dotato.FileOpSkip:
 				// Do nothing
 			case dotato.FileOpCreate:
 				return fmt.Errorf("dot file %s doesn't exist", p.Dot.Path.Abs())

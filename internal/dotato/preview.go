@@ -10,13 +10,15 @@ import (
 type FileOp int
 const (
 	FileOpNone FileOp = iota
+	FileOpSkip
 	FileOpCreate
 	FileOpOverwrite
 )
 
 type PathStat struct {
 	Path gp.GardenPath
-	Real gp.GardenPath	// this value is either same with path or different
+	Target gp.GardenPath	// direct target of the symlink
+	Real gp.GardenPath		// final target of the chained symlinks
 	IsFile bool
 	Exists bool
 }
@@ -24,6 +26,7 @@ type PathStat struct {
 func (d Dotato) newPathStat(path gp.GardenPath) (*PathStat, error) {
 	s := PathStat{
 		Path: path,
+		Target: path,
 		Real: path,
 	}
 
@@ -47,9 +50,20 @@ func (d Dotato) newPathStat(path gp.GardenPath) (*PathStat, error) {
 		s.Real = make(gp.GardenPath, len(s.Path))
 		copy(s.Real, s.Path)
 	} else {
+		// Symlink
 		s.IsFile = false
 
-		// Find real path
+		// Get target
+		target, err := d.fs.Readlink(abs)
+		if err != nil {
+			return nil, err
+		}
+		s.Target, err = gp.New(target)
+		if err != nil {
+			return nil, err
+		}
+
+		// Get real
 		realPath, err := d.evalSymlinks(abs)
 		if err != nil {
 			return nil, err
@@ -74,20 +88,21 @@ func (d Dotato) newPreview(
 	dot gp.GardenPath,
 	dtt gp.GardenPath,
 ) (*Preview, error) {
-	var p = Preview{}
-	{
-		dotStat, err := d.newPathStat(dot)
-		if err != nil {
-			return nil, err
-		}
-		p.Dot = dotStat
+	p := Preview{
+		DotOp: FileOpNone,
+		DttOp: FileOpNone,
+	}
 
-		dttStat, err := d.newPathStat(dtt)
-		if err != nil {
-			return nil, err
-		}
-		p.Dtt = dttStat
-		
+	var err error
+
+	p.Dot, err = d.newPathStat(dot)
+	if err != nil {
+		return nil, err
+	}
+
+	p.Dtt, err = d.newPathStat(dtt)
+	if err != nil {
+		return nil, err
 	}
 
 	return &p, nil
@@ -107,6 +122,12 @@ func (d Dotato) PreviewImportFile(
 	// Dot file operation
 	if !p.Dot.Exists {
 		return nil, fmt.Errorf("dotfile %s does not exist", p.Dot.Path)
+	} else if !p.Dot.IsFile {
+		if p.Dot.Target.IsEqual(p.Dtt.Path) {
+			// Dot file is a symlink to dtt
+			p.DttOp = FileOpSkip
+			return p, nil
+		}
 	}
 	p.DotOp = FileOpNone
 
@@ -120,14 +141,18 @@ func (d Dotato) PreviewImportFile(
 			}
 
 			if equal {
+				// Files are equal
 				p.DttOp = FileOpNone
 			} else {
+				// Files are not equal
 				p.DttOp = FileOpOverwrite
 			}
 		} else {
+			// Overwrite symlink
 			p.DttOp = FileOpOverwrite
 		}
 	} else {
+		// Create file
 		p.DttOp = FileOpCreate
 	}
 

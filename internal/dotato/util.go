@@ -158,6 +158,9 @@ func evalSymlinksRecur(fs billy.Filesystem, path string, depth int) (string, err
 	// Lstat
 	fi, err := fs.Lstat(path)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return path, nil
+		}
 		return "", err
 	}
 
