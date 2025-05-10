@@ -1,7 +1,7 @@
 package io
 
 import (
-	"github.com/go-git/go-billy/v5"
+	"github.com/go-git/go-billy/v6"
 	"github.com/msisdev/dotato/internal/config"
 	"github.com/msisdev/dotato/internal/dotato"
 	"github.com/msisdev/dotato/internal/state"

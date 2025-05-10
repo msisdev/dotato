@@ -7,20 +7,20 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/go-git/go-billy/v5/memfs"
+	"github.com/go-git/go-billy/v6/memfs"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestFS_Stat(t *testing.T) {
 	var (
-		fs = memfs.New()
+		fs       = memfs.New()
 		filepath = "/file"
 		// filename = "file"
 		linkpath = "/link"
 		linkname = "link"
 		deeppath = "/deep"
 		deepname = "deep"
-		content = []byte("Hello, World!")
+		content  = []byte("Hello, World!")
 	)
 
 	// Prepare
@@ -83,12 +83,12 @@ func TestFS_Stat(t *testing.T) {
 
 func TestFS_Open(t *testing.T) {
 	var (
-		fs = memfs.New()
+		fs       = memfs.New()
 		filepath = "/file"
 		linkpath = "/link"
 		deeppath = "/deep"
-		content = []byte("Hello, World!")
-		bufsiz = len(content)
+		content  = []byte("Hello, World!")
+		bufsiz   = len(content)
 	)
 
 	// Prepare
@@ -138,10 +138,10 @@ func TestFS_Open(t *testing.T) {
 
 func TestFS_Symlink(t *testing.T) {
 	var (
-		fs = memfs.New()
+		fs       = memfs.New()
 		filepath = "/file"
 		linkpath = "/link"
-		content = []byte("Hello, World!")
+		content  = []byte("Hello, World!")
 	)
 
 	// Create linkpath as file

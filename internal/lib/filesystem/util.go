@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/go-git/go-billy/v5"
+	"github.com/go-git/go-billy/v6"
 )
 
 func GetRootDir() string {
@@ -62,8 +62,8 @@ func IsFileContentEqual(fs billy.Filesystem, a, b string) (bool, error) {
 	// Compare file contents
 	var (
 		bufsiz = int64(1024)
-		bufA = make([]byte, bufsiz)
-		bufB = make([]byte, bufsiz)
+		bufA   = make([]byte, bufsiz)
+		bufB   = make([]byte, bufsiz)
 		offset = int64(0)
 	)
 	for offset < size {
@@ -150,12 +150,12 @@ func evalSymlinks(fs billy.Filesystem, path string, depth int) (string, error) {
 	resolved := target
 	if !filepath.IsAbs(target) {
 		dir := filepath.Dir(path)
-		
+
 		resolved = fs.Join(dir, target)
 
 		// fs.Join() calls filepath.Clean() internally,
 		// so we don't need to call it again.
-		// 
+		//
 		// resolved = filepath.Clean(resolved)
 	}
 

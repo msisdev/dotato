@@ -4,12 +4,19 @@ import (
 	"os"
 	"runtime"
 	"strings"
+	"testing"
 
-	"github.com/go-git/go-billy/v5"
-	"github.com/go-git/go-billy/v5/memfs"
+	"github.com/go-git/go-billy/v6"
+	"github.com/go-git/go-billy/v6/memfs"
 	"github.com/msisdev/dotato/internal/engine"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
+
+func assertOS(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("skipping test on windows")
+	}
+}
 
 // Allows overwrite
 func createFile(fs billy.Filesystem, path gp.GardenPath, content []byte) error {
@@ -39,6 +46,7 @@ func getGardenPathFirstEl() string {
 }
 
 type FirstReq int
+
 const (
 	FirstReq_Empty FirstReq = iota
 	FirstReq_File
@@ -47,6 +55,7 @@ const (
 )
 
 type SecondReq int
+
 const (
 	SecondReq_Empty SecondReq = iota
 	SecondReq_File_NotEq
@@ -57,9 +66,9 @@ const (
 )
 
 var (
-	randomPathFirst = gp.GardenPath{getGardenPathFirstEl(), "random", "path", "first"}
+	randomPathFirst  = gp.GardenPath{getGardenPathFirstEl(), "random", "path", "first"}
 	randomPathSecond = gp.GardenPath{getGardenPathFirstEl(), "random", "path", "second"}
-	fileContentEq = []byte("Hello, world!")
+	fileContentEq    = []byte("Hello, world!")
 	fileContentNotEq = []byte("Hello, world! Alt")
 )
 

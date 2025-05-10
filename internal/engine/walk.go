@@ -99,7 +99,7 @@ func (e Engine) WalkNonIgnored(
 }
 
 // Scan dotfiles that is not ignored
-func (e Engine) WalkDotfileDir(
+func (e Engine) WalkDotDir(
 	group string,
 	base gp.GardenPath,
 	onDot func(gp.GardenPath, os.FileInfo) error,
@@ -121,7 +121,7 @@ func (e Engine) WalkDotfileDir(
 }
 
 // Scan dotato files in group that is not ignored
-func (e Engine) WalkDotatoDir(
+func (e Engine) WalkDttDir(
 	group string,
 	onDtt func(gp.GardenPath, os.FileInfo) error,
 ) (err error) {
@@ -138,7 +138,9 @@ func (e Engine) WalkDotatoDir(
 		return
 	}
 
+	// Get group dir path
 	base := e.cdir.Copy()
 	base = append(base, group)
+	
 	return e.WalkNonIgnored(base, ig, onDtt)
 }

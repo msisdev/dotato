@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/go-git/go-billy/v5/memfs"
+	"github.com/go-git/go-billy/v6/memfs"
 	"github.com/msisdev/dotato/internal/lib/filesystem"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 	"github.com/stretchr/testify/assert"
@@ -110,7 +110,7 @@ func TestReadRecurWindows(t *testing.T) {
 	configPath := filepath.Join(root, filename)
 	err = Write(fs, configPath, testcase1Config)
 	assert.NoError(t, err, "Write should not return an error")
-	
+
 	// ReadRecur
 	genCfg, dir, err := ReadRecur(fs, wd, filename)
 	assert.NoError(t, err, "ReadRecur should not return an error")

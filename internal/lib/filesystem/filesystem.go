@@ -3,15 +3,15 @@ package filesystem
 import (
 	"runtime"
 
-	"github.com/go-git/go-billy/v5"
-	"github.com/go-git/go-billy/v5/osfs"
+	"github.com/go-git/go-billy/v6"
+	"github.com/go-git/go-billy/v6/osfs"
 )
 
 // What is this function doing?
 //
-// dotato depends on "github.com/go-git/go-billy/v5".
-// It provides a common interface for "github.com/go-git/go-billy/v5/osfs"
-// and "github.com/go-git/go-billy/v5/memfs".
+// dotato depends on "github.com/go-git/go-billy/v6".
+// It provides a common interface for "github.com/go-git/go-billy/v6/osfs"
+// and "github.com/go-git/go-billy/v6/memfs".
 //
 // osfs.New("") occurs errors in linux filesystem when it is used with
 // Readlink(absPath).

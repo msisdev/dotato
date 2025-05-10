@@ -1,8 +1,8 @@
 package filesystem
 
 import (
-	"github.com/go-git/go-billy/v5"
-	"github.com/go-git/go-billy/v5/memfs"
+	"github.com/go-git/go-billy/v6"
+	"github.com/go-git/go-billy/v6/memfs"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 
@@ -27,6 +27,7 @@ func createFile(fs billy.Filesystem, path gp.GardenPath, content []byte) error {
 }
 
 type FirstReq int
+
 const (
 	FirstReq_Empty FirstReq = iota
 	FirstReq_File
@@ -35,6 +36,7 @@ const (
 )
 
 type SecondReq int
+
 const (
 	SecondReq_Empty SecondReq = iota
 	SecondReq_File_NotEq
@@ -45,9 +47,9 @@ const (
 )
 
 var (
-	randomPathFirst = gp.GardenPath{"", "random", "path", "first"}
+	randomPathFirst  = gp.GardenPath{"", "random", "path", "first"}
 	randomPathSecond = gp.GardenPath{"", "random", "path", "second"}
-	fileContentEq = []byte("Hello, world!")
+	fileContentEq    = []byte("Hello, world!")
 	fileContentNotEq = []byte("Hello, world! Alt")
 )
 

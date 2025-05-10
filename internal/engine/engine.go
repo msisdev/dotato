@@ -1,8 +1,8 @@
 package engine
 
 import (
-	"github.com/go-git/go-billy/v5"
-	"github.com/go-git/go-billy/v5/memfs"
+	"github.com/go-git/go-billy/v6"
+	"github.com/go-git/go-billy/v6/memfs"
 	"github.com/msisdev/dotato/internal/config"
 	"github.com/msisdev/dotato/internal/factory"
 	"github.com/msisdev/dotato/internal/ignore"
@@ -13,11 +13,11 @@ import (
 type Engine struct {
 	fs      billy.Filesystem
 	isMem   bool
-	maxIter	int
+	maxIter int
 
-	cdir 		gp.GardenPath
-	cfg 		*config.Config
-	ig 			*ignore.Ignore
+	cdir gp.GardenPath
+	cfg  *config.Config
+	ig   *ignore.Ignore
 }
 
 func New() *Engine {
@@ -30,8 +30,8 @@ func NewMemfs() *Engine {
 
 func NewWithFS(fs billy.Filesystem, isMem bool) *Engine {
 	return &Engine{
-		fs:    fs,
-		isMem: isMem,
+		fs:      fs,
+		isMem:   isMem,
 		maxIter: factory.DotatoMaxFSIter,
 	}
 }

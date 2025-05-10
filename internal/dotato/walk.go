@@ -209,7 +209,7 @@ func (d Dotato) WalkExportFile(
 		return
 	}
 
-	onDot := func(dtt gp.GardenPath, fi os.FileInfo) error {
+	onDtt := func(dtt gp.GardenPath, fi os.FileInfo) error {
 		// Get dot path
 		dot := d.DttToDot(dtt, base)
 
@@ -222,7 +222,7 @@ func (d Dotato) WalkExportFile(
 		return onPreview(*p)
 	}
 
-	return d.WalkDotato(group, onDot)
+	return d.WalkDotato(group, onDtt)
 }
 
 func (d Dotato) WalkExportLink(

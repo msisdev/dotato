@@ -3,7 +3,7 @@ package filesystem
 import (
 	"os"
 
-	"github.com/go-git/go-billy/v5"
+	"github.com/go-git/go-billy/v6"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 
@@ -19,7 +19,7 @@ func NewPathStat(fs billy.Filesystem, path gp.GardenPath) (*PathStat, error) {
 	s := PathStat{
 		Path:   path,
 		Target: path,
-		Real:		path,
+		Real:   path,
 	}
 
 	abs := path.Abs()

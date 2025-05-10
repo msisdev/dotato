@@ -3,7 +3,7 @@ package state
 import (
 	"path/filepath"
 
-	"github.com/go-git/go-billy/v5"
+	"github.com/go-git/go-billy/v6"
 	"gorm.io/gorm"
 )
 
@@ -15,8 +15,8 @@ type State struct {
 type History = HistoryV1
 
 // What New does:
-//  - Initialize db instance
-//  - Migrate db to latest version
+//   - Initialize db instance
+//   - Migrate db to latest version
 func New(fs billy.Filesystem, statePath string) (*State, error) {
 	// Create directories
 	err := fs.MkdirAll(filepath.Dir(statePath), 0644)
@@ -41,7 +41,7 @@ func New(fs billy.Filesystem, statePath string) (*State, error) {
 	default:
 		return nil, ErrVersionUnknown
 	}
-	
+
 	return &State{DB: db}, nil
 }
 

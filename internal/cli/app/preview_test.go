@@ -3,43 +3,13 @@ package app
 import (
 	"testing"
 
-	"github.com/msisdev/dotato/internal/lib/filesystem"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewPathStat(t *testing.T) {
-	var el = getGardenPathFirstEl()
-
-	path := gp.GardenPath{el, "home", "user", ".bashrc"}
-	real := gp.GardenPath{el, "home", "user", "Documents", "dotato", "bash", ".bashrc"}
-
-	// Path: link / Real: file
-	{
-		app := requestApp(real, FirstReq_File, path, SecondReq_Link_Same)
-		stat, err := filesystem.NewPathStat(app.fs, path)
-		assert.NoError(t, err)
-		assert.Equal(t, path, stat.Path)
-		assert.Equal(t, real, stat.Target)
-		assert.Equal(t, real, stat.Real)
-		assert.Equal(t, false, stat.IsFile)
-		assert.Equal(t, true, stat.Exists)
-	}
-
-	// Path: file
-	{
-		app := requestApp(real, FirstReq_File, path, SecondReq_File_Eq)
-		stat, err := filesystem.NewPathStat(app.fs, path)
-		assert.NoError(t, err)
-		assert.Equal(t, path, stat.Path)
-		assert.Equal(t, path, stat.Target)
-		assert.Equal(t, path, stat.Real)
-		assert.Equal(t, true, stat.IsFile)
-		assert.Equal(t, true, stat.Exists)
-	}
-}
-
 func TestNewPreview(t *testing.T) {
+	// assertOS(t)
+
 	var (
 		dot = gp.GardenPath{"", "home", "user", ".bashrc"}
 		dtt = gp.GardenPath{"", "home", "user", "Documents", "dotato", "bash", ".bashrc"}
@@ -51,13 +21,17 @@ func TestNewPreview(t *testing.T) {
 		p, err := d.newPreview(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, dot, p.Dot.Path)
+		assert.Equal(t, dot, p.Dot.Target)
 		assert.Equal(t, dot, p.Dot.Real)
 		assert.Equal(t, dtt, p.Dtt.Path)
+		assert.Equal(t, dtt, p.Dtt.Target)
 		assert.Equal(t, dtt, p.Dtt.Real)
 	}
 }
 
 func TestPreviewImportFile(t *testing.T) {
+	assertOS(t)
+
 	var (
 		dot = gp.GardenPath{"", "home", "user", ".bashrc"}
 		dtt = gp.GardenPath{"", "home", "user", "Documents", "dotato", "bash", ".bashrc"}
@@ -217,6 +191,8 @@ func TestPreviewImportFile(t *testing.T) {
 }
 
 func TestPreviewImportLink(t *testing.T) {
+	assertOS(t)
+
 	var (
 		dot = gp.GardenPath{"", "home", "user", ".bashrc"}
 		dtt = gp.GardenPath{"", "home", "user", "Documents", "dotato", "bash", ".bashrc"}
@@ -333,6 +309,8 @@ func TestPreviewImportLink(t *testing.T) {
 }
 
 func TestPreviewExportFile(t *testing.T) {
+	assertOS(t)
+
 	var (
 		dot = gp.GardenPath{"", "home", "user", ".bashrc"}
 		dtt = gp.GardenPath{"", "home", "user", "Documents", "dotato", "bash", ".bashrc"}
@@ -448,6 +426,8 @@ func TestPreviewExportFile(t *testing.T) {
 }
 
 func TestPreviewExportLink(t *testing.T) {
+	assertOS(t)
+
 	var (
 		dot = gp.GardenPath{"", "home", "user", ".bashrc"}
 		dtt = gp.GardenPath{"", "home", "user", "Documents", "dotato", "bash", ".bashrc"}
@@ -563,6 +543,8 @@ func TestPreviewExportLink(t *testing.T) {
 }
 
 func TestPreviewUnlink(t *testing.T) {
+	assertOS(t)
+
 	var (
 		dot = gp.GardenPath{"", "home", "user", ".bashrc"}
 		dtt = gp.GardenPath{"", "home", "user", "Documents", "dotato", "bash", ".bashrc"}

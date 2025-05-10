@@ -4,16 +4,16 @@ import (
 	"bufio"
 	"os"
 
-	"github.com/go-git/go-billy/v5"
+	"github.com/go-git/go-billy/v6"
 	"github.com/msisdev/dotato/internal/lib/filesystem"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 
 // Ignore wraps RuleTree and implements file read.
 type Ignore struct {
-	fn string						// ignore file name
-	fs billy.Filesystem	// filesystem
-	rt *RuleTree				// ignore rule tree
+	fn string           // ignore file name
+	fs billy.Filesystem // filesystem
+	rt *RuleTree        // ignore rule tree
 }
 
 func _new(fs billy.Filesystem, base gp.GardenPath, filename string) *Ignore {
@@ -63,7 +63,7 @@ func (i Ignore) Read(dir gp.GardenPath) (bool, error) {
 		}
 		buf = append(buf, line)
 	}
-	
+
 	i.rt.Append(dir, newRules(buf...))
 	return true, nil
 }
