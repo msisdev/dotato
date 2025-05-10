@@ -94,6 +94,7 @@ func printPreview(ps []dotato.Preview, f func(dotato.Preview) string) {
 	fmt.Print("\n🔎 Preview\n\n")
 	for _, p := range ps {
 		fmt.Println(f(p))
+		fmt.Println()
 	}
 	fmt.Println()
 }
