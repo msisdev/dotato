@@ -3,6 +3,9 @@
 # 🥔 dotato
 dotato is a lightweight dotfile manager.
 
+> [!CAUTION]
+> Dotato is in alpha release. Always backup before using dotato.
+
 <img src="./example/import.gif" alt="import" width="80%">
 <img src="./example/export.gif" alt="export" width="80%">
 </div>
