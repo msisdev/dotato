@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/memfs"
-	"github.com/msisdev/dotato/internal/engine"
+	"github.com/msisdev/dotato/pkg/engine"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 

@@ -7,8 +7,8 @@ import (
 	"github.com/msisdev/dotato/internal/cli/ui"
 	"github.com/msisdev/dotato/internal/component/mxspinner"
 	"github.com/msisdev/dotato/internal/lib/store"
-	"github.com/msisdev/dotato/internal/state"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
+	"github.com/msisdev/dotato/pkg/state"
 )
 
 func RunPreviewDangerUnlink(a app.App, hs []state.History) ([]app.Preview, error) {

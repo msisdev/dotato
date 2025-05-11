@@ -3,10 +3,10 @@ package app
 import (
 	"github.com/charmbracelet/log"
 	"github.com/go-git/go-billy/v5"
-	"github.com/msisdev/dotato/internal/engine"
 	"github.com/msisdev/dotato/internal/factory"
 	"github.com/msisdev/dotato/internal/lib/filesystem"
-	"github.com/msisdev/dotato/internal/state"
+	"github.com/msisdev/dotato/pkg/engine"
+	"github.com/msisdev/dotato/pkg/state"
 )
 
 type App struct {

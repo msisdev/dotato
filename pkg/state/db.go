@@ -1,7 +1,7 @@
 package state
 
 import (
-	"errors"
+	// "errors"
 	"fmt"
 
 	"github.com/glebarez/sqlite"
@@ -38,7 +38,7 @@ var (
 //
 // What NewDB does not do:
 //  - Migrate History table
-func NewDB(path string) (*gorm.DB, Version, error) {
+func newDB(path string) (*gorm.DB, Version, error) {
 	// Open dbt
 	config := gorm.Config{
 		// Logger: nil,
@@ -54,15 +54,16 @@ func NewDB(path string) (*gorm.DB, Version, error) {
 	}
 
 	// Get version
-	_, ok, err := GetVersion(db)
+	_, ok, err := getVersion(db)
 	if err != nil {
 		return nil, VersionUnknown, err
 	}
 
-	// Is this db new?
+	// Is version not found?
 	if !ok {
-		// Set version
-		if err := SetVersion(db, Version1); err != nil {
+		// This db is new.
+		// Set version to default.
+		if err := setVersion(db, DBVersion); err != nil {
 			return nil, VersionUnknown, err
 		}
 	}
@@ -71,24 +72,27 @@ func NewDB(path string) (*gorm.DB, Version, error) {
 }
 
 // Select version from db
-func GetVersion(db *gorm.DB) (Version, bool, error) {
-	// Query version
-	store := Store{ Key: KeyVersion }
-
-	// Suppress not found error log
-	db.Statement.RaiseErrorOnNotFound = false
-
-	if err := db.First(&store).Error; err != nil {
-		// not found error?
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return "", false, nil
-		}
-
-		// It is an error
+func getVersion(db *gorm.DB) (Version, bool, error) {
+	// Query rows that their keys match 'version'
+	var stores []Store
+	if err := db.Where("key = ?", KeyVersion).Find(&stores).Error; err != nil {
 		return "", false, err
 	}
 
-	// Map value to version
+	// No rows?
+	if len(stores) == 0 {
+		return "", false, nil
+	}
+
+	// Too many rows?
+	if len(stores) > 1 {
+		return "", false, fmt.Errorf("multiple version rows found")
+	}
+	
+	// Select first row
+	store := stores[0]
+
+	// Type cast
 	switch store.Value {
 	case string(DBVersion):
 		return DBVersion, true, nil
@@ -98,7 +102,7 @@ func GetVersion(db *gorm.DB) (Version, bool, error) {
 }
 
 // Upsert version into db
-func SetVersion(db *gorm.DB, version Version) error {
+func setVersion(db *gorm.DB, version Version) error {
 	store := Store{
 		Key:   KeyVersion,
 		Value: string(version),

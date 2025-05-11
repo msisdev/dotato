@@ -3,7 +3,7 @@ package app
 import (
 	"github.com/msisdev/dotato/internal/config"
 	"github.com/msisdev/dotato/internal/lib/filesystem"
-	"github.com/msisdev/dotato/internal/state"
+	"github.com/msisdev/dotato/pkg/state"
 	"gorm.io/gorm"
 )
 

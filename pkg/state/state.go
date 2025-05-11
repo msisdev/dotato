@@ -25,7 +25,7 @@ func New(fs billy.Filesystem, statePath string) (*State, error) {
 	}
 
 	// Open db
-	db, ver, err := NewDB(statePath)
+	db, ver, err := newDB(statePath)
 	if err != nil {
 		return nil, err
 	}

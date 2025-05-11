@@ -8,13 +8,13 @@ import (
 
 func TestDB(t *testing.T) {
 	// Test the NewDB function
-	db, ver, err := NewDB(PathInMemory)
+	db, ver, err := newDB(PathInMemory)
 	assert.NoError(t, err)
 	assert.Equal(t, ver, Version1)
 
 	// Test the version
 	{
-		getVer, ok, err := GetVersion(db)
+		getVer, ok, err := getVersion(db)
 		assert.NoError(t, err)
 		assert.True(t, ok)
 		assert.Equal(t, ver, getVer)
