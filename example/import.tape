@@ -60,9 +60,9 @@ Output import.gif
 Require dotato
 
 Set Shell "bash"
-Set FontSize 24
+Set FontSize 32
 Set Width 1200
-Set Height 600
+Set Height 900
 
 Type "dotato import group bash nux"
 Sleep 500ms
