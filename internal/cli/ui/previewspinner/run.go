@@ -1,6 +1,8 @@
 package previewspinner
 
 import (
+	"fmt"
+
 	"github.com/msisdev/dotato/internal/cli/app"
 	"github.com/msisdev/dotato/internal/cli/ui"
 	"github.com/msisdev/dotato/internal/component/mxspinner"
@@ -12,7 +14,7 @@ import (
 func RunPreviewDangerUnlink(a app.App, hs []state.History) ([]app.Preview, error) {
 	var ps []app.Preview
 
-	title := "Scanning histories ..."
+	title := "Preview ..."
 	err := mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
 		for _, h := range hs {
 			// Check quit
@@ -41,9 +43,9 @@ func RunPreviewDangerUnlink(a app.App, hs []state.History) ([]app.Preview, error
 			// Add preview
 			ps = append(ps, *p)
 
-			store.TrySet("Previewing " + p.Dot.Path.Abs())
+			store.TrySet(fmt.Sprintf("Preview %s ...", p.Dot.Path.Abs()))
 		}
-		store.Set("Done")
+		store.Set("Preview done")
 
 		return nil
 	})
@@ -57,9 +59,9 @@ func RunPreviewDangerUnlink(a app.App, hs []state.History) ([]app.Preview, error
 func RunPreviewImportGroupFile(a app.App, group string, base gp.GardenPath) ([]app.Preview, error) {
 	var ps []app.Preview
 
-	title := "Scanning files ..."
+	title := fmt.Sprintf("Preview %s ...", group)
 	err := mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
-		return a.WalkImportFile(group, base, func(p app.Preview) error {
+		err := a.WalkImportFile(group, base, func(p app.Preview) error {
 			// Check quit
 			select {
 			case <-quit:
@@ -70,9 +72,16 @@ func RunPreviewImportGroupFile(a app.App, group string, base gp.GardenPath) ([]a
 			// Add preview
 			ps = append(ps, p)
 
-			store.TrySet("Previewing " + p.Dot.Path.Abs())
+			store.TrySet(fmt.Sprintf("Preview %s %s ...", group, p.Dot.Path.Abs()))
 			return nil
 		})
+		if err != nil {
+			store.Set(fmt.Sprintf("Preview %s: %s", group, err.Error()))
+		} else {
+			store.Set(fmt.Sprintf("Preview %s done", group))
+		}
+
+		return err
 	})
 	if err != nil {
 		return nil, err
@@ -84,9 +93,9 @@ func RunPreviewImportGroupFile(a app.App, group string, base gp.GardenPath) ([]a
 func RunPreviewImportGroupLink(a app.App, group string, base gp.GardenPath) ([]app.Preview, error) {
 	var ps []app.Preview
 
-	title := "Scanning links ..."
+	title := fmt.Sprintf("Preview %s ...", group)
 	err := mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
-		return a.WalkImportLink(group, base, func(p app.Preview) error {
+		err := a.WalkImportLink(group, base, func(p app.Preview) error {
 			// Check quit
 			select {
 			case <-quit:
@@ -97,10 +106,17 @@ func RunPreviewImportGroupLink(a app.App, group string, base gp.GardenPath) ([]a
 			// Add preview
 			ps = append(ps, p)
 
-			store.TrySet("Previewing " + p.Dot.Path.Abs())
+			store.TrySet(fmt.Sprintf("Preview %s ...", p.Dot.Path.Abs()))
 
 			return nil
 		})
+		if err != nil {
+			store.Set(fmt.Sprintf("Preview %s: %s", group, err.Error()))
+		} else {
+			store.Set(fmt.Sprintf("Preview %s done", group))
+		}
+
+		return err
 	})
 	if err != nil {
 		return nil, err
@@ -112,9 +128,9 @@ func RunPreviewImportGroupLink(a app.App, group string, base gp.GardenPath) ([]a
 func RunPreviewExportGroupFile(a app.App, group string, base gp.GardenPath) ([]app.Preview, error) {
 	var ps []app.Preview
 
-	title := "Scanning files ..."
+	title := fmt.Sprintf("Preview %s ...", group)
 	err := mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
-		return a.WalkExportFile(group, base, func(p app.Preview) error {
+		err := a.WalkExportFile(group, base, func(p app.Preview) error {
 			// Check quit
 			select {
 			case <-quit:
@@ -125,10 +141,17 @@ func RunPreviewExportGroupFile(a app.App, group string, base gp.GardenPath) ([]a
 			// Add preview
 			ps = append(ps, p)
 
-			store.TrySet("Previewing " + p.Dot.Path.Abs())
+			store.TrySet(fmt.Sprintf("Preview %s %s ...", group, p.Dot.Path.Abs()))
 
 			return nil
 		})
+		if err != nil {
+			store.Set(fmt.Sprintf("Preview %s: %s", group, err.Error()))
+		} else {
+			store.Set(fmt.Sprintf("Preview %s done", group))
+		}
+
+		return err
 	})
 	if err != nil {
 		return nil, err
@@ -140,9 +163,9 @@ func RunPreviewExportGroupFile(a app.App, group string, base gp.GardenPath) ([]a
 func RunPreviewExportGroupLink(a app.App, group string, base gp.GardenPath) ([]app.Preview, error) {
 	var ps []app.Preview
 
-	title := "Scanning links ..."
+	title := fmt.Sprintf("Preview %s ...", group)
 	err := mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
-		return a.WalkExportLink(group, base, func(p app.Preview) error {
+		err := a.WalkExportLink(group, base, func(p app.Preview) error {
 			// Check quit
 			select {
 			case <-quit:
@@ -153,10 +176,17 @@ func RunPreviewExportGroupLink(a app.App, group string, base gp.GardenPath) ([]a
 			// Add preview
 			ps = append(ps, p)
 
-			store.TrySet("Previewing " + p.Dot.Path.Abs())
+			store.TrySet(fmt.Sprintf("Preview %s %s ...", group, p.Dot.Path.Abs()))
 
 			return nil
 		})
+		if err != nil {
+			store.Set(fmt.Sprintf("Preview %s: %s", group, err.Error()))
+		} else {
+			store.Set(fmt.Sprintf("Preview %s done", group))
+		}
+
+		return err
 	})
 	if err != nil {
 		return nil, err
@@ -168,9 +198,9 @@ func RunPreviewExportGroupLink(a app.App, group string, base gp.GardenPath) ([]a
 func RunPreviewUnlinkGroup(a app.App, group string, base gp.GardenPath) ([]app.Preview, error) {
 	var ps []app.Preview
 
-	title := "Scanning links ..."
+	title := fmt.Sprintf("Preview %s ...", group)
 	err := mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
-		return a.WalkUnlink(group, base, func(p app.Preview) error {
+		err := a.WalkUnlink(group, base, func(p app.Preview) error {
 			// Check quit
 			select {
 			case <-quit:
@@ -181,10 +211,17 @@ func RunPreviewUnlinkGroup(a app.App, group string, base gp.GardenPath) ([]app.P
 			// Add preview
 			ps = append(ps, p)
 
-			store.TrySet("Previewing " + p.Dot.Path.Abs())
+			store.TrySet(fmt.Sprintf("Preview %s %s ...", group, p.Dot.Path.Abs()))
 
 			return nil
 		})
+		if err != nil {
+			store.Set(fmt.Sprintf("Preview %s: %s", group, err.Error()))
+		} else {
+			store.Set(fmt.Sprintf("Preview %s done", group))
+		}
+
+		return err
 	})
 	if err != nil {
 		return nil, err

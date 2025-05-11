@@ -13,11 +13,11 @@ var (
 )
 
 var (
-	iconNone 			= lipgloss.NewStyle().Foreground(ui.MutedColor).Render("✔")
-	iconSkip 			= lipgloss.NewStyle().Foreground(ui.InfoColor).Render("✘")
-	iconCreate 		= lipgloss.NewStyle().Foreground(ui.PositiveColor).Render("+")
-	iconOverwrite	= lipgloss.NewStyle().Foreground(ui.CriticalColor).Render("!")
-	iconUnknown 	= lipgloss.NewStyle().Foreground(ui.NegativeColor).Render("?")
+	iconNone 			= lipgloss.NewStyle().Foreground(ui.MutedColor).Render(" ✔ ")
+	iconSkip 			= lipgloss.NewStyle().Background(ui.InfoColor).Render(" ✘ ")
+	iconCreate 		= lipgloss.NewStyle().Background(ui.PositiveColor).Render(" + ")
+	iconOverwrite	= lipgloss.NewStyle().Background(ui.CriticalColor).Render(" ! ")
+	iconUnknown 	= lipgloss.NewStyle().Background(ui.NegativeColor).Render(" ? ")
 )
 
 func renderIcon(op app.FileOp) (string, bool) {
@@ -68,7 +68,7 @@ func render(p app.Preview, arrow string) string {
 	}
 
 	return fmt.Sprintf(
-		"%s %s\n%s %s %s\n",
+		"%s%s\n %s%s%s\n",
 		dotIcon, dotPath, arrow, dttIcon, dttPath,
 	)
 }

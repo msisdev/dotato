@@ -6,30 +6,43 @@ import (
 	"github.com/msisdev/dotato/internal/cli/app"
 )
 
-func run(ps []app.Preview, arrow string) {
-	fmt.Printf("\n🔎 Preview: total %d\n\n", len(ps))
+func countUpdate(ps []app.Preview) int {
+	count := 0
+	for _, p := range ps {
+		if (p.DotOp != app.FileOpNone && p.DotOp != app.FileOpSkip) ||
+			(p.DttOp != app.FileOpNone && p.DttOp != app.FileOpSkip) {
+			count++
+		}
+	}
+	return count
+}
+
+func run(ps []app.Preview, arrow string) int {
+	count := countUpdate(ps)
+	fmt.Printf("\n🔎 Preview: update %d / total %d\n\n", count, len(ps))
 	for _, p := range ps {
 		println(render(p, arrow))
 	}
-	println()
+
+	return count
 }
 
-func RunPreviewImportFile(ps []app.Preview) {
-	run(ps, arrowImportFile)
+func RunPreviewImportFile(ps []app.Preview) int {
+	return run(ps, arrowImportFile)
 }
 
-func RunPreviewImportLink(ps []app.Preview) {
-	run(ps, arrowImportLink)
+func RunPreviewImportLink(ps []app.Preview) int {
+	return run(ps, arrowImportLink)
 }
 
-func RunPreviewExportFile(ps []app.Preview) {
-	run(ps, arrowExportFile)
+func RunPreviewExportFile(ps []app.Preview) int {
+	return run(ps, arrowExportFile)
 }
 
-func RunPreviewExportLink(ps []app.Preview) {
-	run(ps, arrowExportLink)
+func RunPreviewExportLink(ps []app.Preview) int {
+	return run(ps, arrowExportLink)
 }
 
-func RunPreviewUnlink(ps []app.Preview) {
-	run(ps, arrowUnlink)
+func RunPreviewUnlink(ps []app.Preview) int {
+	return run(ps, arrowUnlink)
 }

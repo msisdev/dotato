@@ -86,10 +86,14 @@ func ExportPlan(logger *log.Logger, args *args.ExportPlanArgs) {
 	}
 
 	// Print preview
+	var count int
 	if mode == config.ModeFile {
-		previewprinter.RunPreviewExportFile(ps)
+		count = previewprinter.RunPreviewExportFile(ps)
 	} else {
-		previewprinter.RunPreviewExportLink(ps)
+		count = previewprinter.RunPreviewExportLink(ps)
+	}
+	if count == 0 {
+		return
 	}
 
 	// Confirm

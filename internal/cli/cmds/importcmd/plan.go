@@ -86,10 +86,14 @@ func ImportPlan(logger *log.Logger, args *args.ImportPlanArgs) {
 	}
 
 	// Print preview
+	var count int
 	if mode == config.ModeFile {
-		previewprinter.RunPreviewImportFile(ps)
+		count = previewprinter.RunPreviewImportFile(ps)
 	} else {
-		previewprinter.RunPreviewImportLink(ps)
+		count = previewprinter.RunPreviewImportLink(ps)
+	}
+	if count == 0 {
+		return
 	}
 
 	// Confirm

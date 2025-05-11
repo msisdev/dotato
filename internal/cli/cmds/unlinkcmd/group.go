@@ -32,7 +32,10 @@ func UnlinkGroup(logger *log.Logger, args *args.UnlinkGroupArgs) {
 	}
 
 	// Print preview
-	previewprinter.RunPreviewUnlink(ps)
+	count := previewprinter.RunPreviewUnlink(ps)
+	if count == 0 {
+		return
+	}
 
 	// Confirm
 	if !args.Yes {

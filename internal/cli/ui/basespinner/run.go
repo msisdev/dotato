@@ -1,6 +1,8 @@
 package basespinner
 
 import (
+	"fmt"
+
 	"github.com/msisdev/dotato/internal/cli/app"
 	"github.com/msisdev/dotato/internal/component/mxspinner"
 	"github.com/msisdev/dotato/internal/lib/store"
@@ -23,7 +25,8 @@ func Run(a app.App, group, resolver string) (base gp.GardenPath, err error) {
 			return err
 		}
 
-		store.Set("Config group base: " + base.Abs())
+		// store.Set("Config group base: " + base.Abs())
+		store.Set(fmt.Sprintf("Group %s: %s", group, base.Abs()))
 		return nil
 	})
 

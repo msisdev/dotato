@@ -14,7 +14,7 @@ func Run(a app.App) (mode string, err error) {
 			store.Set("Error loading config mode")
 			return err
 		}
-		store.Set("Config mode: " + mode)
+		store.Set("Mode: " + mode)
 		return nil
 	})
 
