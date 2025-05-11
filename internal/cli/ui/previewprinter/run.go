@@ -23,6 +23,7 @@ func run(ps []app.Preview, arrow string) int {
 	for _, p := range ps {
 		println(render(p, arrow))
 	}
+	fmt.Printf("%s okay / %s skip / %s create / %s overwrite / %s unknown\n\n", iconNone, iconSkip, iconCreate, iconOverwrite, iconUnknown)
 
 	return count
 }
