@@ -15,9 +15,9 @@ var (
 
 // Run `onSelect` selectively and recursively on files
 //
-//   - If selectIgnored = true, you are calling onSelect on ignored files.
-//   - If selectIgnored = false, you are calling onSelect on non-ignored files.
-func (e *Engine) Walk(
+//   - If selectIgnored = true, call onSelect on ignored files.
+//   - If selectIgnored = false, call onSelect on non-ignored files.
+func (e Engine) Walk(
 	root gp.GardenPath,
 	ig *ignore.Ignore,
 	selectIgnored bool,
