@@ -25,10 +25,12 @@ func (a App) ImportFile(
 	)
 
 	if pre.DttOp == FileOpOverwrite {
-		// Remove dtt
-		err := a.fs.Remove(dttabs)
-		if err != nil {
-			return err
+		if !pre.Dtt.IsFile {
+			// Remove symlink
+			err := a.fs.Remove(dotabs)
+			if err != nil {
+				return err
+			}
 		}
 	} else {
 		// Make directory
@@ -46,8 +48,8 @@ func (a App) ImportFile(
 
 	// Write history
 	err = a.State.TxUpsertOne(tx, state.History{
-		DotPath: dotabs,
-		DttPath: dttabs,
+		DotPath: pre.Dot.Path.Abs(),
+		DttPath: pre.Dtt.Real.Abs(),
 		Mode:    config.ModeFile,
 	})
 	if err != nil {
@@ -63,6 +65,7 @@ func (a App) ImportLink(
 	dirPerm os.FileMode,
 	filePerm os.FileMode,
 ) error {
+	// If both dot and dtt are none or skip, do nothing
 	if (pre.DotOp == FileOpNone || pre.DotOp == FileOpSkip) &&
 		(pre.DttOp == FileOpNone || pre.DttOp == FileOpSkip) {
 		return nil
@@ -76,10 +79,12 @@ func (a App) ImportLink(
 	// Create dtt first
 	if pre.DttOp != FileOpNone {
 		if pre.DttOp == FileOpOverwrite {
-			// Remove dtt
-			err := a.fs.Remove(dttabs)
-			if err != nil {
-				return err
+			if !pre.Dtt.IsFile {
+				// Remove symlink
+				err := a.fs.Remove(dotabs)
+				if err != nil {
+					return err
+				}
 			}
 		} else {
 			// Create directory
@@ -96,10 +101,10 @@ func (a App) ImportLink(
 		}
 	}
 
-	// Create dot after
+	// Now create dot
 	if pre.DotOp != FileOpNone {
 		if pre.DotOp == FileOpOverwrite {
-			// Remove dot
+			// Remove dot (don't care if it is a file or symlink)
 			err := a.fs.Remove(dotabs)
 			if err != nil {
 				return err
@@ -121,8 +126,8 @@ func (a App) ImportLink(
 
 	// Write history
 	err := a.State.TxUpsertOne(tx, state.History{
-		DotPath: dotabs,
-		DttPath: dttabs,
+		DotPath: pre.Dot.Path.Abs(),
+		DttPath: pre.Dtt.Real.Abs(),
 		Mode:    config.ModeLink,
 	})
 	if err != nil {
@@ -147,8 +152,15 @@ func (a App) ExportFile(
 		dttabs = pre.Dtt.Real.Abs()	// use real path to get actual file
 	)
 
+	// Check dot stat
 	if pre.DotOp == FileOpOverwrite {
-		// Do nothing
+		if !pre.Dot.IsFile {
+			// Remove symlink
+			err := a.fs.Remove(dotabs)
+			if err != nil {
+				return err
+			}
+		}
 	} else {
 		// Make directory
 		err := a.fs.MkdirAll(pre.Dot.Path.Parent().Abs(), dirPerm)
@@ -165,8 +177,8 @@ func (a App) ExportFile(
 
 	// Write history
 	err = a.State.TxUpsertOne(tx, state.History{
-		DotPath: dotabs,
-		DttPath: dttabs,
+		DotPath: pre.Dot.Path.Abs(),
+		DttPath: pre.Dtt.Real.Abs(),
 		Mode:    config.ModeFile,
 	})
 	if err != nil {
@@ -193,7 +205,7 @@ func (a App) ExportLink(
 
 	// Handle dot
 	if pre.DotOp == FileOpOverwrite {
-		// Remove dot
+		// Remove dot (don't care if it is a file or symlink)
 		err := a.fs.Remove(dotabs)
 		if err != nil {
 			return err
@@ -214,8 +226,8 @@ func (a App) ExportLink(
 
 	// Write history
 	err = a.State.TxUpsertOne(tx, state.History{
-		DotPath: dotabs,
-		DttPath: dttabs,
+		DotPath: pre.Dot.Path.Abs(),
+		DttPath: pre.Dtt.Real.Abs(),
 		Mode:    config.ModeLink,
 	})
 	if err != nil {
@@ -231,8 +243,7 @@ func (a App) Unlink(
 	dirPerm os.FileMode,
 	filePerm os.FileMode,
 ) error {
-	if pre.DotOp == FileOpNone ||
-		pre.DotOp == FileOpCreate {
+	if pre.DotOp != FileOpOverwrite {
 		return nil
 	}
 
@@ -255,7 +266,7 @@ func (a App) Unlink(
 
 	// Delete history
 	err = a.State.TxDeleteOne(tx, state.History{
-		DotPath: dotabs,
+		DotPath: pre.Dot.Path.Abs(),
 	})
 	if err != nil {
 		return err
