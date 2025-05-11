@@ -1,8 +1,6 @@
 package engine
 
 import (
-	"github.com/msisdev/dotato/internal/factory"
-	"github.com/msisdev/dotato/internal/ignore"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 
@@ -32,12 +30,4 @@ func (e Engine) DttToDot(
 		path = append(path, dtt[i])
 	}
 	return path
-}
-
-func (e Engine) ReadGroupIgnore(group string) (*ignore.Ignore, error) {
-	if err := e.readConfig(); err != nil { return nil, err }
-
-	dir := e.cdir.Copy()
-	dir = append(dir, group)
-	return factory.ReadIgnoreRecur(e.fs, dir)
 }
