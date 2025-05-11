@@ -45,7 +45,6 @@ func UnlinkGroup(logger *log.Logger, args *args.UnlinkGroupArgs) {
 			return
 		}
 		if !yes {
-			logger.Info("Aborted")
 			return
 		}
 	}

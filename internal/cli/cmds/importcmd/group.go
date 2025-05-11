@@ -68,7 +68,6 @@ func ImportGroup(logger *log.Logger, args *args.ImportGroupArgs) {
 			return
 		}
 		if !yes {
-			logger.Info("Aborted")
 			return
 		}
 	}
