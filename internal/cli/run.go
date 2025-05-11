@@ -11,6 +11,7 @@ import (
 	"github.com/msisdev/dotato/internal/cli/cmds/importcmd"
 	"github.com/msisdev/dotato/internal/cli/cmds/initcmd"
 	"github.com/msisdev/dotato/internal/cli/cmds/unlinkcmd"
+	"github.com/msisdev/dotato/internal/cli/cmds/wherecmd"
 )
 
 func parse() (args.Args, error) {
@@ -94,6 +95,14 @@ func Run() {
 
 	if args.Version != nil {
 		printVersion(logger)
+		return
+	}
+
+	if args.Where != nil {
+		if args.Where.State != nil {
+			wherecmd.WhereState(logger, args.Where.State)
+			return
+		}
 		return
 	}
 }

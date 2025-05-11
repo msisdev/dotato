@@ -92,6 +92,12 @@ func (p GardenPath) Abs() string {
 	return strings.Join(p, string(os.PathSeparator))
 }
 
+func (p GardenPath) Copy() GardenPath {
+	cp := make(GardenPath, len(p))
+	copy(cp, p)
+	return cp
+}
+
 // Return the last element.
 func (p GardenPath) Last() string {
 	if len(p) == 0 {
@@ -119,10 +125,4 @@ func (p GardenPath) IsEqual(other GardenPath) bool {
 		}
 	}
 	return true
-}
-
-func (p GardenPath) Copy() GardenPath {
-	cp := make(GardenPath, len(p))
-	copy(cp, p)
-	return cp
 }

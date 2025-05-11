@@ -38,24 +38,38 @@ func (e Engine) GetConfigPlans() (map[string][]string, error) {
 	return e.cfg.Plans, nil
 }
 
-func (e Engine) GetConfigGroups(plan string) (map[string]bool, error) {
+func (e Engine) GetConfigGroups(plan string) (map[string]bool, bool, error) {
+	if err := e.readConfig(); err != nil {
+		return nil, false, err
+	}
+
+	// Get groups
+	groupList, ok := e.cfg.Plans[plan]
+	if !ok {
+		return nil, false, nil
+	}
+
+	// Convert to map[string]bool
+	groupSet := make(map[string]bool)
+	for _, group := range groupList {
+		groupSet[group] = true
+	}
+
+	return groupSet, true, nil
+}
+
+func (e Engine) GetConfigGroupAll() (map[string]bool, error) {
 	if err := e.readConfig(); err != nil {
 		return nil, err
 	}
 
 	// Get groups
-	groups, ok := e.cfg.Plans[plan]
-	if !ok {
-		return nil, nil
+	groups := make(map[string]bool)
+	for group := range e.cfg.Groups {
+		groups[group] = true
 	}
 
-	// Convert to map[string]bool
-	groupMap := make(map[string]bool)
-	for _, group := range groups {
-		groupMap[group] = true
-	}
-
-	return groupMap, nil
+	return groups, nil
 }
 
 func (e Engine) GetConfigGroupBase(group, resolver string) (gp.GardenPath, []string, error) {

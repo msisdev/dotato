@@ -1,89 +1,74 @@
 package previewprinter
 
 import (
+	"fmt"
+
 	"github.com/charmbracelet/lipgloss"
 	"github.com/msisdev/dotato/internal/cli/app"
+	"github.com/msisdev/dotato/internal/cli/ui"
 )
 
 var (
-	iconNone 			= lipgloss.NewStyle().Foreground(lipgloss.Color("2")).Render("✔")
-	iconSkip 			= lipgloss.NewStyle().Foreground(lipgloss.Color("1")).Render("✘")
-	iconCreate 		= lipgloss.NewStyle().Foreground(lipgloss.Color("3")).Render("+")
-	iconOverwrite	= lipgloss.NewStyle().Foreground(lipgloss.Color("5")).Render("!")
-	iconUnknown 	= lipgloss.NewStyle().Foreground(lipgloss.Color("7")).Render("?")
+	mutedStyle = lipgloss.NewStyle().Foreground(ui.MutedColor)
 )
 
+var (
+	iconNone 			= lipgloss.NewStyle().Foreground(ui.MutedColor).Render("✔")
+	iconSkip 			= lipgloss.NewStyle().Foreground(ui.InfoColor).Render("✘")
+	iconCreate 		= lipgloss.NewStyle().Foreground(ui.PositiveColor).Render("+")
+	iconOverwrite	= lipgloss.NewStyle().Foreground(ui.CriticalColor).Render("!")
+	iconUnknown 	= lipgloss.NewStyle().Foreground(ui.NegativeColor).Render("?")
+)
 
-func getIcon(op app.FileOp) string {
+func renderIcon(op app.FileOp) (string, bool) {
 	switch op {
 	case app.FileOpNone:
-		return iconNone
+		return iconNone, true
 	case app.FileOpSkip:
-		return iconSkip
+		return iconSkip, false
 	case app.FileOpCreate:
-		return iconCreate
+		return iconCreate, false
 	case app.FileOpOverwrite:
-		return iconOverwrite
+		return iconOverwrite, false
 	default:
-		return iconUnknown
+		return iconUnknown, false
 	}
 }
 
-var (
-	dotStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("6"))
-	dttStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("4"))
-	arrowStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("7")).Bold(true)
+const (
+	arrowImportFile = "->"
+	arrowImportLink = "->"
+	arrowExportFile = "<-"
+	arrowExportLink = "<-"
+	arrowUnlink     = "<->"
 )
 
-func sprintPreviewImportFile(p app.Preview) string {
-	return lipgloss.JoinVertical(
-		lipgloss.Left,
-		getIcon(p.DttOp),
-		dotStyle.Render(p.Dot.Path.Abs()),
-		arrowStyle.Render("->"),
-		dttStyle.Render(p.Dtt.Path.Abs()),
-	)
-}
+func render(p app.Preview, arrow string) string {
+	var (
+		dotIcon string
+		dotPath string
+		dotMuted bool
 
-func sprintPreviewImportLink(p app.Preview) string {
-	return lipgloss.JoinVertical(
-		lipgloss.Left,
-		getIcon(p.DotOp),
-		dotStyle.Render(p.Dot.Path.Abs()),
-		arrowStyle.Render("->"),
-		getIcon(p.DttOp),
-		dttStyle.Render(p.Dtt.Path.Abs()),
+		dttIcon string
+		dttPath string
+		dttMuted bool
 	)
-}
+	// Get muted status
+	dotIcon, dotMuted = renderIcon(p.DotOp)
+	dttIcon, dttMuted = renderIcon(p.DttOp)
 
-func sprintPreviewExportFile(p app.Preview) string {
-	return lipgloss.JoinVertical(
-		lipgloss.Left,
-		getIcon(p.DotOp),
-		dotStyle.Render(p.Dot.Path.Abs()),
-		arrowStyle.Render("<-"),
-		dttStyle.Render(p.Dtt.Path.Abs()),
-	)
-}
+	// If both are muted, render all in muted style
+	if dotMuted && dttMuted {
+		dotPath = mutedStyle.Render(p.Dot.Path.Abs())
+		dttPath = mutedStyle.Render(p.Dtt.Path.Abs())
+		arrow = mutedStyle.Render(arrow)
+	} else {
+		dotPath = p.Dot.Path.Abs()
+		dttPath = p.Dtt.Path.Abs()
+	}
 
-func sprintPreviewExportLink(p app.Preview) string {
-	return lipgloss.JoinVertical(
-		lipgloss.Left,
-		getIcon(p.DotOp),
-		dotStyle.Render(p.Dot.Path.Abs()),
-		arrowStyle.Render("<-"),
-		getIcon(p.DttOp),
-		dttStyle.Render(p.Dtt.Path.Abs()),
-	)
-}
-
-func sprintPreviewUnlink(p app.Preview) string {
-	return lipgloss.JoinVertical(
-		lipgloss.Left,
-		getIcon(p.DotOp),
-		dotStyle.Render(p.Dot.Path.Abs()),
-		arrowStyle.Render("<-"),
-		getIcon(p.DttOp),
-		dttStyle.Render(p.Dtt.Path.Abs()),
+	return fmt.Sprintf(
+		"%s %s\n%s %s %s\n",
+		dotIcon, dotPath, arrow, dttIcon, dttPath,
 	)
 }

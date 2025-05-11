@@ -1,59 +1,68 @@
 package exportcmd
 
 import (
-	"fmt"
-
 	"github.com/charmbracelet/log"
+	"github.com/msisdev/dotato/internal/cli/app"
 	"github.com/msisdev/dotato/internal/cli/args"
-	"github.com/msisdev/dotato/internal/cli/component/inputconfirm"
-	"github.com/msisdev/dotato/internal/cli/component/mxspinner"
-	"github.com/msisdev/dotato/internal/cli/shared"
+	"github.com/msisdev/dotato/internal/cli/ui"
+	"github.com/msisdev/dotato/internal/cli/ui/basespinner"
+	"github.com/msisdev/dotato/internal/cli/ui/confirm"
+	"github.com/msisdev/dotato/internal/cli/ui/modespinner"
+	"github.com/msisdev/dotato/internal/cli/ui/previewprinter"
+	"github.com/msisdev/dotato/internal/cli/ui/previewspinner"
+	"github.com/msisdev/dotato/internal/component/mxspinner"
 	"github.com/msisdev/dotato/internal/config"
-	"github.com/msisdev/dotato/internal/dotato"
 	"github.com/msisdev/dotato/internal/lib/store"
+	"gorm.io/gorm"
 )
 
 func ExportGroup(logger *log.Logger, args *args.ExportGroupArgs) {
-	s, err := shared.New(logger)
+	a := app.New(logger)
+
+	// Get mode
+	mode, err := modespinner.Run(a)
+	if err != nil {
+		logger.Fatal(err)
+		return
+	}
+	if mode != config.ModeFile && mode != config.ModeLink {
+		logger.Fatal("Invalid mode")
+		return
+	}
+
+	// Get base
+	base, err := basespinner.Run(a, args.Group, args.Resolver)
 	if err != nil {
 		logger.Fatal(err)
 		return
 	}
 
 	// Preview
-	var (
-		ps   []dotato.Preview
-		mods int
-	)
-	if s.GetMode() == config.ModeFile {
-		ps, mods, err = s.PreviewExportGroupFile(args.Group, args.Resolver)
+	var ps []app.Preview
+	if mode == config.ModeFile {
+		ps, err = previewspinner.RunPreviewExportGroupFile(a, args.Group, base)
 		if err != nil {
 			logger.Fatal(err)
 			return
 		}
 	} else {
-		ps, mods, err = s.PreviewExportGroupLink(args.Group, args.Resolver)
+		ps, err = previewspinner.RunPreviewExportGroupLink(a, args.Group, base)
 		if err != nil {
 			logger.Fatal(err)
 			return
 		}
 	}
 
-	// Print preview list
-	if s.GetMode() == config.ModeFile {
-		shared.PrintPreviewExportFile(ps)
+	// Print preview
+	if mode == config.ModeFile {
+		previewprinter.RunPreviewExportFile(ps)
 	} else {
-		shared.PrintPreviewExportLink(ps)
-	}
-
-	if mods == 0 {
-		fmt.Println("No files to export.")
-		return
+		previewprinter.RunPreviewExportLink(ps)
 	}
 
 	// Confirm
 	if !args.Yes {
-		yes, err := inputconfirm.Run("Do you want to proceed?")
+		yes, err := confirm.Run("Do you want to proceed?")
 		if err != nil {
 			logger.Fatal(err)
 			return
@@ -61,51 +70,42 @@ func ExportGroup(logger *log.Logger, args *args.ExportGroupArgs) {
 		if !yes {
 			return
 		}
-	} else {
-		fmt.Println("Proceeding...")
 	}
 
-	// Import
-	var title string
-	if s.GetMode() == config.ModeFile {
-		title = "Exporting files..."
-	} else {
-		title = "Exporting links..."
-	}
+	// Execute
+	title := "Exporting..."
 	err = mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
-		for _, pre := range ps {
-			// Check quit
-			select {
-			case <-quit:
-				return errQuit
-			default:
-			}
+		return a.State.TxSafe(func(tx *gorm.DB) error {
+			for _, pre := range ps {
+				// Check quit
+				select {
+				case <-quit:
+					return ui.ErrQuit
+				default:
+				}
 
-			// import
-			if s.GetMode() == config.ModeFile {
-				err := s.ExportFile(pre)
+				// Export
+				var err error
+				if mode == config.ModeFile {
+					err = a.ExportFile(pre, tx)
+				} else {
+					err = a.ExportLink(pre, tx)
+				}
 				if err != nil {
 					return err
 				}
-			} else {
-				err := s.ExportLink(pre)
-				if err != nil {
-					return err
-				}
+
+				store.TrySet(pre.Dot.Path.Abs())
 			}
 
-			store.TrySet(pre.Dot.Path.Abs())
-		}
-
-		store.Set("Done")
-
-		return nil
+			store.Set("Done")
+			return nil
+		})
 	})
 	if err != nil {
-		if err != errQuit {
+		if err != ui.ErrQuit {
 			logger.Fatal(err)
 		}
-
 		return
 	}
 }

@@ -17,7 +17,7 @@ var (
 //
 //   - If selectIgnored = true, you are calling onSelect on ignored files.
 //   - If selectIgnored = false, you are calling onSelect on non-ignored files.
-func (e Engine) Walk(
+func (e *Engine) Walk(
 	root gp.GardenPath,
 	ig *ignore.Ignore,
 	selectIgnored bool,
@@ -99,7 +99,7 @@ func (e Engine) WalkNonIgnored(
 }
 
 // Scan dotfiles that is not ignored
-func (e Engine) WalkDotDir(
+func (e *Engine) WalkDotDir(
 	group string,
 	base gp.GardenPath,
 	onDot func(gp.GardenPath, os.FileInfo) error,
@@ -121,7 +121,7 @@ func (e Engine) WalkDotDir(
 }
 
 // Scan dotato files in group that is not ignored
-func (e Engine) WalkDttDir(
+func (e *Engine) WalkDttDir(
 	group string,
 	onDtt func(gp.GardenPath, os.FileInfo) error,
 ) (err error) {

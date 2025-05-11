@@ -11,6 +11,7 @@ type Store[T any] struct {
 // Initialize Store
 func New[T any](init T, ok bool) *Store[T] {
 	return &Store[T]{
+		mx: sync.Mutex{},
 		d: init,
 		ok: ok,
 	}

@@ -1,31 +1,35 @@
 package previewprinter
 
-import "github.com/msisdev/dotato/internal/cli/app"
+import (
+	"fmt"
 
-func run(ps []app.Preview, f func(app.Preview) string) {
-	println("\n🔎 Preview\n\n")
+	"github.com/msisdev/dotato/internal/cli/app"
+)
+
+func run(ps []app.Preview, arrow string) {
+	fmt.Printf("\n🔎 Preview: total %d\n\n", len(ps))
 	for _, p := range ps {
-		println(f(p))
+		println(render(p, arrow))
 	}
 	println()
 }
 
 func RunPreviewImportFile(ps []app.Preview) {
-	run(ps, sprintPreviewImportFile)
+	run(ps, arrowImportFile)
 }
 
 func RunPreviewImportLink(ps []app.Preview) {
-	run(ps, sprintPreviewImportLink)
+	run(ps, arrowImportLink)
 }
 
 func RunPreviewExportFile(ps []app.Preview) {
-	run(ps, sprintPreviewExportFile)
+	run(ps, arrowExportFile)
 }
 
 func RunPreviewExportLink(ps []app.Preview) {
-	run(ps, sprintPreviewExportLink)
+	run(ps, arrowExportLink)
 }
 
 func RunPreviewUnlink(ps []app.Preview) {
-	run(ps, sprintPreviewUnlink)
+	run(ps, arrowUnlink)
 }

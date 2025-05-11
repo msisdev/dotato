@@ -1,0 +1,77 @@
+package textinput
+
+import (
+	"fmt"
+
+	"github.com/charmbracelet/bubbles/textinput"
+	tea "github.com/charmbracelet/bubbletea"
+)
+
+const (
+	charLimit = 3
+)
+
+type model struct {
+	textInput textinput.Model
+	title			string
+	err 			error
+}
+
+func initialModel(title, placeholder string) model {
+	ti := textinput.New()
+	ti.Focus()
+	ti.Placeholder = placeholder
+	ti.CharLimit = charLimit
+	ti.Width = charLimit
+	
+	return model{
+		textInput: ti,
+		title: title,
+		err: nil,
+	}
+}
+
+func (m model) Init() tea.Cmd {
+	return textinput.Blink
+}
+
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.Type {
+		case tea.KeyEnter, tea.KeyCtrlC, tea.KeyEsc:
+			return m, tea.Quit
+		}
+
+	case error:
+		m.err = msg
+		return m, nil
+	}
+
+	m.textInput, cmd = m.textInput.Update(msg)
+	return m, cmd
+}
+
+func (m model) View() string {
+	return fmt.Sprintf(
+		"%s\n\n%s\n\n",
+		m.title,
+		m.textInput.View(),
+	)
+}
+
+func Run(title, placeholder string) (string, error) {
+	m := initialModel(title, placeholder)
+
+	p := tea.NewProgram(m)
+
+	if final, err := p.Run(); err != nil {
+		return "", err
+	} else {
+		m = final.(model)
+	}
+
+	return m.textInput.Value(), m.err
+}

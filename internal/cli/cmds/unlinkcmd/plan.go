@@ -1,100 +1,127 @@
 package unlinkcmd
 
 import (
-	"fmt"
-
 	"github.com/charmbracelet/log"
+	"github.com/msisdev/dotato/internal/cli/app"
 	"github.com/msisdev/dotato/internal/cli/args"
-	"github.com/msisdev/dotato/internal/cli/component/inputconfirm"
-	"github.com/msisdev/dotato/internal/cli/component/mxspinner"
-	"github.com/msisdev/dotato/internal/cli/shared"
-	"github.com/msisdev/dotato/internal/config"
-	"github.com/msisdev/dotato/internal/dotato"
+	"github.com/msisdev/dotato/internal/cli/ui"
+	"github.com/msisdev/dotato/internal/cli/ui/basespinner"
+	"github.com/msisdev/dotato/internal/cli/ui/confirm"
+	"github.com/msisdev/dotato/internal/cli/ui/previewprinter"
+	"github.com/msisdev/dotato/internal/cli/ui/previewspinner"
+	"github.com/msisdev/dotato/internal/component/mxspinner"
 	"github.com/msisdev/dotato/internal/lib/store"
+	gp "github.com/msisdev/dotato/pkg/gardenpath"
+	"gorm.io/gorm"
 )
 
 func UnlinkPlan(logger *log.Logger, args *args.UnlinkPlanArgs) {
-	s, err := shared.New(logger)
-	if err != nil {
-		logger.Fatal(err)
-		return
-	}
-	if s.GetMode() == config.ModeFile {
-		logger.Fatal("unlink group not supported in file mode")
-		return
+	a := app.New(logger)
+
+	{
+		plans, err := a.E.GetConfigPlans()
+		if err != nil {
+			logger.Fatal(err)
+			return
+		}
+
+		if groupList, ok := plans[args.Plan]; !ok {
+			logger.Fatal("Group not found")
+			return
+		} else {
+			if len(groupList) == 0 {
+				
+			}
+		}
 	}
 
 	// Get groups
-	groups, err := s.GetGroups(args.Plan)
+	groups, ok, err := a.E.GetConfigGroups(args.Plan)
 	if err != nil {
 		logger.Fatal(err)
 		return
 	}
-
-	// Preview
-	var (
-		ps   []dotato.Preview
-		mods int
-	)
-	for group := range groups {
-		temp, m, err := s.PreviewUnlinkGroup(group, args.Resolver)
+	if !ok {
+		// Plan not found
+		logger.Fatal("No such plan")
+		return
+	}
+	if len(groups) == 0 {
+		// Empty group list means all groups
+		groups, err = a.E.GetConfigGroupAll()
 		if err != nil {
 			logger.Fatal(err)
 			return
 		}
-		ps = append(ps, temp...)
-		mods += m
 	}
 
-	// Print preview list
-	shared.PrintPreviewUnlink(ps)
+	// Get base
+	bases := make(map[string]gp.GardenPath)
+	for group := range groups {
+		base, err := basespinner.Run(a, group, args.Resolver)
+		if err != nil {
+			logger.Fatal(err)
+			return
+		}
 
-	if mods == 0 {
-		fmt.Println("No changes to be made.")
-		return
+		bases[group] = base
 	}
+
+	// Preview
+	var ps []app.Preview
+	for group, base := range bases {
+		list, err := previewspinner.RunPreviewUnlinkGroup(a, group, base)
+		if err != nil {
+			logger.Fatal(err)
+			return
+		}
+
+		ps = append(ps, list...)
+	}
+
+	// Print preview
+	previewprinter.RunPreviewUnlink(ps)
 
 	// Confirm
 	if !args.Yes {
-		yes, err := inputconfirm.Run("Do you want to proceed?")
+		ok, err := confirm.Run("Do you want to proceed?")
 		if err != nil {
 			logger.Fatal(err)
 			return
 		}
-		if !yes {
+		if !ok {
 			return
 		}
-	} else {
-		fmt.Println("Proceeding...")
 	}
 
-	// Unlink
-	title := fmt.Sprintf("Unlinking plan %s...", args.Plan)
+	// Execute
+	title := "Unlinking ..."
 	err = mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
-		for _, pre := range ps {
-			// Check quit
-			select {
-			case <-quit:
-				return errQuit
-			default:
+		return a.State.TxSafe(func(tx *gorm.DB) error {
+			for _, pre := range ps {
+				// Check quit
+				select {
+				case <-quit:
+					return ui.ErrQuit
+				default:
+				}
+
+				// Unlink
+				err := a.Unlink(pre, tx)
+				if err != nil {
+					return err
+				}
+
+				// Update spinner
+				store.TrySet(pre.Dot.Path.Abs())
 			}
 
-			// Unlink
-			err := s.Unlink(pre)
-			if err != nil {
-				return err
-			}
-
-			// Update spinner
-			store.TrySet(pre.Dot.Path.Abs())
-		}
-
-		store.Set("Done")
-
-		return nil
+			store.Set("Done")
+			return nil
+		})
 	})
 	if err != nil {
-		if err != errQuit {
+		if err != ui.ErrQuit {
 			logger.Fatal(err)
 		}
 		return

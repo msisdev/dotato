@@ -5,12 +5,12 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/msisdev/dotato/internal/cli/args"
-	"github.com/msisdev/dotato/internal/dotato"
+	"github.com/msisdev/dotato/internal/factory"
+	"github.com/msisdev/dotato/internal/lib/filesystem"
 )
 
 func Init(logger *log.Logger, args *args.InitArgs) {
-	dotato := dotato.New()
-	ok, err := dotato.Init()
+	ok, err := factory.WriteExampleConfig(filesystem.NewOSFS(), 0666)
 	if err != nil {
 		logger.Fatal(err)
 		return

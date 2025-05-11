@@ -41,7 +41,7 @@ func (a App) ImportFile(
 	}
 
 	// Write history
-	err = a.state.TxUpsertOne(tx, state.History{
+	err = a.State.TxUpsertOne(tx, state.History{
 		DotPath: dotabs,
 		DttPath: dttabs,
 		Mode:    config.ModeFile,
@@ -114,7 +114,7 @@ func (a App) ImportLink(
 	}
 
 	// Write history
-	err := a.state.TxUpsertOne(tx, state.History{
+	err := a.State.TxUpsertOne(tx, state.History{
 		DotPath: dotabs,
 		DttPath: dttabs,
 		Mode:    config.ModeLink,
@@ -156,7 +156,7 @@ func (a App) ExportFile(
 	}
 
 	// Write history
-	err = a.state.TxUpsertOne(tx, state.History{
+	err = a.State.TxUpsertOne(tx, state.History{
 		DotPath: dotabs,
 		DttPath: dttabs,
 		Mode:    config.ModeFile,
@@ -203,7 +203,7 @@ func (a App) ExportLink(
 	}
 
 	// Write history
-	err = a.state.TxUpsertOne(tx, state.History{
+	err = a.State.TxUpsertOne(tx, state.History{
 		DotPath: dotabs,
 		DttPath: dttabs,
 		Mode:    config.ModeLink,
@@ -242,7 +242,7 @@ func (a App) Unlink(
 	}
 
 	// Delete history
-	err = a.state.TxDeleteOne(tx, state.History{
+	err = a.State.TxDeleteOne(tx, state.History{
 		DotPath: dotabs,
 	})
 	if err != nil {

@@ -64,6 +64,20 @@ func (s State) Tx(fn func(tx *gorm.DB) error) error {
 	return s.v1_tx(fn)
 }
 
+// Intercept error from fn, run tx safely and return the error
+func (s State) TxSafe(fn func(tx *gorm.DB) error) error {
+	var fnErr error
+
+	// Must return nil
+	s.v1_tx(func(tx *gorm.DB) error {
+		fnErr = fn(tx)
+
+		return nil
+	})
+
+	return fnErr
+}
+
 func (s State) TxUpsertOne(tx *gorm.DB, h History) error {
 	return s.v1_tx_upsertOne(tx, h)
 }

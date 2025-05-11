@@ -1,6 +1,8 @@
 package ui
 
-import "fmt"
+import (
+	"fmt"
+)
 
 var (
 	ErrQuit = fmt.Errorf("quit")

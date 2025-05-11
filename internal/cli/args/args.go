@@ -18,7 +18,7 @@ type DangerArgs struct {
 	Unlink	*DangerUnlinkArgs	`arg:"subcommand:unlink"`
 }
 type DangerUnlinkArgs struct {
-	Yes				bool							`arg:"-y,--yes" help:"Skip confirmation"`
+	Yes				bool	`arg:"-y,--yes" help:"Skip confirmation"`
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -28,14 +28,14 @@ type ExportArgs struct {
 	Group		*ExportGroupArgs	`arg:"subcommand:group|g"`
 }
 type ExportPlanArgs struct {
-	Plan 			string 						`arg:"positional" help:"Plan name"`
-	Resolver	string 						`arg:"positional" help:"Resolver name"`
-	Yes 			bool							`arg:"-y,--yes" help:"Skip confirmation"`
+	Plan 			string 	`arg:"positional" help:"Plan name"`
+	Resolver	string 	`arg:"positional" help:"Resolver name"`
+	Yes 			bool		`arg:"-y,--yes" help:"Skip confirmation"`
 }
 type ExportGroupArgs struct {
-	Group 		string 						`arg:"positional" help:"Group name"`
-	Resolver	string 						`arg:"positional" help:"Resolver name"`
-	Yes 			bool							`arg:"-y,--yes" help:"Skip confirmation"`
+	Group 		string	`arg:"positional" help:"Group name"`
+	Resolver	string 	`arg:"positional" help:"Resolver name"`
+	Yes 			bool		`arg:"-y,--yes" help:"Skip confirmation"`
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -45,14 +45,14 @@ type ImportArgs struct {
 	Group		*ImportGroupArgs	`arg:"subcommand:group|g"`
 }
 type ImportPlanArgs struct {
-	Plan 			string 						`arg:"positional" help:"Plan name"`
-	Resolver	string 						`arg:"positional" help:"Resolver name"`
-	Yes 			bool							`arg:"-y,--yes" help:"Skip confirmation"`
+	Plan 			string 	`arg:"positional" help:"Plan name"`
+	Resolver	string 	`arg:"positional" help:"Resolver name"`
+	Yes 			bool		`arg:"-y,--yes" help:"Skip confirmation"`
 }
 type ImportGroupArgs struct {
-	Group 		string 						`arg:"positional" help:"Group name"`
-	Resolver 	string						`arg:"positional" help:"Resolver name"`
-	Yes 			bool							`arg:"-y,--yes" help:"Skip confirmation"`
+	Group 		string	`arg:"positional" help:"Group name"`
+	Resolver 	string	`arg:"positional" help:"Resolver name"`
+	Yes 			bool		`arg:"-y,--yes" help:"Skip confirmation"`
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -66,14 +66,14 @@ type UnlinkArgs struct {
 	Group		*UnlinkGroupArgs	`arg:"subcommand:group|g"`
 }
 type UnlinkPlanArgs struct {
-	Plan 			string 						`arg:"positional" help:"Plan name"`
-	Resolver	string 						`arg:"positional" help:"Resolver name"`
-	Yes 			bool							`arg:"-y,--yes" help:"Skip confirmation"`
+	Plan 			string	`arg:"positional" help:"Plan name"`
+	Resolver	string 	`arg:"positional" help:"Resolver name"`
+	Yes 			bool		`arg:"-y,--yes" help:"Skip confirmation"`
 }
 type UnlinkGroupArgs struct {
-	Group 		string 						`arg:"positional" help:"Group name"`
-	Resolver	string 						`arg:"positional" help:"Resolver name"`
-	Yes 			bool							`arg:"-y,--yes" help:"Skip confirmation"`
+	Group 		string 	`arg:"positional" help:"Group name"`
+	Resolver	string 	`arg:"positional" help:"Resolver name"`
+	Yes 			bool		`arg:"-y,--yes" help:"Skip confirmation"`
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -82,5 +82,6 @@ type VersionArgs struct {}
 
 ///////////////////////////////////////////////////////////////////////////////
 type WhereArgs struct {
-	Component string `arg:"positional" help:"Component name"`
+	State *WhereStateArgs `arg:"subcommand:state|s"`
 }
+type WhereStateArgs struct {}

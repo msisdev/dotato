@@ -42,7 +42,9 @@ func TestPreviewImportFile(t *testing.T) {
 		app := requestApp(dot, FirstReq_File, dtt, SecondReq_Empty)
 		p, err := app.PreviewImportFile(dot, dtt)
 		assert.NoError(t, err)
+		assert.Equal(t, dot, p.Dot.Path)
 		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, dtt, p.Dtt.Path)
 		assert.Equal(t, FileOpCreate, p.DttOp)
 	}
 

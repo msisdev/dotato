@@ -1,126 +1,143 @@
 package exportcmd
 
 import (
-	"fmt"
-
 	"github.com/charmbracelet/log"
+	"github.com/msisdev/dotato/internal/cli/app"
 	"github.com/msisdev/dotato/internal/cli/args"
-	"github.com/msisdev/dotato/internal/cli/component/inputconfirm"
-	"github.com/msisdev/dotato/internal/cli/component/mxspinner"
-	"github.com/msisdev/dotato/internal/cli/shared"
+	"github.com/msisdev/dotato/internal/cli/ui"
+	"github.com/msisdev/dotato/internal/cli/ui/basespinner"
+	"github.com/msisdev/dotato/internal/cli/ui/confirm"
+	"github.com/msisdev/dotato/internal/cli/ui/modespinner"
+	"github.com/msisdev/dotato/internal/cli/ui/previewprinter"
+	"github.com/msisdev/dotato/internal/cli/ui/previewspinner"
+	"github.com/msisdev/dotato/internal/component/mxspinner"
 	"github.com/msisdev/dotato/internal/config"
-	"github.com/msisdev/dotato/internal/dotato"
 	"github.com/msisdev/dotato/internal/lib/store"
+	gp "github.com/msisdev/dotato/pkg/gardenpath"
+	"gorm.io/gorm"
 )
 
 func ExportPlan(logger *log.Logger, args *args.ExportPlanArgs) {
-	s, err := shared.New(logger)
+	a := app.New(logger)
+
+	// Get mode
+	mode, err := modespinner.Run(a)
 	if err != nil {
 		logger.Fatal(err)
+		return
+	}
+	if mode != config.ModeFile && mode != config.ModeLink {
+		logger.Fatal("Invalid mode")
 		return
 	}
 
 	// Get groups
-	groups, err := s.GetGroups(args.Plan)
+	groups, ok, err := a.E.GetConfigGroups(args.Plan)
 	if err != nil {
 		logger.Fatal(err)
 		return
 	}
-
-	// Preview
-	var (
-		ps   []dotato.Preview
-		mods int
-	)
-	if s.GetMode() == config.ModeFile {
-		for group := range groups {
-			temp, m, err := s.PreviewExportGroupFile(group, args.Resolver)
-			if err != nil {
-				logger.Fatal(err)
-				return
-			}
-			ps = append(ps, temp...)
-			mods += m
-		}
-	} else {
-		for group := range groups {
-			temp, m, err := s.PreviewExportGroupLink(group, args.Resolver)
-			if err != nil {
-				logger.Fatal(err)
-				return
-			}
-			ps = append(ps, temp...)
-			mods += m
-		}
-	}
-
-	// Print preview list
-	if s.GetMode() == config.ModeFile {
-		shared.PrintPreviewExportFile(ps)
-	} else {
-		shared.PrintPreviewExportLink(ps)
-	}
-
-	if mods == 0 {
-		fmt.Println("No files to export.")
+	if !ok {
+		// Plan not found
+		logger.Fatal("No such plan")
 		return
 	}
-
-	// Confirm
-	if !args.Yes {
-		yes, err := inputconfirm.Run("Do you want to proceed?")
+	if len(groups) == 0 {
+		// Empty group list means all groups
+		groups, err = a.E.GetConfigGroupAll()
 		if err != nil {
 			logger.Fatal(err)
 			return
 		}
-		if !yes {
+	}
+
+	// Get base
+	bases := make(map[string]gp.GardenPath)
+	for group := range groups {
+		base, err := basespinner.Run(a, group, args.Resolver)
+		if err != nil {
+			logger.Fatal(err)
 			return
 		}
-	} else {
-		fmt.Println("Proceeding...")
+
+		bases[group] = base
 	}
 
-	// Import
-	var title string
-	if s.GetMode() == config.ModeFile {
-		title = "Exporting files..."
-	} else {
-		title = "Exporting links..."
-	}
-	err = mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
-		for _, pre := range ps {
-			// Check quit
-			select {
-			case <-quit:
-				return errQuit
-			default:
-			}
+	// Preview
+	var ps []app.Preview
+	for group, base := range bases {
+		var list []app.Preview
 
-			// import
-			if s.GetMode() == config.ModeFile {
-				err := s.ExportFile(pre)
-				if err != nil {
-					return err
-				}
-			} else {
-				err := s.ExportLink(pre)
-				if err != nil {
-					return err
-				}
+		if mode == config.ModeFile {
+			list, err = previewspinner.RunPreviewExportGroupFile(a, group, base)
+			if err != nil {
+				logger.Fatal(err)
+				return
 			}
-
-			store.TrySet(pre.Dot.Path.Abs())
+		} else {
+			list, err = previewspinner.RunPreviewExportGroupLink(a, group, base)
+			if err != nil {
+				logger.Fatal(err)
+				return
+			}
 		}
 
-		store.Set("Done")
+		ps = append(ps, list...)
+	}
 
-		return nil
+	// Print preview
+	if mode == config.ModeFile {
+		previewprinter.RunPreviewExportFile(ps)
+	} else {
+		previewprinter.RunPreviewExportLink(ps)
+	}
+
+	// Confirm
+	if !args.Yes {
+		ok, err := confirm.Run("Do you want to proceed?")
+		if err != nil {
+			logger.Fatal(err)
+			return
+		}
+		if !ok {
+			return
+		}
+	}
+
+	// Execute
+	title := "Exporting..."
+	err = mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
+		return a.State.TxSafe(func(tx *gorm.DB) error {
+			for _, pre := range ps {
+				// Check quit
+				select {
+				case <-quit:
+					return ui.ErrQuit
+				default:
+				}
+
+				// Export
+				var err error
+				if mode == config.ModeFile {
+					err = a.ExportFile(pre, tx)
+				} else {
+					err = a.ExportLink(pre, tx)
+				}
+				if err != nil {
+					return err
+				}
+
+				store.TrySet(pre.Dot.Path.Abs())
+			}
+
+			store.Set("Done")
+			return nil
+		})
 	})
 	if err != nil {
-		if err != errQuit {
+		if err != ui.ErrQuit {
 			logger.Fatal(err)
 		}
-
 		return
 	}
 }
