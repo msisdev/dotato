@@ -1,6 +1,8 @@
 package unlinkcmd
 
 import (
+	"os"
+
 	"github.com/charmbracelet/log"
 	"github.com/msisdev/dotato/internal/cli/app"
 	"github.com/msisdev/dotato/internal/cli/args"
@@ -110,7 +112,7 @@ func UnlinkPlan(logger *log.Logger, args *args.UnlinkPlanArgs) {
 				}
 
 				// Unlink
-				err := a.Unlink(pre, tx)
+				err := a.Unlink(pre, tx, os.FileMode(args.DirPerm), os.FileMode(args.FilePerm))
 				if err != nil {
 					return err
 				}

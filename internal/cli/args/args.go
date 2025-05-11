@@ -19,6 +19,8 @@ type DangerArgs struct {
 }
 type DangerUnlinkArgs struct {
 	Yes				bool	`arg:"-y,--yes" help:"Skip confirmation"`
+	FilePerm int 	`arg:"-f,--file-perm" help:"File permission" default:"0644"`
+	DirPerm  int 	`arg:"-d,--dir-perm" help:"Directory permission" default:"0755"`
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -31,11 +33,15 @@ type ExportPlanArgs struct {
 	Plan 			string 	`arg:"positional" help:"Plan name"`
 	Resolver	string 	`arg:"positional" help:"Resolver name"`
 	Yes 			bool		`arg:"-y,--yes" help:"Skip confirmation"`
+	FilePerm 	int 		`arg:"-f,--file-perm" help:"File permission" default:"0644"`
+	DirPerm  	int 		`arg:"-d,--dir-perm" help:"Directory permission" default:"0755"`
 }
 type ExportGroupArgs struct {
 	Group 		string	`arg:"positional" help:"Group name"`
 	Resolver	string 	`arg:"positional" help:"Resolver name"`
 	Yes 			bool		`arg:"-y,--yes" help:"Skip confirmation"`
+	FilePerm 	int 		`arg:"-f,--file-perm" help:"File permission" default:"0644"`
+	DirPerm  	int 		`arg:"-d,--dir-perm" help:"Directory permission" default:"0755"`
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -48,11 +54,15 @@ type ImportPlanArgs struct {
 	Plan 			string 	`arg:"positional" help:"Plan name"`
 	Resolver	string 	`arg:"positional" help:"Resolver name"`
 	Yes 			bool		`arg:"-y,--yes" help:"Skip confirmation"`
+	FilePerm 	int 		`arg:"-f,--file-perm" help:"File permission" default:"0644"`
+	DirPerm  	int 		`arg:"-d,--dir-perm" help:"Directory permission" default:"0755"`
 }
 type ImportGroupArgs struct {
 	Group 		string	`arg:"positional" help:"Group name"`
 	Resolver 	string	`arg:"positional" help:"Resolver name"`
 	Yes 			bool		`arg:"-y,--yes" help:"Skip confirmation"`
+	FilePerm 	int 		`arg:"-f,--file-perm" help:"File permission" default:"0644"`
+	DirPerm  	int 		`arg:"-d,--dir-perm" help:"Directory permission" default:"0755"`
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -69,11 +79,15 @@ type UnlinkPlanArgs struct {
 	Plan 			string	`arg:"positional" help:"Plan name"`
 	Resolver	string 	`arg:"positional" help:"Resolver name"`
 	Yes 			bool		`arg:"-y,--yes" help:"Skip confirmation"`
+	FilePerm 	int 		`arg:"-f,--file-perm" help:"File permission" default:"0644"`
+	DirPerm  	int 		`arg:"-d,--dir-perm" help:"Directory permission" default:"0755"`
 }
 type UnlinkGroupArgs struct {
 	Group 		string 	`arg:"positional" help:"Group name"`
 	Resolver	string 	`arg:"positional" help:"Resolver name"`
 	Yes 			bool		`arg:"-y,--yes" help:"Skip confirmation"`
+	FilePerm 	int 		`arg:"-f,--file-perm" help:"File permission" default:"0644"`
+	DirPerm  	int 		`arg:"-d,--dir-perm" help:"Directory permission" default:"0755"`
 }
 
 ///////////////////////////////////////////////////////////////////////////////

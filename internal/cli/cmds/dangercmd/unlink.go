@@ -1,6 +1,8 @@
 package dangercmd
 
 import (
+	"os"
+
 	"github.com/charmbracelet/log"
 	"github.com/msisdev/dotato/internal/cli/app"
 	"github.com/msisdev/dotato/internal/cli/args"
@@ -74,7 +76,7 @@ func Unlink(logger *log.Logger, args *args.DangerUnlinkArgs) {
 				}
 
 				// Unlink
-				err := a.Unlink(pre, tx)
+				err := a.Unlink(pre, tx, os.FileMode(args.DirPerm), os.FileMode(args.FilePerm))
 				if err != nil {
 					return err
 				}

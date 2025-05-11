@@ -99,14 +99,14 @@ func IsFileContentEqual(fs billy.Filesystem, a, b string) (bool, error) {
 }
 
 // Overwrite is allowed
-func CreateAndCopyFile(fs billy.Filesystem, src, dst string) error {
+func CreateAndCopyFile(fs billy.Filesystem, src, dst string, perm os.FileMode) error {
 	srcFile, err := fs.Open(src)
 	if err != nil {
 		return err
 	}
 	defer srcFile.Close()
 
-	dstFile, err := fs.Create(dst)
+	dstFile, err := fs.OpenFile(dst, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)
 	if err != nil {
 		return err
 	}

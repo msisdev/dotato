@@ -10,7 +10,7 @@ import (
 // What is this function doing?
 //
 // dotato depends on "github.com/go-git/go-billy/v5".
-// It provides a common interface for "github.com/go-git/go-billy/v5/osfs"
+// It provides a abstract interface for "github.com/go-git/go-billy/v5/osfs"
 // and "github.com/go-git/go-billy/v5/memfs".
 //
 // osfs.New("") occurs errors in linux filesystem when it is used with

@@ -1,6 +1,8 @@
 package app
 
 import (
+	"os"
+
 	"github.com/msisdev/dotato/internal/config"
 	"github.com/msisdev/dotato/internal/lib/filesystem"
 	"github.com/msisdev/dotato/pkg/state"
@@ -10,6 +12,8 @@ import (
 func (a App) ImportFile(
 	pre Preview,
 	tx *gorm.DB,
+	dirPerm os.FileMode,
+	filePerm os.FileMode,
 ) error {
 	if pre.DttOp == FileOpNone || pre.DttOp == FileOpSkip {
 		return nil
@@ -28,14 +32,14 @@ func (a App) ImportFile(
 		}
 	} else {
 		// Make directory
-		err := a.fs.MkdirAll(pre.Dtt.Path.Parent().Abs(), 0755)
+		err := a.fs.MkdirAll(pre.Dtt.Path.Parent().Abs(), dirPerm)
 		if err != nil {
 			return err
 		}
 	}
 
 	// Copy file
-	err := filesystem.CreateAndCopyFile(a.fs, dotabs, dttabs)
+	err := filesystem.CreateAndCopyFile(a.fs, dotabs, dttabs, filePerm)
 	if err != nil {
 		return err
 	}
@@ -56,6 +60,8 @@ func (a App) ImportFile(
 func (a App) ImportLink(
 	pre Preview,
 	tx *gorm.DB,
+	dirPerm os.FileMode,
+	filePerm os.FileMode,
 ) error {
 	if (pre.DotOp == FileOpNone || pre.DotOp == FileOpSkip) &&
 		(pre.DttOp == FileOpNone || pre.DttOp == FileOpSkip) {
@@ -77,14 +83,14 @@ func (a App) ImportLink(
 			}
 		} else {
 			// Create directory
-			err := a.fs.MkdirAll(pre.Dtt.Path.Parent().Abs(), 0755)
+			err := a.fs.MkdirAll(pre.Dtt.Path.Parent().Abs(), dirPerm)
 			if err != nil {
 				return err
 			}
 		}
 
 		// Create file
-		err := filesystem.CreateAndCopyFile(a.fs, dotabs, dttabs)
+		err := filesystem.CreateAndCopyFile(a.fs, dotabs, dttabs, filePerm)
 		if err != nil {
 			return err
 		}
@@ -100,7 +106,7 @@ func (a App) ImportLink(
 			}
 		} else {
 			// Create directory
-			err := a.fs.MkdirAll(pre.Dot.Path.Parent().Abs(), 0755)
+			err := a.fs.MkdirAll(pre.Dot.Path.Parent().Abs(), dirPerm)
 			if err != nil {
 				return err
 			}
@@ -129,6 +135,8 @@ func (a App) ImportLink(
 func (a App) ExportFile(
 	pre Preview,
 	tx *gorm.DB,
+	dirPerm os.FileMode,
+	filePerm os.FileMode,
 ) error {
 	if pre.DotOp == FileOpNone {
 		return nil
@@ -143,14 +151,14 @@ func (a App) ExportFile(
 		// Do nothing
 	} else {
 		// Make directory
-		err := a.fs.MkdirAll(pre.Dot.Path.Parent().Abs(), 0755)
+		err := a.fs.MkdirAll(pre.Dot.Path.Parent().Abs(), dirPerm)
 		if err != nil {
 			return err
 		}
 	}
 
 	// Copy file
-	err := filesystem.CreateAndCopyFile(a.fs, dttabs, dotabs)
+	err := filesystem.CreateAndCopyFile(a.fs, dttabs, dotabs, filePerm)
 	if err != nil {
 		return err
 	}
@@ -171,6 +179,8 @@ func (a App) ExportFile(
 func (a App) ExportLink(
 	pre Preview,
 	tx *gorm.DB,
+	dirPerm os.FileMode,
+	filePerm os.FileMode,
 ) error {
 	if pre.DotOp == FileOpNone {
 		return nil
@@ -190,7 +200,7 @@ func (a App) ExportLink(
 		}
 	} else {
 		// Make directory
-		err := a.fs.MkdirAll(pre.Dot.Path.Parent().Abs(), 0755)
+		err := a.fs.MkdirAll(pre.Dot.Path.Parent().Abs(), dirPerm)
 		if err != nil {
 			return err
 		}
@@ -218,6 +228,8 @@ func (a App) ExportLink(
 func (a App) Unlink(
 	pre Preview,
 	tx *gorm.DB,
+	dirPerm os.FileMode,
+	filePerm os.FileMode,
 ) error {
 	if pre.DotOp == FileOpNone ||
 		pre.DotOp == FileOpCreate {
@@ -236,7 +248,7 @@ func (a App) Unlink(
 	}
 
 	// Copy file
-	err = filesystem.CreateAndCopyFile(a.fs, dttabs, dotabs)
+	err = filesystem.CreateAndCopyFile(a.fs, dttabs, dotabs, filePerm)
 	if err != nil {
 		return err
 	}

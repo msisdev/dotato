@@ -1,6 +1,8 @@
 package exportcmd
 
 import (
+	"os"
+
 	"github.com/charmbracelet/log"
 	"github.com/msisdev/dotato/internal/cli/app"
 	"github.com/msisdev/dotato/internal/cli/args"
@@ -91,9 +93,9 @@ func ExportGroup(logger *log.Logger, args *args.ExportGroupArgs) {
 				// Export
 				var err error
 				if mode == config.ModeFile {
-					err = a.ExportFile(pre, tx)
+					err = a.ExportFile(pre, tx, os.FileMode(args.DirPerm), os.FileMode(args.FilePerm))
 				} else {
-					err = a.ExportLink(pre, tx)
+					err = a.ExportLink(pre, tx, os.FileMode(args.DirPerm), os.FileMode(args.FilePerm))
 				}
 				if err != nil {
 					return err

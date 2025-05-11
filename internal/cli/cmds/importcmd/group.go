@@ -1,6 +1,8 @@
 package importcmd
 
 import (
+	"os"
+
 	"github.com/charmbracelet/log"
 	"github.com/msisdev/dotato/internal/cli/app"
 	"github.com/msisdev/dotato/internal/cli/args"
@@ -87,9 +89,9 @@ func ImportGroup(logger *log.Logger, args *args.ImportGroupArgs) {
 				// Import
 				var err error
 				if mode == config.ModeFile {
-					err = a.ImportFile(pre, tx)
+					err = a.ImportFile(pre, tx, os.FileMode(args.DirPerm), os.FileMode(args.FilePerm))
 				} else {
-					err = a.ImportLink(pre, tx)
+					err = a.ImportLink(pre, tx, os.FileMode(args.DirPerm), os.FileMode(args.FilePerm))
 				}
 				if err != nil {
 					return err
