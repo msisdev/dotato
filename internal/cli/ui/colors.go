@@ -25,7 +25,7 @@ var (
 	
 	MutedColor 	= lipgloss.Color("8")		// gray
 	PositiveColor = lipgloss.Color("2")		// green
-	CriticalColor = lipgloss.Color("11")	// yellow
+	CriticalColor = lipgloss.Color("3")	// olive (yellow)
 	NegativeColor = lipgloss.Color("9")		// red
 	InfoColor 		= lipgloss.Color("4")		// navy
 )
