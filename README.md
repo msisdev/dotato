@@ -69,13 +69,16 @@ Configure `bash/.dotatoignore` to tell which files to ignore/grab.
 Copy files into dotato directory:
 ```console
 > dotato import group bash nux
-✔ Config mode: file
-✔ Config group base: /home/msisdev
-✔ group bash: create 0, overwrite 1, total 1
+✔ Mode: file
+✔ Group bash: /home/msisdev
+✔ Preview bash done
 
-🔎 Preview
+🔎 Preview: update 1 / total 1
 
-! /home/msisdev/.bashrc -> /home/msisdev/Documents/GitHub/dotato/example/bash/.bashrc
+ ✔ /home/msisdev/.bashrc
+ -> + /home/msisdev/Documents/GitHub/my-tumbleweed/bash/.bashrc
+
+ ✔  okay /  ✘  skip /  +  create /  !  overwrite
 
 Do you want to proceed?
 
@@ -94,14 +97,17 @@ Do you want to proceed?
 
 Copy dotato files back to their original place:
 ```console
-> dotato export group bash nux
-✔ Config mode: file
-✔ Config group base: /home/msisdev
-✔ group bash: create 0, overwrite 1, total 1
+dotato export group bash nux
+✔ Mode: file
+✔ Group bash: /home/msisdev
+✔ Preview bash done
 
-🔎 Preview
+🔎 Preview: update 1 / total 1
 
-! /home/msisdev/.bashrc <- /home/msisdev/Documents/GitHub/dotato/example/bash/.bashrc
+ ! /home/msisdev/.bashrc
+ <- ✔ /home/msisdev/Documents/GitHub/my-tumbleweed/bash/.bashrc
+
+ ✔  okay /  ✘  skip /  +  create /  !  overwrite
 
 Do you want to proceed?
 
