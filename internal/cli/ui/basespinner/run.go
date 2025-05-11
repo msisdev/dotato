@@ -2,7 +2,7 @@ package basespinner
 
 import (
 	"github.com/msisdev/dotato/internal/cli/app"
-	"github.com/msisdev/dotato/internal/cli/ui/component/mxspinner"
+	"github.com/msisdev/dotato/internal/cli/component/mxspinner"
 	"github.com/msisdev/dotato/internal/lib/store"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )

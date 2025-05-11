@@ -3,7 +3,7 @@ package shared
 import (
 	"fmt"
 
-	"github.com/msisdev/dotato/internal/cli/ui/component/mxspinner"
+	"github.com/msisdev/dotato/internal/cli/component/mxspinner"
 	"github.com/msisdev/dotato/internal/config"
 	"github.com/msisdev/dotato/internal/dotato"
 	"github.com/msisdev/dotato/internal/lib/store"

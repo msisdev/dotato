@@ -2,8 +2,8 @@ package previewspinner
 
 import (
 	"github.com/msisdev/dotato/internal/cli/app"
+	"github.com/msisdev/dotato/internal/cli/component/mxspinner"
 	"github.com/msisdev/dotato/internal/cli/ui"
-	"github.com/msisdev/dotato/internal/cli/ui/component/mxspinner"
 	"github.com/msisdev/dotato/internal/lib/store"
 	"github.com/msisdev/dotato/internal/state"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"

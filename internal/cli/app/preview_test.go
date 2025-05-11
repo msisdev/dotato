@@ -17,8 +17,8 @@ func TestNewPreview(t *testing.T) {
 
 	// Dot: file / Dtt: file
 	{
-		d := requestApp(dot, FirstReq_File, dtt, SecondReq_File_Eq)
-		p, err := d.newPreview(dot, dtt)
+		app := requestApp(dot, FirstReq_File, dtt, SecondReq_File_Eq)
+		p, err := app.newPreview(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, dot, p.Dot.Path)
 		assert.Equal(t, dot, p.Dot.Target)
@@ -39,9 +39,8 @@ func TestPreviewImportFile(t *testing.T) {
 
 	// Dot: file / Dtt: not exists
 	{
-		d := requestApp(dot, FirstReq_File, dtt, SecondReq_Empty)
-		// Preview
-		p, err := d.PreviewImportFile(dot, dtt)
+		app := requestApp(dot, FirstReq_File, dtt, SecondReq_Empty)
+		p, err := app.PreviewImportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpCreate, p.DttOp)
@@ -49,10 +48,8 @@ func TestPreviewImportFile(t *testing.T) {
 
 	// Dot: file / Dtt: file, not equal
 	{
-		d := requestApp(dot, FirstReq_File, dtt, SecondReq_File_NotEq)
-
-		// Preview
-		p, err := d.PreviewImportFile(dot, dtt)
+		app := requestApp(dot, FirstReq_File, dtt, SecondReq_File_NotEq)
+		p, err := app.PreviewImportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpOverwrite, p.DttOp)
@@ -60,10 +57,8 @@ func TestPreviewImportFile(t *testing.T) {
 
 	// Dot: file / Dtt: file, equal
 	{
-		d := requestApp(dot, FirstReq_File, dtt, SecondReq_File_Eq)
-
-		// Preview
-		p, err := d.PreviewImportFile(dot, dtt)
+		app := requestApp(dot, FirstReq_File, dtt, SecondReq_File_Eq)
+		p, err := app.PreviewImportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -71,10 +66,8 @@ func TestPreviewImportFile(t *testing.T) {
 
 	// Dot: file / Dtt: symlink, at diff
 	{
-		d := requestApp(dot, FirstReq_File, dtt, SecondReq_Link_Diff_NotEq)
-
-		// Preview
-		p, err := d.PreviewImportFile(dot, dtt)
+		app := requestApp(dot, FirstReq_File, dtt, SecondReq_Link_Diff_NotEq)
+		p, err := app.PreviewImportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpOverwrite, p.DttOp)
@@ -82,10 +75,8 @@ func TestPreviewImportFile(t *testing.T) {
 
 	// Dot: file / Dtt: symlink, at same
 	{
-		d := requestApp(dot, FirstReq_File, dtt, SecondReq_Link_Same)
-
-		// Preview
-		p, err := d.PreviewImportFile(dot, dtt)
+		app := requestApp(dot, FirstReq_File, dtt, SecondReq_Link_Same)
+		p, err := app.PreviewImportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpOverwrite, p.DttOp)
@@ -93,10 +84,8 @@ func TestPreviewImportFile(t *testing.T) {
 
 	// Dot: symlink at diff / Dtt: not exists
 	{
-		d := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_Empty)
-
-		// Preview
-		p, err := d.PreviewImportFile(dot, dtt)
+		app := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_Empty)
+		p, err := app.PreviewImportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpCreate, p.DttOp)
@@ -104,10 +93,8 @@ func TestPreviewImportFile(t *testing.T) {
 
 	// Dot: symlink at diff / Dtt: file, not equal
 	{
-		d := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_File_NotEq)
-
-		// Preview
-		p, err := d.PreviewImportFile(dot, dtt)
+		app := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_File_NotEq)
+		p, err := app.PreviewImportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpOverwrite, p.DttOp)
@@ -115,10 +102,8 @@ func TestPreviewImportFile(t *testing.T) {
 
 	// Dot: symlink at diff / Dtt: file, equal
 	{
-		d := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_File_Eq)
-
-		// Preview
-		p, err := d.PreviewImportFile(dot, dtt)
+		app := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_File_Eq)
+		p, err := app.PreviewImportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -126,10 +111,8 @@ func TestPreviewImportFile(t *testing.T) {
 
 	// Dot: symlink at diff / Dtt: symlink, diff
 	{
-		d := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_Link_Diff_NotEq)
-
-		// Preview
-		p, err := d.PreviewImportFile(dot, dtt)
+		app := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_Link_Diff_NotEq)
+		p, err := app.PreviewImportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpOverwrite, p.DttOp)
@@ -137,10 +120,8 @@ func TestPreviewImportFile(t *testing.T) {
 
 	// Dot: symlink at diff / Dtt: symlink, same
 	{
-		d := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_Link_Same)
-
-		// Preview
-		p, err := d.PreviewImportFile(dot, dtt)
+		app := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_Link_Same)
+		p, err := app.PreviewImportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpOverwrite, p.DttOp)
@@ -148,8 +129,8 @@ func TestPreviewImportFile(t *testing.T) {
 
 	// Dot: symlink at same / Dtt: not exists
 	{
-		d := requestApp(dot, FirstReq_Link_Same, dtt, SecondReq_Empty)
-		p, err := d.PreviewImportFile(dot, dtt)
+		app := requestApp(dot, FirstReq_Link_Same, dtt, SecondReq_Empty)
+		p, err := app.PreviewImportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpSkip, p.DttOp)
@@ -157,8 +138,8 @@ func TestPreviewImportFile(t *testing.T) {
 
 	// Dot: symlink at same / Dtt: file, not equal
 	{
-		d := requestApp(dot, FirstReq_Link_Same, dtt, SecondReq_File_NotEq)
-		p, err := d.PreviewImportFile(dot, dtt)
+		app := requestApp(dot, FirstReq_Link_Same, dtt, SecondReq_File_NotEq)
+		p, err := app.PreviewImportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpSkip, p.DttOp)
@@ -166,8 +147,8 @@ func TestPreviewImportFile(t *testing.T) {
 
 	// Dot: symlink at same / Dtt: file, equal
 	{
-		d := requestApp(dot, FirstReq_Link_Same, dtt, SecondReq_File_Eq)
-		p, err := d.PreviewImportFile(dot, dtt)
+		app := requestApp(dot, FirstReq_Link_Same, dtt, SecondReq_File_Eq)
+		p, err := app.PreviewImportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpSkip, p.DttOp)
@@ -175,8 +156,8 @@ func TestPreviewImportFile(t *testing.T) {
 
 	// Dot: symlink at same / Dtt: symlink, diff
 	{
-		d := requestApp(dot, FirstReq_Link_Same, dtt, SecondReq_Link_Diff_NotEq)
-		p, err := d.PreviewImportFile(dot, dtt)
+		app := requestApp(dot, FirstReq_Link_Same, dtt, SecondReq_Link_Diff_NotEq)
+		p, err := app.PreviewImportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpSkip, p.DttOp)
@@ -184,8 +165,8 @@ func TestPreviewImportFile(t *testing.T) {
 
 	// Dot: symlink at same / Dtt: symlink, same
 	{
-		d := requestApp(dot, FirstReq_Link_Same, dtt, SecondReq_Link_Same)
-		_, err := d.PreviewImportFile(dot, dtt)
+		app := requestApp(dot, FirstReq_Link_Same, dtt, SecondReq_Link_Same)
+		_, err := app.PreviewImportFile(dot, dtt)
 		assert.Error(t, err)
 	}
 }
@@ -200,10 +181,8 @@ func TestPreviewImportLink(t *testing.T) {
 	
 	// Dot: file / Dtt: file, not exists
 	{
-		d := requestApp(dot, FirstReq_File, dtt, SecondReq_Empty)
-
-		// Preview
-		p, err := d.PreviewImportLink(dot, dtt)
+		app := requestApp(dot, FirstReq_File, dtt, SecondReq_Empty)
+		p, err := app.PreviewImportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpCreate, p.DttOp)
@@ -211,10 +190,8 @@ func TestPreviewImportLink(t *testing.T) {
 
 	// Dot: file / Dtt: file, not equal
 	{
-		d := requestApp(dot, FirstReq_File, dtt, SecondReq_File_NotEq)
-
-		// Preview
-		p, err := d.PreviewImportLink(dot, dtt)
+		app := requestApp(dot, FirstReq_File, dtt, SecondReq_File_NotEq)
+		p, err := app.PreviewImportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpOverwrite, p.DttOp)
@@ -222,10 +199,8 @@ func TestPreviewImportLink(t *testing.T) {
 
 	// Dot: file / Dtt: file, equal
 	{
-		d := requestApp(dot, FirstReq_File, dtt, SecondReq_File_Eq)
-
-		// Preview
-		p, err := d.PreviewImportLink(dot, dtt)
+		app := requestApp(dot, FirstReq_File, dtt, SecondReq_File_Eq)
+		p, err := app.PreviewImportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -233,9 +208,9 @@ func TestPreviewImportLink(t *testing.T) {
 
 	// Dot: file / Dtt: link, at diff
 	{
-		d := requestApp(dot, FirstReq_File, dtt, SecondReq_Link_Diff_NotEq)
+		app := requestApp(dot, FirstReq_File, dtt, SecondReq_Link_Diff_NotEq)
 
-		p, err := d.PreviewImportLink(dot, dtt)
+		p, err := app.PreviewImportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpOverwrite, p.DttOp)
@@ -243,9 +218,9 @@ func TestPreviewImportLink(t *testing.T) {
 
 	// Dot: file / Dtt: link, at same
 	{
-		d := requestApp(dot, FirstReq_File, dtt, SecondReq_Link_Same)
+		app := requestApp(dot, FirstReq_File, dtt, SecondReq_Link_Same)
 
-		p, err := d.PreviewImportLink(dot, dtt)
+		p, err := app.PreviewImportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpOverwrite, p.DttOp)
@@ -253,9 +228,9 @@ func TestPreviewImportLink(t *testing.T) {
 
 	// Dot: link at diff / Dtt: empty
 	{
-		d := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_Empty)
+		app := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_Empty)
 
-		p, err := d.PreviewImportLink(dot, dtt)
+		p, err := app.PreviewImportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpCreate, p.DttOp)
@@ -263,9 +238,9 @@ func TestPreviewImportLink(t *testing.T) {
 
 	// Dot: link at diff / Dtt: file, not equal
 	{
-		d := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_File_NotEq)
+		app := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_File_NotEq)
 
-		p, err := d.PreviewImportLink(dot, dtt)
+		p, err := app.PreviewImportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpOverwrite, p.DttOp)
@@ -273,8 +248,8 @@ func TestPreviewImportLink(t *testing.T) {
 
 	// Dot: link at diff / Dtt: file, equal
 	{
-		d := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_File_Eq)
-		p, err := d.PreviewImportLink(dot, dtt)
+		app := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_File_Eq)
+		p, err := app.PreviewImportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -282,8 +257,8 @@ func TestPreviewImportLink(t *testing.T) {
 
 	// Dot: link at diff / Dtt: link, diff, not equal
 	{
-		d := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_Link_Diff_NotEq)
-		p, err := d.PreviewImportLink(dot, dtt)
+		app := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_Link_Diff_NotEq)
+		p, err := app.PreviewImportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpOverwrite, p.DttOp)
@@ -291,8 +266,8 @@ func TestPreviewImportLink(t *testing.T) {
 
 	// Dot: link at diff / Dtt: link, diff, equal
 	{
-		d := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_Link_Diff_Eq)
-		p, err := d.PreviewImportLink(dot, dtt)
+		app := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_Link_Diff_Eq)
+		p, err := app.PreviewImportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpOverwrite, p.DttOp)
@@ -300,8 +275,8 @@ func TestPreviewImportLink(t *testing.T) {
 
 	// Dot: link at diff / Dtt: link, same
 	{
-		d := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_Link_Same)
-		p, err := d.PreviewImportLink(dot, dtt)
+		app := requestApp(dot, FirstReq_Link_Diff, dtt, SecondReq_Link_Same)
+		p, err := app.PreviewImportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpOverwrite, p.DttOp)
@@ -318,8 +293,8 @@ func TestPreviewExportFile(t *testing.T) {
 
 	// Dot: empty / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_Empty)
-		p, err := d.PreviewExportFile(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_Empty)
+		p, err := app.PreviewExportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpCreate, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -327,8 +302,8 @@ func TestPreviewExportFile(t *testing.T) {
 
 	// Dot: file, not equal / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_File_NotEq)
-		p, err := d.PreviewExportFile(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_File_NotEq)
+		p, err := app.PreviewExportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -336,8 +311,8 @@ func TestPreviewExportFile(t *testing.T) {
 
 	// Dot: file, equal / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_File_Eq)
-		p, err := d.PreviewExportFile(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_File_Eq)
+		p, err := app.PreviewExportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -345,8 +320,8 @@ func TestPreviewExportFile(t *testing.T) {
 
 	// Dot: link, at diff, not equal / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Diff_NotEq)
-		p, err := d.PreviewExportFile(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Diff_NotEq)
+		p, err := app.PreviewExportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -354,8 +329,8 @@ func TestPreviewExportFile(t *testing.T) {
 
 	// Dot: link, at diff, equal / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Diff_Eq)
-		p, err := d.PreviewExportFile(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Diff_Eq)
+		p, err := app.PreviewExportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -363,8 +338,8 @@ func TestPreviewExportFile(t *testing.T) {
 
 	// Dot: link, at same / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Same)
-		p, err := d.PreviewExportFile(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Same)
+		p, err := app.PreviewExportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -372,8 +347,8 @@ func TestPreviewExportFile(t *testing.T) {
 
 	// Dot: empty / Dtt: link, at diff
 	{
-		d := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_Empty)
-		p, err := d.PreviewExportFile(dot, dtt)
+		app := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_Empty)
+		p, err := app.PreviewExportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpCreate, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -381,8 +356,8 @@ func TestPreviewExportFile(t *testing.T) {
 
 	// Dot: file, not equal / Dtt: link, at diff
 	{
-		d := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_File_NotEq)
-		p, err := d.PreviewExportFile(dot, dtt)
+		app := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_File_NotEq)
+		p, err := app.PreviewExportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -390,8 +365,8 @@ func TestPreviewExportFile(t *testing.T) {
 
 	// Dot: file, equal / Dtt: link, at diff
 	{
-		d := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_File_Eq)
-		p, err := d.PreviewExportFile(dot, dtt)
+		app := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_File_Eq)
+		p, err := app.PreviewExportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -399,8 +374,8 @@ func TestPreviewExportFile(t *testing.T) {
 
 	// Dot: link, at diff, not eq / Dtt: link, at diff
 	{
-		d := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Diff_NotEq)
-		p, err := d.PreviewExportFile(dot, dtt)
+		app := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Diff_NotEq)
+		p, err := app.PreviewExportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -408,8 +383,8 @@ func TestPreviewExportFile(t *testing.T) {
 
 	// Dot: link, at diff, eq / Dtt: link, at diff
 	{
-		d := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Diff_Eq)
-		p, err := d.PreviewExportFile(dot, dtt)
+		app := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Diff_Eq)
+		p, err := app.PreviewExportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -417,8 +392,8 @@ func TestPreviewExportFile(t *testing.T) {
 
 	// Dot: link, at same / Dtt: link, at diff
 	{
-		d := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Same)
-		p, err := d.PreviewExportFile(dot, dtt)
+		app := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Same)
+		p, err := app.PreviewExportFile(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -435,8 +410,8 @@ func TestPreviewExportLink(t *testing.T) {
 
 	// Dot: empty / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_Empty)
-		p, err := d.PreviewExportLink(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_Empty)
+		p, err := app.PreviewExportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpCreate, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -444,8 +419,8 @@ func TestPreviewExportLink(t *testing.T) {
 
 	// Dot: file, not equal / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_File_NotEq)
-		p, err := d.PreviewExportLink(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_File_NotEq)
+		p, err := app.PreviewExportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -453,8 +428,8 @@ func TestPreviewExportLink(t *testing.T) {
 
 	// Dot: file, equal / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_File_Eq)
-		p, err := d.PreviewExportLink(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_File_Eq)
+		p, err := app.PreviewExportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -462,8 +437,8 @@ func TestPreviewExportLink(t *testing.T) {
 
 	// Dot: link, at diff, not equal / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Diff_NotEq)
-		p, err := d.PreviewExportLink(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Diff_NotEq)
+		p, err := app.PreviewExportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -471,8 +446,8 @@ func TestPreviewExportLink(t *testing.T) {
 
 	// Dot: link, at diff, equal / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Diff_Eq)
-		p, err := d.PreviewExportLink(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Diff_Eq)
+		p, err := app.PreviewExportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -480,8 +455,8 @@ func TestPreviewExportLink(t *testing.T) {
 
 	// Dot: link, at same / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Same)
-		p, err := d.PreviewExportLink(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Same)
+		p, err := app.PreviewExportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -489,8 +464,8 @@ func TestPreviewExportLink(t *testing.T) {
 
 	// Dot: empty / Dtt: link, at diff
 	{
-		d := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_Empty)
-		p, err := d.PreviewExportLink(dot, dtt)
+		app := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_Empty)
+		p, err := app.PreviewExportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpCreate, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -498,8 +473,8 @@ func TestPreviewExportLink(t *testing.T) {
 
 	// Dot: file, not equal / Dtt: link, at diff
 	{
-		d := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_File_NotEq)
-		p, err := d.PreviewExportLink(dot, dtt)
+		app := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_File_NotEq)
+		p, err := app.PreviewExportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -507,8 +482,8 @@ func TestPreviewExportLink(t *testing.T) {
 
 	// Dot: file, equal / Dtt: link, at diff
 	{
-		d := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_File_Eq)
-		p, err := d.PreviewExportLink(dot, dtt)
+		app := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_File_Eq)
+		p, err := app.PreviewExportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -516,8 +491,8 @@ func TestPreviewExportLink(t *testing.T) {
 
 	// Dot: link, at diff, not eq / Dtt: link, at diff
 	{
-		d := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Diff_NotEq)
-		p, err := d.PreviewExportLink(dot, dtt)
+		app := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Diff_NotEq)
+		p, err := app.PreviewExportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -525,8 +500,8 @@ func TestPreviewExportLink(t *testing.T) {
 
 	// Dot: link, at diff, eq / Dtt: link, at diff
 	{
-		d := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Diff_Eq)
-		p, err := d.PreviewExportLink(dot, dtt)
+		app := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Diff_Eq)
+		p, err := app.PreviewExportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -534,8 +509,8 @@ func TestPreviewExportLink(t *testing.T) {
 
 	// Dot: link, at same / Dtt: link, at diff
 	{
-		d := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Same)
-		p, err := d.PreviewExportLink(dot, dtt)
+		app := requestApp(dtt, FirstReq_Link_Diff, dot, SecondReq_Link_Same)
+		p, err := app.PreviewExportLink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -552,8 +527,8 @@ func TestPreviewUnlink(t *testing.T) {
 
 	// Dot: empty / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_Empty)
-		p, err := d.PreviewUnlink(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_Empty)
+		p, err := app.PreviewUnlink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -561,8 +536,8 @@ func TestPreviewUnlink(t *testing.T) {
 
 	// Dot: file, not equal / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_File_NotEq)
-		p, err := d.PreviewUnlink(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_File_NotEq)
+		p, err := app.PreviewUnlink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -570,8 +545,8 @@ func TestPreviewUnlink(t *testing.T) {
 
 	// Dot: file, equal / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_File_Eq)
-		p, err := d.PreviewUnlink(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_File_Eq)
+		p, err := app.PreviewUnlink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -579,8 +554,8 @@ func TestPreviewUnlink(t *testing.T) {
 
 	// Dot: link, at diff, not equal / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Diff_NotEq)
-		p, err := d.PreviewUnlink(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Diff_NotEq)
+		p, err := app.PreviewUnlink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -588,8 +563,8 @@ func TestPreviewUnlink(t *testing.T) {
 
 	// Dot: link, at diff, equal / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Diff_Eq)
-		p, err := d.PreviewUnlink(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Diff_Eq)
+		p, err := app.PreviewUnlink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpNone, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
@@ -597,8 +572,8 @@ func TestPreviewUnlink(t *testing.T) {
 
 	// Dot: link, at same / Dtt: file
 	{
-		d := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Same)
-		p, err := d.PreviewUnlink(dot, dtt)
+		app := requestApp(dtt, FirstReq_File, dot, SecondReq_Link_Same)
+		p, err := app.PreviewUnlink(dot, dtt)
 		assert.NoError(t, err)
 		assert.Equal(t, FileOpOverwrite, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
