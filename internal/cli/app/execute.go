@@ -20,7 +20,7 @@ func (a App) ImportFile(
 	}
 
 	var (
-		dotabs = pre.Dot.Path.Abs()
+		dotabs = pre.Dot.Real.Abs()	// use real path to get actual file
 		dttabs = pre.Dtt.Path.Abs()
 	)
 
@@ -144,7 +144,7 @@ func (a App) ExportFile(
 
 	var (
 		dotabs = pre.Dot.Path.Abs()
-		dttabs = pre.Dtt.Path.Abs()
+		dttabs = pre.Dtt.Real.Abs()	// use real path to get actual file
 	)
 
 	if pre.DotOp == FileOpOverwrite {
