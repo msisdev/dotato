@@ -11,7 +11,6 @@ import (
 
 func (a App) ImportFile(
 	pre Preview,
-	tx *gorm.DB,
 	dirPerm os.FileMode,
 	filePerm os.FileMode,
 ) error {
@@ -46,16 +45,7 @@ func (a App) ImportFile(
 		return err
 	}
 
-	// Write history
-	err = a.State.TxUpsertOne(tx, state.History{
-		DotPath: pre.Dot.Path.Abs(),
-		DttPath: pre.Dtt.Real.Abs(),
-		Mode:    config.ModeFile,
-	})
-	if err != nil {
-		return err
-	}
-
+	// Do not write history because dotfile is not changed.
 	return nil
 }
 

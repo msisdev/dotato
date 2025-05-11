@@ -125,7 +125,7 @@ func ImportPlan(logger *log.Logger, args *args.ImportPlanArgs) {
 				// Import
 				var err error
 				if mode == config.ModeFile {
-					err = a.ImportFile(pre, tx, os.FileMode(args.DirPerm), os.FileMode(args.FilePerm))
+					err = a.ImportFile(pre, os.FileMode(args.DirPerm), os.FileMode(args.FilePerm))
 				} else {
 					err = a.ImportLink(pre, tx, os.FileMode(args.DirPerm), os.FileMode(args.FilePerm))
 				}
