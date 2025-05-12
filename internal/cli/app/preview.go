@@ -8,6 +8,7 @@ import (
 )
 
 type FileOp int
+
 const (
 	FileOpNone FileOp = iota
 	FileOpSkip
@@ -99,7 +100,6 @@ func (a App) PreviewImportFile(
 	return p, nil
 }
 
-
 // Preview Import Link ////////////////////////////////////////////////////////
 
 // Dot should be link and dtt should be file.
@@ -142,7 +142,7 @@ func (a App) PreviewImportLink(
 		} else {
 			p.DttOp = FileOpOverwrite
 		}
-		
+
 		return p, nil
 	}
 
@@ -161,7 +161,7 @@ func (a App) PreviewImportLink(
 		p.DttOp = FileOpCreate
 	} else {
 		if p.Dtt.IsFile {
-		 	equal, err := filesystem.IsFileContentEqual(
+			equal, err := filesystem.IsFileContentEqual(
 				a.fs,
 				p.Dot.Path.Abs(),
 				p.Dtt.Path.Abs(),

@@ -18,7 +18,7 @@ func (e *Engine) readIgnore() (err error) {
 	if err = e.readConfig(); err != nil {
 		return
 	}
-	
+
 	e.ig, err = factory.ReadIgnore(e.fs, e.cdir.Copy())
 	return
 }

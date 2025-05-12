@@ -13,8 +13,8 @@ const (
 
 type model struct {
 	textInput textinput.Model
-	title			string
-	err 			error
+	title     string
+	err       error
 }
 
 func initialModel(title, placeholder string) model {
@@ -23,11 +23,11 @@ func initialModel(title, placeholder string) model {
 	ti.Placeholder = placeholder
 	ti.CharLimit = charLimit
 	ti.Width = charLimit
-	
+
 	return model{
 		textInput: ti,
-		title: title,
-		err: nil,
+		title:     title,
+		err:       nil,
 	}
 }
 

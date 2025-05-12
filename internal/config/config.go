@@ -8,34 +8,34 @@ import (
 )
 
 var (
-	ErrVersionNotFound 	= fmt.Errorf("version not found")
-	ErrModeNotFound    	= fmt.Errorf("mode not found")
-	ErrGroupNotFound 		= fmt.Errorf("group not found")
+	ErrVersionNotFound  = fmt.Errorf("version not found")
+	ErrModeNotFound     = fmt.Errorf("mode not found")
+	ErrGroupNotFound    = fmt.Errorf("group not found")
 	ErrResolverNotFound = fmt.Errorf("resolver not found")
 )
 
 const (
-	ModeFile = "file"
-	ModeLink = "link"
+	ModeFile    = "file"
+	ModeLink    = "link"
 	ModeDefault = ModeFile
 
-	Version1 = "v1"
+	Version1      = "v1"
 	ConfigVersion = Version1
 )
 
 type Config struct {
-	Version string               					`yaml:"version"`
-	Mode		string               					`yaml:"mode"`
-	Plans   map[string][]string						`yaml:"plans"`
-	Groups  map[string]map[string]string	`yaml:"groups"`
+	Version string                       `yaml:"version"`
+	Mode    string                       `yaml:"mode"`
+	Plans   map[string][]string          `yaml:"plans"`
+	Groups  map[string]map[string]string `yaml:"groups"`
 }
 
 func New() *Config {
 	return &Config{
-		Version:	ConfigVersion,
-		Mode:			ModeDefault,
-		Plans:   	map[string][]string{},
-		Groups:  	map[string]map[string]string{},
+		Version: ConfigVersion,
+		Mode:    ModeDefault,
+		Plans:   map[string][]string{},
+		Groups:  map[string]map[string]string{},
 	}
 }
 
@@ -160,29 +160,29 @@ func (c Config) GetGroupBase(
 }
 
 // Returns:
-//  - groups - map of group and base pairs
-//  - notFound - env vars that are not found in the base
-//	- err - error if any
+//   - groups - map of group and base pairs
+//   - notFound - env vars that are not found in the base
+//   - err - error if any
 func (c Config) GetGroupBaseAll(resolver string) (groups map[string]gp.GardenPath, notFound []string, err error) {
 	groups = make(map[string]gp.GardenPath)
-	
+
 	// Make groups
 	for group, resolvers := range c.Groups {
 		// Find resolver
 		path, ok := resolvers[resolver]
 		if !ok {
-			continue	// Resolver not found
+			continue // Resolver not found
 		}
 
 		// Get garden path
 		var (
 			gpath gp.GardenPath
-			envs []string
+			envs  []string
 		)
 		gpath, envs, err = gp.NewCheckEnv(path)
 		if err != nil {
 			if err == gp.ErrEnvVarNotSet {
-				notFound = append(notFound, envs...)	// Append not found env vars
+				notFound = append(notFound, envs...) // Append not found env vars
 			} else {
 				return
 			}

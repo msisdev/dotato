@@ -28,7 +28,7 @@ func expandEnv(s string) (expanded string, notFound []string) {
 		if !ok {
 			notFound = append(notFound, env)
 		}
-		
+
 		return val
 	})
 

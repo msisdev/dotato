@@ -30,17 +30,17 @@ const (
 )
 
 var (
-	DotatoFileNameConfig	= useEnvOrDefault(configFileNameEnv, configFileNameDefault)
-	DotatoFileNameIgnore	= useEnvOrDefault(ignoreFileNameEnv, ignoreFileNameDefault)
-	DotatoDirPath		 			= getDotatoDirUnsafe()
-	DotatoFileNameState  	= useEnvOrDefault(stateFileNameEnv, stateFileNameDefault)
-	DotatoFilePathState 	= filepath.Join(DotatoDirPath, DotatoFileNameState)
-	DotatoFileNames = map[string]bool{
+	DotatoFileNameConfig = useEnvOrDefault(configFileNameEnv, configFileNameDefault)
+	DotatoFileNameIgnore = useEnvOrDefault(ignoreFileNameEnv, ignoreFileNameDefault)
+	DotatoDirPath        = getDotatoDirUnsafe()
+	DotatoFileNameState  = useEnvOrDefault(stateFileNameEnv, stateFileNameDefault)
+	DotatoFilePathState  = filepath.Join(DotatoDirPath, DotatoFileNameState)
+	DotatoMaxFSIter      = useEnvOrDefaultInt(maxFSIterEnv, maxFSIterDefault)
+	DotatoFileNames      = map[string]bool{
 		DotatoFileNameConfig: true,
 		DotatoFileNameIgnore: true,
 		DotatoFileNameState:  true,
 	}
-	DotatoMaxFSIter 			= useEnvOrDefaultInt(maxFSIterEnv, maxFSIterDefault)
 )
 
 // Loop up in the env var or use default value

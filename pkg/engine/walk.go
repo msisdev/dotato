@@ -32,7 +32,7 @@ func (e Engine) Walk(
 	var dfs func(dir gp.GardenPath) (err error)
 	dfs = func(dir gp.GardenPath) (err error) {
 		iter++
-		
+
 		// max iter exceeded ?
 		if iter > e.maxIter {
 			return ErrMaxIterExceeded
@@ -141,6 +141,6 @@ func (e *Engine) WalkDttDir(
 	// Get group dir path
 	base := e.cdir.Copy()
 	base = append(base, group)
-	
+
 	return e.WalkNonIgnored(base, ig, onDtt)
 }

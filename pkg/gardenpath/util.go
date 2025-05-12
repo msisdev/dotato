@@ -15,7 +15,7 @@ func expandTilde(rawPath string) (string, error) {
 	// Is tilde followed by a slash?
 	end := strings.Index(rawPath, "/")
 	if end == -1 {
-		end = len(rawPath)	// No slash: use the whole string
+		end = len(rawPath) // No slash: use the whole string
 	}
 
 	// Path in ~/

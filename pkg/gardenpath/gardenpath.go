@@ -12,15 +12,15 @@ var ErrEnvVarNotSet = fmt.Errorf("env var not set")
 // GardenPath is a smart path representation.
 // It is a sequence of directory names starting from root
 // directory.
-// 
+//
 // The first element represents the root directory:
-//  - linux or else: empty string
-//  - windows: volume name (e.g. C:)
+//   - linux or else: empty string
+//   - windows: volume name (e.g. C:)
 type GardenPath []string
 
 // New constructor handles:
 //
-//  1. Clean dot and double dot  
+//  1. Clean dot and double dot
 //  2. tilde replacement,
 //  3. absolute path conversion,
 //  4. trailing slash removal.
@@ -58,8 +58,8 @@ func NewCheckEnv(path string) (gp GardenPath, notFound []string, err error) {
 
 	// (windows) handle volume name
 	if vol := filepath.VolumeName(path); vol != "" {
-		path = strings.TrimPrefix(path, vol)	// remove volume name
-		path = strings.TrimPrefix(path, sep)	// remove leading separator
+		path = strings.TrimPrefix(path, vol) // remove volume name
+		path = strings.TrimPrefix(path, sep) // remove leading separator
 		gp = GardenPath{vol}
 		if path != "" {
 			gp = append(gp, strings.Split(path, sep)...)
@@ -78,7 +78,6 @@ func (p GardenPath) Abs() string {
 		return ""
 	}
 
-	
 	if len(p) == 1 {
 		if p[0] == "" {
 			// (linux) handle root directory
@@ -88,7 +87,7 @@ func (p GardenPath) Abs() string {
 			return p[0] + string(os.PathSeparator)
 		}
 	}
-	
+
 	return strings.Join(p, string(os.PathSeparator))
 }
 

@@ -180,7 +180,7 @@ func TestPreviewImportLink(t *testing.T) {
 		dot = gp.GardenPath{"", "home", "user", ".bashrc"}
 		dtt = gp.GardenPath{"", "home", "user", "Documents", "dotato", "bash", ".bashrc"}
 	)
-	
+
 	// Dot: file / Dtt: file, not exists
 	{
 		app := requestApp(dot, FirstReq_File, dtt, SecondReq_Empty)

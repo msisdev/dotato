@@ -30,9 +30,9 @@ groups:
 
 var testcase1Config = &Config{
 	Version: "0.0.1",
-	Mode:		ModeFile,
+	Mode:    ModeFile,
 	Plans: map[string][]string{
-		"all": 			nil,
+		"all":      nil,
 		"default":  {},
 		"fedora":   {"kde", "konsole", "zsh"},
 		"hyprland": {"alacritty", "fish", "waybar"},

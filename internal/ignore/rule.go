@@ -58,7 +58,7 @@ func (n *ruleNode) IsIgnored(relPath string) bool {
 
 type RuleTree struct {
 	head *ruleNode // head is a dummy node
-	base int		   // Base index for the path
+	base int       // Base index for the path
 }
 
 // Further algorithms will skip path[0:base] and
@@ -118,7 +118,6 @@ func (t RuleTree) IsIgnoredWithBaseDir(baseDir gp.GardenPath, path gp.GardenPath
 	return t.IsIgnoredWithBase(GetBaseFrom(baseDir), path)
 }
 
-// 
 func (t RuleTree) IsIgnoredWithBase(base int, path gp.GardenPath) bool {
 	// Some edge cases
 	if t.head == nil {
@@ -133,13 +132,13 @@ func (t RuleTree) IsIgnoredWithBase(base int, path gp.GardenPath) bool {
 	}
 
 	node := t.head
-	
+
 	if parent := path.Parent(); base < len(parent) {
 		for i, nextName := range parent[base:] {
 			if node.IsIgnored(path[i:].Abs()) {
 				return true
 			}
-	
+
 			nextNode, ok := node.dirs[nextName]
 			if !ok {
 				return false

@@ -26,7 +26,7 @@ func (e Engine) DttToDot(
 	}
 
 	path := base.Copy()
-	for i := len(e.cdir)+1; i < len(dtt); i++ {
+	for i := len(e.cdir) + 1; i < len(dtt); i++ {
 		path = append(path, dtt[i])
 	}
 	return path

@@ -18,20 +18,20 @@ type endMsg struct {
 type Task func(up chan<- string, quit <-chan bool) error
 
 type taskMsg struct {
-	text string	// text to show
+	text string // text to show
 }
 
 type Spinner struct {
-	spinner		spinner.Model			// spinner spins
-	frame 		string						// buffer for view
-	text 			string						// buffer for view
+	spinner spinner.Model // spinner spins
+	frame   string        // buffer for view
+	text    string        // buffer for view
 
-	task 			Task							// task is interactive
-	up 				chan string				// used by task
-	quit 			chan bool					// quit signal from model to work
-	quitting	bool							// to prevent closing channel twice
-	
-	Error 		error							// error returned from task
+	task     Task        // task is interactive
+	up       chan string // used by task
+	quit     chan bool   // quit signal from model to work
+	quitting bool        // to prevent closing channel twice
+
+	Error error // error returned from task
 }
 
 func New(init string, f Task) Spinner {
@@ -39,14 +39,14 @@ func New(init string, f Task) Spinner {
 	sp.Spinner.FPS = time.Millisecond * 100
 
 	return Spinner{
-		spinner:	sp,
-		frame: 		sp.Spinner.Frames[0],
-		text: 		init,
-		task: 		f,
-		up: 			make(chan string, 1),	// this extra space is needed
-		quit: 		make(chan bool),
+		spinner:  sp,
+		frame:    sp.Spinner.Frames[0],
+		text:     init,
+		task:     f,
+		up:       make(chan string, 1), // this extra space is needed
+		quit:     make(chan bool),
 		quitting: false,
-		Error: 		nil,
+		Error:    nil,
 	}
 }
 
@@ -81,25 +81,25 @@ func (m Spinner) work() tea.Msg {
 func (m Spinner) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case taskMsg:
-		m.text = msg.text	// Update state
-		return m, m.wait	// Run another wait
+		m.text = msg.text // Update state
+		return m, m.wait  // Run another wait
 
 	case spinner.TickMsg:
 		var cmd tea.Cmd
 		m.spinner, cmd = m.spinner.Update(msg)
 		m.frame = m.spinner.View()
-		return m, cmd			// Restart tick
+		return m, cmd // Restart tick
 
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q":
 			if !m.quitting {
 				m.quitting = true
-				close(m.quit)	// Send quit signal
-				m.spinner.Spinner = spinner.Pulse	
+				close(m.quit) // Send quit signal
+				m.spinner.Spinner = spinner.Pulse
 			}
-			
-			return m, nil		// Quit is not happening yet
+
+			return m, nil // Quit is not happening yet
 		}
 
 	case endMsg:
@@ -127,8 +127,8 @@ func (m Spinner) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		close(m.up)
-		
-		return m, tea.Quit	// Quit
+
+		return m, tea.Quit // Quit
 	}
 
 	return m, nil

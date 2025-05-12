@@ -3,16 +3,16 @@ package store
 import "sync"
 
 type Store[T any] struct {
-	mx	sync.Mutex
-	d		T						// data
-	ok	bool				// data existence
+	mx sync.Mutex
+	d  T    // data
+	ok bool // data existence
 }
 
 // Initialize Store
 func New[T any](init T, ok bool) *Store[T] {
 	return &Store[T]{
 		mx: sync.Mutex{},
-		d: init,
+		d:  init,
 		ok: ok,
 	}
 }
@@ -54,7 +54,7 @@ func (s *Store[T]) Update(f func(T) T) {
 // The returning boolean value indicates one of the following:
 //
 //   - TryLock succeeded and data exists
-//	 - TryLock succeeded and data does not exist
+//   - TryLock succeeded and data does not exist
 //   - TryLock failed
 func (s *Store[T]) TryGet() (T, bool) {
 	if s.mx.TryLock() {

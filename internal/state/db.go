@@ -10,17 +10,18 @@ import (
 
 // Key value store
 type Store struct {
-	Key		string	`gorm:"primaryKey"`
+	Key   string `gorm:"primaryKey"`
 	Value string
 }
 
 // DB schema version
 type Version string
+
 const (
-	KeyVersion							= "version"
-	VersionUnknown	Version = "unknown"
-	Version1 				Version = "v1"
-	DBVersion	Version = Version1
+	KeyVersion             = "version"
+	VersionUnknown Version = "unknown"
+	Version1       Version = "v1"
+	DBVersion      Version = Version1
 )
 
 const (
@@ -29,15 +30,14 @@ const (
 
 var (
 	ErrVersionUnknown = fmt.Errorf("unknown version")
-
 )
 
 // What NewDB does:
-//  - Open/create db file
-//  - Migrate Store table
+//   - Open/create db file
+//   - Migrate Store table
 //
 // What NewDB does not do:
-//  - Migrate History table
+//   - Migrate History table
 func newDB(path string) (*gorm.DB, Version, error) {
 	// Open dbt
 	config := gorm.Config{
@@ -88,7 +88,7 @@ func getVersion(db *gorm.DB) (Version, bool, error) {
 	if len(stores) > 1 {
 		return "", false, fmt.Errorf("multiple version rows found")
 	}
-	
+
 	// Select first row
 	store := stores[0]
 

@@ -7,8 +7,8 @@ import (
 	"github.com/msisdev/dotato/internal/factory"
 	"github.com/msisdev/dotato/internal/ignore"
 	"github.com/msisdev/dotato/internal/lib/filesystem"
-	gp "github.com/msisdev/dotato/pkg/gardenpath"
 	"github.com/msisdev/dotato/internal/state"
+	gp "github.com/msisdev/dotato/pkg/gardenpath"
 	"gorm.io/gorm"
 )
 
@@ -17,10 +17,10 @@ type Engine struct {
 	isMem   bool
 	maxIter int
 
-	cdir 	gp.GardenPath
-	cfg  	*config.Config
-	ig   	*ignore.Ignore
-	state	*state.State
+	cdir  gp.GardenPath
+	cfg   *config.Config
+	ig    *ignore.Ignore
+	state *state.State
 }
 
 func New() *Engine {
@@ -135,7 +135,9 @@ func (e Engine) GetConfigGroupResolvers(group string) (map[string]string, error)
 // Ignore /////////////////////////////////////////////////////////////////////
 
 func (e Engine) ReadGroupIgnore(group string) (*ignore.Ignore, error) {
-	if err := e.readConfig(); err != nil { return nil, err }
+	if err := e.readConfig(); err != nil {
+		return nil, err
+	}
 
 	dir := e.cdir.Copy()
 	dir = append(dir, group)

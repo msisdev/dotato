@@ -9,9 +9,9 @@ import (
 func TestSampleConfig(t *testing.T) {
 	cfg := &Config{
 		Version: ConfigVersion,
-		Mode:	ModeFile,
+		Mode:    ModeFile,
 		Plans: map[string][]string{
-			"all": nil,
+			"all":  nil,
 			"mypc": {"bash"},
 		},
 		Groups: map[string]map[string]string{

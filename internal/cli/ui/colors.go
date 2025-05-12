@@ -17,17 +17,17 @@ var (
 */
 
 var (
-	PrimaryColor 		= lipgloss.AdaptiveColor{Light: "#e9a11c", Dark: "#e39c16"}
-	SecondaryColor	= lipgloss.AdaptiveColor{Light: "#8ccdf3", Dark: "#0c4e73"}
-	AccentColor 		= lipgloss.AdaptiveColor{Light: "#8054ed", Dark: "#3d12ab"}
-	TextColor 			= lipgloss.AdaptiveColor{Light: "#170f03", Dark: "#fcf4e8"}
-	BackgroundColor	= lipgloss.AdaptiveColor{Light: "#fefbf6", Dark: "#090601"}
-	
-	EmptyColor = lipgloss.Color("0")
-	MutedColor 	= lipgloss.Color("7")		// gray
-	PositiveColor = lipgloss.Color("10")		// green
-	CriticalColor = lipgloss.Color("11")	// olive (yellow)
-	NegativeColor = lipgloss.Color("9")		// red
-	InfoColor 		= lipgloss.Color("12")		// navy
-	PromoteColor = lipgloss.Color("13")	// purple
+	PrimaryColor    = lipgloss.AdaptiveColor{Light: "#e9a11c", Dark: "#e39c16"}
+	SecondaryColor  = lipgloss.AdaptiveColor{Light: "#8ccdf3", Dark: "#0c4e73"}
+	AccentColor     = lipgloss.AdaptiveColor{Light: "#8054ed", Dark: "#3d12ab"}
+	TextColor       = lipgloss.AdaptiveColor{Light: "#170f03", Dark: "#fcf4e8"}
+	BackgroundColor = lipgloss.AdaptiveColor{Light: "#fefbf6", Dark: "#090601"}
+
+	EmptyColor    = lipgloss.Color("0")
+	MutedColor    = lipgloss.Color("7")  // gray
+	PositiveColor = lipgloss.Color("10") // green
+	CriticalColor = lipgloss.Color("11") // olive (yellow)
+	NegativeColor = lipgloss.Color("9")  // red
+	InfoColor     = lipgloss.Color("12") // navy
+	PromoteColor  = lipgloss.Color("13") // purple
 )

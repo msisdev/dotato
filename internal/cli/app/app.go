@@ -8,9 +8,9 @@ import (
 )
 
 type App struct {
-	logger	*log.Logger
-	fs     	billy.Filesystem
-	E      	*engine.Engine
+	logger *log.Logger
+	fs     billy.Filesystem
+	E      *engine.Engine
 }
 
 func New(logger *log.Logger) App {

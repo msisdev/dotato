@@ -7,8 +7,8 @@ import (
 	"github.com/go-git/go-billy/v5"
 	"github.com/msisdev/dotato/internal/config"
 	"github.com/msisdev/dotato/internal/ignore"
-	gp "github.com/msisdev/dotato/pkg/gardenpath"
 	"github.com/msisdev/dotato/internal/state"
+	gp "github.com/msisdev/dotato/pkg/gardenpath"
 )
 
 func ReadConfig(
