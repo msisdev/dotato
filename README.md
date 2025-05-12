@@ -16,13 +16,13 @@ dotato is a lightweight dotfile manager.
 - Select dotfiles with config file
 - Move dotfiles to your directory
 
-✏️ Config files are clear:
-- `dotato.yaml` - declare original path of dotfiles
-- `.dotatoignore` - select files that you are interested
+✏️ Config files are clear.
+- `dotato.yaml`: declare original path of dotfiles
+- `.dotatoignore`: select files that you are interested
 
-🚚 Choose behavior:
-- file mode - copy dotfiles into your directory (like snapshot)
-- link mode - move dotfiles into your directory and leave symlink instead. (like [stow](https://www.gnu.org/software/stow/))
+🚚 Choose command mode.
+- **file mode**: copy dotfiles into your directory (like snapshot)
+- **link mode**: move dotfiles into your directory and leave symlink instead. (like [stow](https://www.gnu.org/software/stow/))
 
 
 
