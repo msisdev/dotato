@@ -21,9 +21,9 @@ func run(ps []app.Preview, arrow string) int {
 	count := countUpdate(ps)
 	fmt.Printf("\n🔎 Preview: update %d / total %d\n\n", count, len(ps))
 	for _, p := range ps {
-		println(render(p, arrow))
+		println(renderItem(p, arrow))
 	}
-	fmt.Printf("%s okay / %s skip / %s create / %s overwrite\n\n", iconNone, iconSkip, iconCreate, iconOverwrite)
+	println(footer)
 
 	return count
 }

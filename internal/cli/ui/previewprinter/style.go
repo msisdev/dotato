@@ -9,15 +9,55 @@ import (
 )
 
 var (
-	mutedStyle = lipgloss.NewStyle().Foreground(ui.MutedColor)
+	mutedForegroundStyle = lipgloss.NewStyle().Foreground(ui.MutedColor)
+	mutedBackgroundStyle = lipgloss.NewStyle().Background(ui.MutedColor)
+	infoForegroundStyle = lipgloss.NewStyle().Foreground(ui.InfoColor)
+	infoBackgroundStyle = lipgloss.NewStyle().Background(ui.InfoColor)
+	positiveForegroundStyle = lipgloss.NewStyle().Foreground(ui.PositiveColor)
+	positiveBackgroundStyle = lipgloss.NewStyle().Background(ui.PositiveColor)
+	criticalForegroundStyle = lipgloss.NewStyle().Foreground(ui.CriticalColor)
+	criticalBackgroundStyle = lipgloss.NewStyle().Background(ui.CriticalColor)
+	negativeForegroundStyle = lipgloss.NewStyle().Foreground(ui.NegativeColor)
+	negativeBackgroundStyle = lipgloss.NewStyle().Background(ui.NegativeColor)
+)
+
+// https://www.unicode.org/charts/ -> Block Elements
+const (
+	iconLeftBar = "▐"
+	iconRightBar = "▌"
+	arrowImportFile = "->"
+	arrowImportLink = "->"
+	arrowExportFile = "<-"
+	arrowExportLink = "<-"
+	arrowUnlink     = "<->"
 )
 
 var (
-	iconNone 			= lipgloss.NewStyle().Foreground(ui.MutedColor).Render(" ✔ ")
-	iconSkip 			= lipgloss.NewStyle().Background(ui.InfoColor).Render(" ✘ ")
-	iconCreate 		= lipgloss.NewStyle().Background(ui.PositiveColor).Render(" + ")
-	iconOverwrite	= lipgloss.NewStyle().Background(ui.CriticalColor).Render(" ! ")
-	iconUnknown 	= lipgloss.NewStyle().Background(ui.NegativeColor).Render(" ? ")
+	iconNone = (
+		mutedForegroundStyle.Render(iconLeftBar) +
+		mutedBackgroundStyle.Bold(true).Render("o") +
+		mutedForegroundStyle.Render(iconRightBar))
+	iconSkip 			= (
+		infoForegroundStyle.Render(iconLeftBar) +
+		infoBackgroundStyle.Bold(true).Render("s") +
+		infoForegroundStyle.Render(iconRightBar))
+	iconCreate = (
+		positiveForegroundStyle.Render(iconLeftBar) +
+		positiveBackgroundStyle.Bold(true).Render("c") +
+		positiveForegroundStyle.Render(iconRightBar))
+	// iconCreate = positiveBackgroundStyle.Render("✦")
+	iconOverwrite = (
+		criticalForegroundStyle.Render(iconLeftBar) +
+		criticalBackgroundStyle.Bold(true).Render("w") +
+		criticalForegroundStyle.Render(iconRightBar))
+	iconUnknown = (
+		negativeForegroundStyle.Render(iconLeftBar) +
+		negativeBackgroundStyle.Bold(true).Render("?") +
+		negativeForegroundStyle.Render(iconRightBar))
+	footer = fmt.Sprintf(
+		"%s okay / %s skip / %s create / %s overwrite\n",
+		iconNone, iconSkip, iconCreate, iconOverwrite,
+	)
 )
 
 func renderIcon(op app.FileOp) (string, bool) {
@@ -35,15 +75,7 @@ func renderIcon(op app.FileOp) (string, bool) {
 	}
 }
 
-const (
-	arrowImportFile = "->"
-	arrowImportLink = "->"
-	arrowExportFile = "<-"
-	arrowExportLink = "<-"
-	arrowUnlink     = "<->"
-)
-
-func render(p app.Preview, arrow string) string {
+func renderItem(p app.Preview, arrow string) string {
 	var (
 		dotIcon string
 		dotPath string
@@ -53,15 +85,16 @@ func render(p app.Preview, arrow string) string {
 		dttPath string
 		dttMuted bool
 	)
+
 	// Get muted status
 	dotIcon, dotMuted = renderIcon(p.DotOp)
 	dttIcon, dttMuted = renderIcon(p.DttOp)
 
 	// If both are muted, render all in muted style
 	if dotMuted && dttMuted {
-		dotPath = mutedStyle.Render(p.Dot.Path.Abs())
-		dttPath = mutedStyle.Render(p.Dtt.Path.Abs())
-		arrow = mutedStyle.Render(arrow)
+		dotPath = mutedForegroundStyle.Render(p.Dot.Path.Abs())
+		dttPath = mutedForegroundStyle.Render(p.Dtt.Path.Abs())
+		arrow = mutedForegroundStyle.Render(arrow)
 	} else {
 		dotPath = p.Dot.Path.Abs()
 		dttPath = p.Dtt.Path.Abs()
