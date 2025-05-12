@@ -62,7 +62,7 @@ dotato is written in pure go. If you have [go](https://go.dev/dl/), it is easy:
 go install github.com/msisdev/dotato@latest
 ```
 
-Make sure you have `~/go/bin` in path env var.
+And make sure you have `~/go/bin` in the `PATH` env var.
 
 
 
