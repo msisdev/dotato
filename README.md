@@ -43,8 +43,7 @@ Your dotato directory will look like this.
 📁
 ├── 📁bash
 │   └── 📄.dotatoignore
-├── 📄.dotatoignore
-└── 📄dotato.yaml
+└── ⚙️dotato.yaml
 ```
 
 Configure `dotato.yaml` to tell dotato where to order/deliver files from/to.
@@ -78,10 +77,10 @@ Copy files into dotato directory:
 
 🔎 Preview: update 1 / total 1
 
- ✔ /home/msisdev/.bashrc
- -> + /home/msisdev/Documents/GitHub/my-tumbleweed/bash/.bashrc
+▐o▌/home/msisdev/.bashrc
+ ->▐c▌/home/msisdev/Documents/GitHub/dotato/bash/.bashrc
 
- ✔  okay /  ✘  skip /  +  create /  !  overwrite
+▐o▌ okay / ▐s▌ skip / ▐c▌ create / ▐w▌ overwrite
 
 Do you want to proceed?
 
@@ -94,23 +93,22 @@ Do you want to proceed?
 ├── 📁bash
 │   ├── ✨.bashrc
 │   └── 📄.dotatoignore
-├── 📄.dotatoignore
-└── 📄dotato.yaml
+└── ⚙️dotato.yaml
 ```
 
 Copy dotato files back to their original place:
 ```console
-dotato export group bash nux
+> dotato export group bash nux
 ✔ Mode: file
 ✔ Group bash: /home/msisdev
 ✔ Preview bash done
 
 🔎 Preview: update 1 / total 1
 
- ! /home/msisdev/.bashrc
- <- ✔ /home/msisdev/Documents/GitHub/my-tumbleweed/bash/.bashrc
+▐w▌/home/msisdev/.bashrc
+ <-▐o▌/home/msisdev/Documents/GitHub/dotato/bash/.bashrc
 
- ✔  okay /  ✘  skip /  +  create /  !  overwrite
+▐o▌ okay / ▐s▌ skip / ▐c▌ create / ▐w▌ overwrite
 
 Do you want to proceed?
 
