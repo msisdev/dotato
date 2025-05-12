@@ -20,15 +20,10 @@ plans:
 #  - You can use multiple resolvers in the same group.
 #  - You can use tilde or env var in a resolver.
 #  - '%%FOO%%' is not handled. Use '$FOO' or '${FOO}' instead.
-#
-# groups:
-#   bash:
-#     nux: "$HOME"
-#     mac: "$MY_DIR/bash"
 groups:
   bash:
     nux: "~"
-    win: "$USERPROFILE"
+    mac: "$HOME"
 `
 
 func GetExample() string {

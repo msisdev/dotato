@@ -24,4 +24,4 @@ plans:
 groups:
   bash:
     nux: "~"
-    win: "\\\\wsl.localhost\\openSUSE-Tumbleweed\\root"
+    mac: "$HOME"
