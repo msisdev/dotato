@@ -8,7 +8,7 @@ import (
 	"github.com/msisdev/dotato/internal/config"
 	"github.com/msisdev/dotato/internal/ignore"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
-	"github.com/msisdev/dotato/pkg/state"
+	"github.com/msisdev/dotato/internal/state"
 )
 
 func ReadConfig(

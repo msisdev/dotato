@@ -113,7 +113,7 @@ func ExportPlan(logger *log.Logger, args *args.ExportPlanArgs) {
 	// Execute
 	title := "Exporting..."
 	err = mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
-		return a.State.TxSafe(func(tx *gorm.DB) error {
+		return a.E.StateTxSafe(func(tx *gorm.DB) error {
 			for _, pre := range ps {
 				// Check quit
 				select {

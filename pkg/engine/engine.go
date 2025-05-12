@@ -8,6 +8,8 @@ import (
 	"github.com/msisdev/dotato/internal/ignore"
 	"github.com/msisdev/dotato/internal/lib/filesystem"
 	gp "github.com/msisdev/dotato/pkg/gardenpath"
+	"github.com/msisdev/dotato/internal/state"
+	"gorm.io/gorm"
 )
 
 type Engine struct {
@@ -15,9 +17,10 @@ type Engine struct {
 	isMem   bool
 	maxIter int
 
-	cdir gp.GardenPath
-	cfg  *config.Config
-	ig   *ignore.Ignore
+	cdir 	gp.GardenPath
+	cfg  	*config.Config
+	ig   	*ignore.Ignore
+	state	*state.State
 }
 
 func New() *Engine {
@@ -137,4 +140,62 @@ func (e Engine) ReadGroupIgnore(group string) (*ignore.Ignore, error) {
 	dir := e.cdir.Copy()
 	dir = append(dir, group)
 	return factory.ReadIgnoreRecur(e.fs, dir)
+}
+
+// State //////////////////////////////////////////////////////////////////////
+
+func (e Engine) GetHistoryByMode(mode string) ([]History, error) {
+	if err := e.readState(); err != nil {
+		return nil, err
+	}
+
+	return e.state.GetAllByMode(mode)
+}
+
+func (e Engine) UpsertHistory(h History) error {
+	if err := e.readState(); err != nil {
+		return err
+	}
+
+	return e.state.Upsert(h)
+}
+
+func (e Engine) DeleteHistory(h History) error {
+	if err := e.readState(); err != nil {
+		return err
+	}
+
+	return e.state.Delete(h)
+}
+
+func (e *Engine) StateTx(fn func(tx *gorm.DB) error) error {
+	if err := e.readState(); err != nil {
+		return err
+	}
+
+	return e.state.Tx(fn)
+}
+
+func (e *Engine) StateTxSafe(fn func(tx *gorm.DB) error) error {
+	if err := e.readState(); err != nil {
+		return err
+	}
+
+	return e.state.TxSafe(fn)
+}
+
+func (e Engine) StateTxUpsert(tx *gorm.DB, h History) error {
+	if err := e.readState(); err != nil {
+		return err
+	}
+
+	return e.state.TxUpsert(tx, h)
+}
+
+func (e Engine) StateTxDelete(tx *gorm.DB, h History) error {
+	if err := e.readState(); err != nil {
+		return err
+	}
+
+	return e.state.TxDelete(tx, h)
 }

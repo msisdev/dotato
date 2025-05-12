@@ -25,7 +25,7 @@ func TestV1_GetAllByMode(t *testing.T) {
 	// Insert
 	{
 		for _, h := range hs {
-			err := state.v1_upsertOne(h)
+			err := state.v1_upsert(h)
 			assert.NoError(t, err)
 		}
 	}
@@ -48,7 +48,7 @@ func TestV1_GetAllByMode(t *testing.T) {
 	// Delete
 	{
 		for _, h := range hs {
-			err := state.v1_deleteOne(h)
+			err := state.v1_delete(h)
 			assert.NoError(t, err)
 		}
 

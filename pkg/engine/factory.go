@@ -22,3 +22,15 @@ func (e *Engine) readIgnore() (err error) {
 	e.ig, err = factory.ReadIgnore(e.fs, e.cdir.Copy())
 	return
 }
+
+func (e *Engine) readState() (err error) {
+	if e.state != nil {
+		return
+	}
+	if err = e.readConfig(); err != nil {
+		return
+	}
+
+	e.state, err = factory.ReadState(e.fs, e.isMem)
+	return
+}

@@ -32,7 +32,7 @@ func Unlink(logger *log.Logger, args *args.DangerUnlinkArgs) {
 	}
 
 	// Get histories
-	hs, err := a.State.GetAllByMode(mode)
+	hs, err := a.E.GetHistoryByMode(mode)
 	if err != nil {
 		logger.Fatal(err)
 		return
@@ -66,7 +66,7 @@ func Unlink(logger *log.Logger, args *args.DangerUnlinkArgs) {
 	// Execute
 	title := "Unlinking all ..."
 	err = mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
-		return a.State.TxSafe(func(tx *gorm.DB) error {
+		return a.E.StateTxSafe(func(tx *gorm.DB) error {
 			for _, pre := range ps {
 				// Check quit
 				select {
