@@ -18,7 +18,7 @@ dotato is a lightweight dotfile manager.
 
 ✏️ Config files are clear.
 - `dotato.yaml`: declare original path of dotfiles
-- `.dotatoignore`: select files that you are interested
+- `.dotatoignore`: select files that you need
 
 🚚 Choose command mode.
 - **file mode**: copy dotfiles into your directory (like snapshot)
