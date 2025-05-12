@@ -60,11 +60,11 @@ dotato is a lightweight dotfile manager.
 ## Installation
 ### With Go
 dotato is written in pure go. If you have [go](https://go.dev/dl/), it is easy:
-```console
-> go install github.com/msisdev/dotato@latest
+```
+go install github.com/msisdev/dotato@latest
 ```
 
-Make sure you have `~/go/bin` in env var path.
+Make sure you have `~/go/bin` in path env var.
 
 
 
