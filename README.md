@@ -27,8 +27,8 @@ Export dotfiles
 - Filter unnecessary files with `.dotatoignore`
 
 🚚 Choose your mode.
-- **file mode**: copy dotfiles into your directory (like snapshot)
-- **link mode**: move dotfiles into your directory and leave symlink instead. (like [stow](https://www.gnu.org/software/stow/))
+- **file mode**: copy dotfiles into your backup directory (like snapshot)
+- **link mode**: move dotfiles into your backup directory and leave symlink instead. (like [stow](https://www.gnu.org/software/stow/))
 
 ## OS Support
 <table>
