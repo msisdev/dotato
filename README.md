@@ -9,8 +9,6 @@ dotato is a lightweight dotfile manager.
 
 
 ## Introduction
-> [!CAUTION]
-> Dotato is in alpha release. Always backup before using dotato.
 
 🥔 dotato is simple.
 - Select dotfiles with config file
