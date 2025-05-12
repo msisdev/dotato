@@ -67,7 +67,9 @@ And make sure you have `~/go/bin` in `PATH` env var.
 
 
 ## Tutorial (file mode)
-Your dotato directory will look like this.
+Let's copy `~/.bashrc` file into your backup directory.
+
+Your backup directory will look like this.
 ```
 📁
 ├── 📁bash
@@ -83,11 +85,11 @@ version: 1.0.0
 mode: file
 
 plans:
-  all:  # empty plan means all groups
+  all:
 
 groups:
-  bash:
-    nux: "~"
+  bash:        # write name of your dotfile group
+    nux: "~"   # write directory of your dotfile
 ```
 
 Configure `bash/.dotatoignore` to tell which files to ignore/grab.
