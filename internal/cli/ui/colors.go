@@ -23,6 +23,7 @@ var (
 	TextColor 			= lipgloss.AdaptiveColor{Light: "#170f03", Dark: "#fcf4e8"}
 	BackgroundColor	= lipgloss.AdaptiveColor{Light: "#fefbf6", Dark: "#090601"}
 	
+	EmptyColor = lipgloss.Color("0")
 	MutedColor 	= lipgloss.Color("7")		// gray
 	PositiveColor = lipgloss.Color("10")		// green
 	CriticalColor = lipgloss.Color("11")	// olive (yellow)

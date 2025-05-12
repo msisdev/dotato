@@ -9,17 +9,16 @@ import (
 )
 
 var (
-	blackColor = lipgloss.Color("0")
 	mutedForegroundStyle = lipgloss.NewStyle().Foreground(ui.MutedColor)
-	mutedBackgroundStyle = lipgloss.NewStyle().Foreground(blackColor).Background(ui.MutedColor)
+	mutedBackgroundStyle = lipgloss.NewStyle().Foreground(ui.EmptyColor).Background(ui.MutedColor)
 	infoForegroundStyle = lipgloss.NewStyle().Foreground(ui.InfoColor)
-	infoBackgroundStyle = lipgloss.NewStyle().Foreground(blackColor).Background(ui.InfoColor)
+	infoBackgroundStyle = lipgloss.NewStyle().Foreground(ui.EmptyColor).Background(ui.InfoColor)
 	positiveForegroundStyle = lipgloss.NewStyle().Foreground(ui.PositiveColor)
-	positiveBackgroundStyle = lipgloss.NewStyle().Foreground(blackColor).Background(ui.PositiveColor)
+	positiveBackgroundStyle = lipgloss.NewStyle().Foreground(ui.EmptyColor).Background(ui.PositiveColor)
 	criticalForegroundStyle = lipgloss.NewStyle().Foreground(ui.CriticalColor)
-	criticalBackgroundStyle = lipgloss.NewStyle().Foreground(blackColor).Background(ui.CriticalColor)
+	criticalBackgroundStyle = lipgloss.NewStyle().Foreground(ui.EmptyColor).Background(ui.CriticalColor)
 	negativeForegroundStyle = lipgloss.NewStyle().Foreground(ui.NegativeColor)
-	negativeBackgroundStyle = lipgloss.NewStyle().Foreground(blackColor).Background(ui.NegativeColor)
+	negativeBackgroundStyle = lipgloss.NewStyle().Foreground(ui.EmptyColor).Background(ui.NegativeColor)
 )
 
 // https://www.unicode.org/charts/ -> Block Elements
