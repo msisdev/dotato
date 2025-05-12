@@ -88,6 +88,9 @@ func UnlinkPlan(logger *log.Logger, args *args.UnlinkPlanArgs) {
 	}
 
 	// Confirm
+	if args.No {
+		return
+	}
 	if !args.Yes {
 		ok, err := confirm.Run("Do you want to proceed?")
 		if err != nil {

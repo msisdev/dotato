@@ -63,6 +63,9 @@ func ImportGroup(logger *log.Logger, args *args.ImportGroupArgs) {
 	}
 
 	// Confirm
+	if args.No {
+		return
+	}
 	if !args.Yes {
 		yes, err := confirm.Run("Do you want to proceed?")
 		if err != nil {

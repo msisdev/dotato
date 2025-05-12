@@ -40,6 +40,9 @@ func UnlinkGroup(logger *log.Logger, args *args.UnlinkGroupArgs) {
 	}
 
 	// Confirm
+	if args.No {
+		return
+	}
 	if !args.Yes {
 		yes, err := confirm.Run("Do you want to proceed?")
 		if err != nil {
