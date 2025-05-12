@@ -12,7 +12,7 @@ dotato is a lightweight dotfile manager.
 
 🥔 dotato is simple.
 - Select dotfiles with config file
-- Move dotfiles to your directory
+- Move dotfiles to your backup directory
 
 ✏️ Config files are clear.
 - `dotato.yaml`: declare original path of dotfiles
