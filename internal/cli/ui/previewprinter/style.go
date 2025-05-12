@@ -9,16 +9,17 @@ import (
 )
 
 var (
+	blackColor = lipgloss.Color("0")
 	mutedForegroundStyle = lipgloss.NewStyle().Foreground(ui.MutedColor)
-	mutedBackgroundStyle = lipgloss.NewStyle().Background(ui.MutedColor)
+	mutedBackgroundStyle = lipgloss.NewStyle().Foreground(blackColor).Background(ui.MutedColor)
 	infoForegroundStyle = lipgloss.NewStyle().Foreground(ui.InfoColor)
-	infoBackgroundStyle = lipgloss.NewStyle().Background(ui.InfoColor)
+	infoBackgroundStyle = lipgloss.NewStyle().Foreground(blackColor).Background(ui.InfoColor)
 	positiveForegroundStyle = lipgloss.NewStyle().Foreground(ui.PositiveColor)
-	positiveBackgroundStyle = lipgloss.NewStyle().Background(ui.PositiveColor)
+	positiveBackgroundStyle = lipgloss.NewStyle().Foreground(blackColor).Background(ui.PositiveColor)
 	criticalForegroundStyle = lipgloss.NewStyle().Foreground(ui.CriticalColor)
-	criticalBackgroundStyle = lipgloss.NewStyle().Background(ui.CriticalColor)
+	criticalBackgroundStyle = lipgloss.NewStyle().Foreground(blackColor).Background(ui.CriticalColor)
 	negativeForegroundStyle = lipgloss.NewStyle().Foreground(ui.NegativeColor)
-	negativeBackgroundStyle = lipgloss.NewStyle().Background(ui.NegativeColor)
+	negativeBackgroundStyle = lipgloss.NewStyle().Foreground(blackColor).Background(ui.NegativeColor)
 )
 
 // https://www.unicode.org/charts/ -> Block Elements
@@ -45,7 +46,6 @@ var (
 		positiveForegroundStyle.Render(iconLeftBar) +
 		positiveBackgroundStyle.Bold(true).Render("c") +
 		positiveForegroundStyle.Render(iconRightBar))
-	// iconCreate = positiveBackgroundStyle.Render("✦")
 	iconOverwrite = (
 		criticalForegroundStyle.Render(iconLeftBar) +
 		criticalBackgroundStyle.Bold(true).Render("w") +
