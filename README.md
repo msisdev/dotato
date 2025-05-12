@@ -24,6 +24,37 @@ dotato is a lightweight dotfile manager.
 - **file mode**: copy dotfiles into your directory (like snapshot)
 - **link mode**: move dotfiles into your directory and leave symlink instead. (like [stow](https://www.gnu.org/software/stow/))
 
+## OS Support
+<table>
+  <tr>
+    <th>OS</th>
+    <th>Support</th>
+  </tr>
+  <tr>
+    <td>Linux</td>
+    <td>✅</td>
+  </tr>
+  <tr>
+    <td>MacOS</td>
+    <td>✅</td>
+  </tr>
+  <tr>
+    <td>Windows</td>
+    <td>
+      <p>File mode: ⚠️</p>
+      <ul>
+        <li>It works with local drive. e.g. 'C:\'</li>
+        <li>It doesn't work with network path. e.g. '\\wsl.localhost\'</li>
+      </ul>
+      <p>Link mode: ❌</p>
+      <ul>
+        <li>Any command that deletes symlink will fail.</li>
+      </ul>
+    </td>
+  </tr>
+  
+</table>
+
 
 
 ## Installation
