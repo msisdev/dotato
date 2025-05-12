@@ -5,11 +5,11 @@ dotato is a lightweight dotfile manager.
 
 <sup>[What is dotfile manager?](https://github.com/msisdev/dotato/wiki/Background)</sup>
 
-<img src="./example/import.gif" alt="import" width="50%">
+<img src="./example/import.gif" alt="import" width="75%">
 
 Import dotfiles
 
-<img src="./example/export.gif" alt="export" width="50%">
+<img src="./example/export.gif" alt="export" width="75%">
 
 Export dotfiles
 
