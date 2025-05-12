@@ -72,4 +72,4 @@ Sleep 3s
 Type "yes"
 Sleep 500ms
 Enter
-Sleep 20s
+Sleep 30s

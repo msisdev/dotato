@@ -17,7 +17,7 @@ func TestSampleConfig(t *testing.T) {
 		Groups: map[string]map[string]string{
 			"bash": {
 				"nux": "~",
-				"win": "$USERPROFILE",
+				"mac": "$HOME",
 			},
 		},
 	}
