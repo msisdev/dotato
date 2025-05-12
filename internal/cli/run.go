@@ -14,10 +14,10 @@ import (
 	"github.com/msisdev/dotato/internal/cli/cmds/wherecmd"
 )
 
-func parse() (args.Args, error) {
+func parse(logger *log.Logger) args.Args {
 	var args args.Args
-	err := arg.Parse(&args)
-	return args, err
+	arg.MustParse(&args)
+	return args
 }
 
 func setLogLevel(logger *log.Logger, level log.Level) {
@@ -41,11 +41,7 @@ func setLogLevel(logger *log.Logger, level log.Level) {
 func Run() {
 	logger := log.New(os.Stderr)
 
-	args, err := parse()
-	if err != nil {
-		logger.Fatal(err)
-		return
-	}
+	args := parse(logger)
 
 	if args.Danger != nil {
 		if args.Danger.Unlink != nil {
