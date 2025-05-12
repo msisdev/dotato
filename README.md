@@ -140,3 +140,6 @@ dotato export group bash nux
 - You can define global rule - one ignore rule applied to all groups.
 - Nest many dotatoignore files under group directory.
 - Remember it is applied on both imprt/export command.
+
+[Commands](https://github.com/msisdev/dotato/wiki/Commands)
+- Use `-h` flag to read hints.
