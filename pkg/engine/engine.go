@@ -168,7 +168,7 @@ func (e Engine) DeleteHistory(h History) error {
 	return e.state.Delete(h)
 }
 
-func (e *Engine) StateTx(fn func(tx *gorm.DB) error) error {
+func (e *Engine) Tx(fn func(tx *gorm.DB) error) error {
 	if err := e.readState(); err != nil {
 		return err
 	}
@@ -176,7 +176,7 @@ func (e *Engine) StateTx(fn func(tx *gorm.DB) error) error {
 	return e.state.Tx(fn)
 }
 
-func (e *Engine) StateTxSafe(fn func(tx *gorm.DB) error) error {
+func (e *Engine) TxSafe(fn func(tx *gorm.DB) error) error {
 	if err := e.readState(); err != nil {
 		return err
 	}
@@ -184,7 +184,15 @@ func (e *Engine) StateTxSafe(fn func(tx *gorm.DB) error) error {
 	return e.state.TxSafe(fn)
 }
 
-func (e Engine) StateTxUpsert(tx *gorm.DB, h History) error {
+func (e Engine) TxGetHistoryByMode(tx *gorm.DB, mode string) ([]History, error) {
+	if err := e.readState(); err != nil {
+		return nil, err
+	}
+
+	return e.state.TxGetAllByMode(tx, mode)
+}
+
+func (e Engine) TxUpsertHistory(tx *gorm.DB, h History) error {
 	if err := e.readState(); err != nil {
 		return err
 	}
@@ -192,7 +200,7 @@ func (e Engine) StateTxUpsert(tx *gorm.DB, h History) error {
 	return e.state.TxUpsert(tx, h)
 }
 
-func (e Engine) StateTxDelete(tx *gorm.DB, h History) error {
+func (e Engine) TxDeleteHistory(tx *gorm.DB, h History) error {
 	if err := e.readState(); err != nil {
 		return err
 	}

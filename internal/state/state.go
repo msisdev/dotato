@@ -78,6 +78,10 @@ func (s State) TxSafe(fn func(tx *gorm.DB) error) error {
 	return fnErr
 }
 
+func (s State) TxGetAllByMode(tx *gorm.DB, mode string) ([]History, error) {
+	return s.v1_tx_getAllByMode(tx, mode)
+}
+
 func (s State) TxUpsert(tx *gorm.DB, h History) error {
 	return s.v1_tx_upsert(tx, h)
 }

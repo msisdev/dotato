@@ -69,7 +69,7 @@ func ImportPlan(logger *log.Logger, args *args.ImportPlanArgs) {
 	var ps []app.Preview
 	for group, base := range bases {
 		var list []app.Preview
-		
+
 		if mode == config.ModeFile {
 			list, err = previewspinner.RunPreviewImportGroupFile(a, group, base)
 			if err != nil {
@@ -116,7 +116,7 @@ func ImportPlan(logger *log.Logger, args *args.ImportPlanArgs) {
 	// Execute
 	title := "Importing..."
 	err = mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
-		return a.E.StateTxSafe(func(tx *gorm.DB) error {
+		return a.E.TxSafe(func(tx *gorm.DB) error {
 			for _, pre := range ps {
 				// Check quit
 				select {

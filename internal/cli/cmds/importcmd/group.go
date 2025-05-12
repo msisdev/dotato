@@ -80,7 +80,7 @@ func ImportGroup(logger *log.Logger, args *args.ImportGroupArgs) {
 	// Execute
 	title := "Importing ..."
 	err = mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
-		return a.E.StateTxSafe(func(tx *gorm.DB) error {
+		return a.E.TxSafe(func(tx *gorm.DB) error {
 			for _, pre := range ps {
 				// Check quit
 				select {

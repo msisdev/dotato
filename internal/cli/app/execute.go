@@ -115,7 +115,7 @@ func (a App) ImportLink(
 	}
 
 	// Write history
-	err := a.E.StateTxUpsert(tx, engine.History{
+	err := a.E.TxUpsertHistory(tx, engine.History{
 		DotPath: pre.Dot.Path.Abs(),
 		DttPath: pre.Dtt.Real.Abs(),
 		Mode:    config.ModeLink,
@@ -166,7 +166,7 @@ func (a App) ExportFile(
 	}
 
 	// Write history
-	err = a.E.StateTxUpsert(tx, engine.History{
+	err = a.E.TxUpsertHistory(tx, engine.History{
 		DotPath: pre.Dot.Path.Abs(),
 		DttPath: pre.Dtt.Real.Abs(),
 		Mode:    config.ModeFile,
@@ -215,7 +215,7 @@ func (a App) ExportLink(
 	}
 
 	// Write history
-	err = a.E.StateTxUpsert(tx, engine.History{
+	err = a.E.TxUpsertHistory(tx, engine.History{
 		DotPath: pre.Dot.Path.Abs(),
 		DttPath: pre.Dtt.Real.Abs(),
 		Mode:    config.ModeLink,
@@ -255,7 +255,7 @@ func (a App) Unlink(
 	}
 
 	// Delete history
-	err = a.E.StateTxDelete(tx, engine.History{
+	err = a.E.TxDeleteHistory(tx, engine.History{
 		DotPath: pre.Dot.Path.Abs(),
 	})
 	if err != nil {

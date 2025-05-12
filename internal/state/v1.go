@@ -43,6 +43,12 @@ func (s State) v1_tx(fn func(tx *gorm.DB) error) error {
 	return s.DB.Transaction(fn)
 }
 
+func (s State) v1_tx_getAllByMode(tx *gorm.DB, mode string) (hs []HistoryV1, err error) {
+	err = tx.Where("mode = ?", mode).Find(&hs).Error
+	
+	return
+}
+
 func (s State) v1_tx_upsert(tx *gorm.DB, h HistoryV1) error {
 	return tx.Clauses(clause.OnConflict{
 		Columns: []clause.Column{{Name: "dot_path"}},
