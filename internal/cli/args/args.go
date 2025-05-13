@@ -31,16 +31,16 @@ type ExportArgs struct {
 	Group *ExportGroupArgs `arg:"subcommand:group|g" help:"export dotfiles in a group"`
 }
 type ExportPlanArgs struct {
-	Plan     string `arg:"positional" help:"plan name"`
-	Resolver string `arg:"positional" help:"resolver name"`
+	Plan     string `arg:"positional,required" help:"plan name"`
+	Resolver string `arg:"positional,required" help:"resolver name"`
 	Yes      bool   `arg:"-y,--yes" help:"skip confirmation"`
 	No       bool   `arg:"-n,--no" help:"exit on confirmation"`
 	FilePerm int    `arg:"-f,--file-perm" help:"create file with permission" default:"0644"`
 	DirPerm  int    `arg:"-d,--dir-perm" help:"create directory with permission" default:"0755"`
 }
 type ExportGroupArgs struct {
-	Group    string `arg:"positional" help:"group name"`
-	Resolver string `arg:"positional" help:"resolver name"`
+	Group    string `arg:"positional,required" help:"group name"`
+	Resolver string `arg:"positional,required" help:"resolver name"`
 	Yes      bool   `arg:"-y,--yes" help:"skip confirmation"`
 	No       bool   `arg:"-n,--no" help:"exit on confirmation"`
 	FilePerm int    `arg:"-f,--file-perm" help:"create file with permission" default:"0644"`
@@ -54,16 +54,16 @@ type ImportArgs struct {
 	Group *ImportGroupArgs `arg:"subcommand:group|g" help:"Import dotfiles in a group"`
 }
 type ImportPlanArgs struct {
-	Plan     string `arg:"positional" help:"plan name"`
-	Resolver string `arg:"positional" help:"resolver name"`
+	Plan     string `arg:"positional,required" help:"plan name"`
+	Resolver string `arg:"positional,required" help:"resolver name"`
 	Yes      bool   `arg:"-y,--yes" help:"skip confirmation"`
 	No       bool   `arg:"-n,--no" help:"exit on confirmation"`
 	FilePerm int    `arg:"-f,--file-perm" help:"create file with permission" default:"0644"`
 	DirPerm  int    `arg:"-d,--dir-perm" help:"create directory with permission" default:"0755"`
 }
 type ImportGroupArgs struct {
-	Group    string `arg:"positional" help:"group name"`
-	Resolver string `arg:"positional" help:"resolver name"`
+	Group    string `arg:"positional,required" help:"group name"`
+	Resolver string `arg:"positional,required" help:"resolver name"`
 	Yes      bool   `arg:"-y,--yes" help:"skip confirmation"`
 	No       bool   `arg:"-n,--no" help:"exit on confirmation"`
 	FilePerm int    `arg:"-f,--file-perm" help:"create file with permission" default:"0644"`
@@ -81,16 +81,16 @@ type UnlinkArgs struct {
 	Group *UnlinkGroupArgs `arg:"subcommand:group|g"`
 }
 type UnlinkPlanArgs struct {
-	Plan     string `arg:"positional" help:"plan name"`
-	Resolver string `arg:"positional" help:"resolver name"`
+	Plan     string `arg:"positional,required" help:"plan name"`
+	Resolver string `arg:"positional,required" help:"resolver name"`
 	Yes      bool   `arg:"-y,--yes" help:"skip confirmation"`
 	No       bool   `arg:"-n,--no" help:"skip confirmation"`
 	FilePerm int    `arg:"-f,--file-perm" help:"create file with permission" default:"0644"`
 	DirPerm  int    `arg:"-d,--dir-perm" help:"create directory with permission" default:"0755"`
 }
 type UnlinkGroupArgs struct {
-	Group    string `arg:"positional" help:"group name"`
-	Resolver string `arg:"positional" help:"resolver name"`
+	Group    string `arg:"positional,required" help:"group name"`
+	Resolver string `arg:"positional,required" help:"resolver name"`
 	Yes      bool   `arg:"-y,--yes" help:"skip confirmation"`
 	No       bool   `arg:"-n,--no" help:"skip confirmation"`
 	FilePerm int    `arg:"-f,--file-perm" help:"create file with permission" default:"0644"`
