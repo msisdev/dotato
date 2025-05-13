@@ -56,47 +56,81 @@ func (a App) PreviewImportFile(
 		return nil, err
 	}
 
-	// Dot file operation
 	if !p.Dot.Exists {
 		return nil, fmt.Errorf("dotfile %s does not exist", p.Dot.Path)
-	} else if !p.Dot.IsFile {
-		if p.Dot.Target.IsEqual(p.Dtt.Path) {
-			// Dot file is a symlink to dtt
-			p.DttOp = FileOpSkip
-			return p, nil
-		}
 	}
-	p.DotOp = FileOpNone
+	// dot exists
+	if p.Dot.IsFile && !p.Dtt.Exists {
+		p.DotOp = FileOpNone
+		p.DttOp = FileOpCreate
+		return p, nil
+	}
+	if p.Dot.IsFile && p.Dtt.Exists && p.Dtt.IsFile {
+		p.DotOp = FileOpNone
 
-	// Dtt file operation
-	if p.Dtt.Exists {
-		if p.Dtt.IsFile {
-			// Compare files
-			equal, err := filesystem.IsFileContentEqual(
-				a.fs,
-				p.Dot.Path.Abs(),
-				p.Dtt.Path.Abs(),
-			)
-			if err != nil {
-				return nil, err
-			}
-
-			if equal {
-				// Files are equal
-				p.DttOp = FileOpNone
-			} else {
-				// Files are not equal
-				p.DttOp = FileOpOverwrite
-			}
+		eq, err := filesystem.IsFileContentEqual(
+			a.fs,
+			p.Dot.Path.Abs(),
+			p.Dtt.Path.Abs(),
+		)
+		if err != nil {
+			return nil, err
+		}
+		if eq {
+			p.DttOp = FileOpNone
 		} else {
-			// Overwrite symlink
 			p.DttOp = FileOpOverwrite
 		}
-	} else {
-		// Create file
-		p.DttOp = FileOpCreate
-	}
 
+		return p, nil
+	}
+	if p.Dot.IsFile && p.Dtt.Exists && !p.Dtt.IsFile {
+		p.DotOp = FileOpNone
+		p.DttOp = FileOpOverwrite
+		return p, nil
+	}
+	// dot is symlink
+	targEq := p.Dot.Target.IsEqual(p.Dtt.Path)
+	if targEq {
+		p.DotOp = FileOpNone
+		p.DttOp = FileOpSkip
+		return p, nil
+	}
+	realEq := p.Dot.Real.IsEqual(p.Dtt.Path)
+	if realEq {
+		p.DotOp = FileOpNone
+		p.DttOp = FileOpNone
+		return p, nil
+	}
+	// dot is symlink to another file
+	if !p.Dtt.Exists {
+		p.DotOp = FileOpNone
+		p.DttOp = FileOpCreate
+		return p, nil
+	}
+	// dtt exists
+	if p.Dtt.IsFile {
+		p.DotOp = FileOpNone
+		
+		eq, err := filesystem.IsFileContentEqual(
+			a.fs,
+			p.Dot.Path.Abs(),
+			p.Dtt.Path.Abs(),
+		)
+		if err != nil {
+			return nil, err
+		}
+		if eq {
+			p.DttOp = FileOpNone
+		} else {
+			p.DttOp = FileOpOverwrite
+		}
+
+		return p, nil
+	}
+	// dtt is symlink
+	p.DotOp = FileOpNone
+	p.DttOp = FileOpOverwrite
 	return p, nil
 }
 
@@ -115,70 +149,90 @@ func (a App) PreviewImportLink(
 	if !p.Dot.Exists {
 		return nil, fmt.Errorf("dotfile %s does not exist", p.Dot.Path)
 	}
-
-	// Case 1: dotfile is a file
-	if p.Dot.IsFile {
-		// dot op
+	// dot exists
+	if p.Dot.IsFile && !p.Dtt.Exists {
+		p.DotOp = FileOpOverwrite
+		p.DttOp = FileOpCreate
+		return p, nil
+	}
+	if p.Dot.IsFile && p.Dtt.Exists && p.Dtt.IsFile {
 		p.DotOp = FileOpOverwrite
 
-		// dtt op
-		if !p.Dtt.Exists {
-			p.DttOp = FileOpCreate
-		} else if p.Dtt.IsFile {
-			// Compare files
-			equal, err := filesystem.IsFileContentEqual(
-				a.fs,
-				p.Dot.Path.Abs(),
-				p.Dtt.Path.Abs(),
-			)
-			if err != nil {
-				return nil, err
-			}
-			if equal {
-				p.DttOp = FileOpNone
-			} else {
-				p.DttOp = FileOpOverwrite
-			}
+		eq, err := filesystem.IsFileContentEqual(
+			a.fs,
+			p.Dot.Path.Abs(),
+			p.Dtt.Path.Abs(),
+		)
+		if err != nil {
+			return nil, err
+		}
+		if eq {
+			p.DttOp = FileOpNone
 		} else {
 			p.DttOp = FileOpOverwrite
 		}
-
 		return p, nil
 	}
-
-	// Case 2: dotfile is a symlink
-
-	// Dotfile operation
-	if p.Dot.Real.IsEqual(p.Dtt.Path) {
+	if p.Dot.IsFile && p.Dtt.Exists && !p.Dtt.IsFile {
+		p.DotOp = FileOpOverwrite
+		p.DttOp = FileOpOverwrite
+		return p, nil
+	}
+	// dot is symlink
+	targEq := p.Dot.Target.IsEqual(p.Dtt.Path)
+	realEq := p.Dot.Real.IsEqual(p.Dtt.Path)
+	if targEq && realEq && p.Dot.Exists {
 		p.DotOp = FileOpNone
 		p.DttOp = FileOpNone
 		return p, nil
 	}
-	p.DotOp = FileOpOverwrite
+	if targEq && realEq && !p.Dot.Exists {
+		p.DotOp = FileOpNone
+		p.DttOp = FileOpSkip
+		return p, nil
+	}
+	if targEq && !realEq {
+		p.DotOp = FileOpNone
+		p.DttOp = FileOpSkip
+		return p, nil
+	}
+	if !targEq && realEq && p.Dot.Exists {
+		p.DotOp = FileOpOverwrite
+		p.DttOp = FileOpNone
+		return p, nil
+	}
+	if !targEq && realEq && !p.Dot.Exists {
+		p.DotOp = FileOpSkip
+		p.DttOp = FileOpSkip
+		return p, nil
+	}
+	// dot is symlink to another file
+	if p.Dtt.Exists && p.Dtt.IsFile {
+		p.DotOp = FileOpOverwrite
 
-	// Dotato operation
-	if !p.Dtt.Exists {
-		p.DttOp = FileOpCreate
-	} else {
-		if p.Dtt.IsFile {
-			equal, err := filesystem.IsFileContentEqual(
-				a.fs,
-				p.Dot.Path.Abs(),
-				p.Dtt.Path.Abs(),
-			)
-			if err != nil {
-				return nil, err
-			}
-			if equal {
-				p.DttOp = FileOpNone
-			} else {
-				p.DttOp = FileOpOverwrite
-			}
+		eq, err := filesystem.IsFileContentEqual(
+			a.fs,
+			p.Dot.Path.Abs(),
+			p.Dtt.Path.Abs(),
+		)
+		if err != nil {
+			return nil, err
+		}
+		if eq {
+			p.DttOp = FileOpNone
 		} else {
 			p.DttOp = FileOpOverwrite
 		}
+		return p, nil
 	}
-
+	if p.Dtt.Exists && !p.Dtt.IsFile {
+		p.DotOp = FileOpOverwrite
+		p.DttOp = FileOpOverwrite
+		return p, nil
+	}
+	// dtt does not exist
+	p.DotOp = FileOpOverwrite
+	p.DttOp = FileOpCreate
 	return p, nil
 }
 
@@ -193,37 +247,46 @@ func (a App) PreviewExportFile(
 		return nil, err
 	}
 
-	// Dtt file operation
 	if !p.Dtt.Exists {
 		return nil, fmt.Errorf("dotato file %s does not exist", p.Dtt.Path)
 	}
-	p.DttOp = FileOpNone
-
-	// Dot file operation
-	if p.Dot.Exists {
-		if p.Dot.IsFile {
-			// Compare files
-			equal, err := filesystem.IsFileContentEqual(
-				a.fs,
-				p.Dot.Path.Abs(),
-				p.Dtt.Path.Abs(),
-			)
-			if err != nil {
-				return nil, err
-			}
-
-			if equal {
-				p.DotOp = FileOpNone
-			} else {
-				p.DotOp = FileOpOverwrite
-			}
-		} else {
-			p.DotOp = FileOpOverwrite
-		}
-	} else {
-		p.DotOp = FileOpCreate
+	// dtt exists
+	if !p.Dtt.IsFile && (
+		p.Dtt.Target.IsEqual(p.Dot.Path) ||
+		p.Dtt.Real.IsEqual(p.Dot.Path)) {
+		p.DotOp = FileOpSkip
+		p.DttOp = FileOpNone
+		return p, nil
 	}
-
+	// dtt is file or symlink to another file
+	if !p.Dot.Exists {
+		p.DotOp = FileOpCreate
+		p.DttOp = FileOpNone
+		return p, nil
+	}
+	// dot exists
+	if !p.Dot.IsFile {
+		p.DotOp = FileOpOverwrite
+		p.DttOp = FileOpNone
+		return p, nil
+	}
+	// dot is file
+	eq, err := filesystem.IsFileContentEqual(
+		a.fs,
+		p.Dot.Path.Abs(),
+		p.Dtt.Path.Abs(),
+	)
+	if err != nil {
+		return nil, err
+	}
+	if eq {
+		p.DotOp = FileOpNone
+		p.DttOp = FileOpNone
+		return p, nil
+	}
+	// dot is different
+	p.DotOp = FileOpOverwrite
+	p.DttOp = FileOpNone
 	return p, nil
 }
 
@@ -242,27 +305,35 @@ func (a App) PreviewExportLink(
 	if !p.Dtt.Exists {
 		return nil, fmt.Errorf("dotato file %s does not exist", p.Dtt.Path)
 	}
-	p.DttOp = FileOpNone
-
-	// Dot operation
-	if p.Dot.Exists {
-		if p.Dot.IsFile {
-			p.DotOp = FileOpOverwrite
-		} else {
-			link, err := a.fs.Readlink(p.Dot.Path.Abs())
-			if err != nil {
-				return nil, err
-			}
-			if link == p.Dtt.Path.Abs() {
-				p.DotOp = FileOpNone
-			} else {
-				p.DotOp = FileOpOverwrite
-			}
-		}
-	} else {
-		p.DotOp = FileOpCreate
+	if !p.Dtt.IsFile && (
+		p.Dtt.Target.IsEqual(p.Dot.Path) ||
+		p.Dtt.Real.IsEqual(p.Dot.Path)) {
+		p.DotOp = FileOpSkip
+		p.DttOp = FileOpNone
+		return p, nil
 	}
-
+	// dtt is file
+	if !p.Dot.Exists {
+		p.DotOp = FileOpCreate
+		p.DttOp = FileOpNone
+		return p, nil
+	}
+	// dot exists
+	if p.Dot.IsFile {
+		p.DotOp = FileOpOverwrite
+		p.DttOp = FileOpNone
+		return p, nil
+	}
+	// dot is symlink
+	targEq := p.Dot.Target.IsEqual(p.Dtt.Path)
+	if targEq {
+		p.DotOp = FileOpNone
+		p.DttOp = FileOpNone
+		return p, nil
+	}
+	// dot is symlink to another file
+	p.DotOp = FileOpOverwrite
+	p.DttOp = FileOpNone
 	return p, nil
 }
 
@@ -277,34 +348,26 @@ func (a App) PreviewUnlink(
 		return nil, err
 	}
 
-	// Dot file operation
-	if !p.Dot.Exists {
-		// Dot file does not exist.
-		p.DotOp = FileOpNone
-	} else if p.Dot.IsFile {
-		// Dot file is a file.
-		p.DotOp = FileOpNone
-	} else {
-		// Dot file is a symlink.
-		target, err := a.fs.Readlink(p.Dot.Path.Abs())
-		if err != nil {
-			return nil, err
-		}
-
-		if target == p.Dtt.Path.Abs() {
-			// Dot file is a symlink to dtt.
-			p.DotOp = FileOpOverwrite
-		} else {
-			// Dot file is a symlink to another file.
-			p.DotOp = FileOpNone
-		}
+	// target very specific case
+	if p.Dot.Exists &&
+		!p.Dot.IsFile &&
+		p.Dot.Target.IsEqual(p.Dtt.Path) &&
+		p.Dtt.Exists &&
+		p.Dtt.IsFile {
+		p.DotOp = FileOpOverwrite
+		p.DttOp = FileOpNone
+		return p, nil
 	}
 
-	// Dtt file operation
+	if !p.Dot.Exists {
+		p.DotOp = FileOpSkip
+	} else {
+		p.DotOp = FileOpNone
+	}
 	if !p.Dtt.Exists {
 		return nil, fmt.Errorf("dotato file %s does not exist", p.Dtt.Path)
+	} else {
+		p.DttOp = FileOpNone
 	}
-	p.DttOp = FileOpNone
-
 	return p, nil
 }
