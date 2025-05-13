@@ -532,7 +532,7 @@ func TestPreviewUnlink(t *testing.T) {
 		app := requestApp(dtt, FirstReq_File, dot, SecondReq_Empty)
 		p, err := app.PreviewUnlink(dot, dtt)
 		assert.NoError(t, err)
-		assert.Equal(t, FileOpNone, p.DotOp)
+		assert.Equal(t, FileOpSkip, p.DotOp)
 		assert.Equal(t, FileOpNone, p.DttOp)
 	}
 
