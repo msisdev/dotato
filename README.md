@@ -5,11 +5,11 @@ dotato is a lightweight dotfile manager.
 
 <sup>[What is dotfile manager?](https://github.com/msisdev/dotato/wiki/Background)</sup>
 
-<img src="./example/import.gif" alt="import" width="50%">
+<img src="./example/import.gif" alt="import" width="75%">
 
 Import dotfiles
 
-<img src="./example/export.gif" alt="export" width="50%">
+<img src="./example/export.gif" alt="export" width="75%">
 
 Export dotfiles
 
@@ -27,8 +27,8 @@ Export dotfiles
 - Filter unnecessary files with `.dotatoignore`
 
 🚚 Choose your mode.
-- **file mode**: copy dotfiles into your directory (like snapshot)
-- **link mode**: move dotfiles into your directory and leave symlink instead. (like [stow](https://www.gnu.org/software/stow/))
+- **file mode**: copy dotfiles into your backup directory (like snapshot)
+- **link mode**: move dotfiles into your backup directory and leave symlink instead. (like [stow](https://www.gnu.org/software/stow/))
 
 ## OS Support
 <table>
@@ -140,3 +140,6 @@ dotato export group bash nux
 - You can define global rule - one ignore rule applied to all groups.
 - Nest many dotatoignore files under group directory.
 - Remember it is applied on both imprt/export command.
+
+[Commands](https://github.com/msisdev/dotato/wiki/Commands)
+- Use `-h` flag to read hints.
