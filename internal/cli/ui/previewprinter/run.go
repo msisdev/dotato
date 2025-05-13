@@ -19,11 +19,23 @@ func countUpdate(ps []app.Preview) int {
 
 func run(ps []app.Preview, arrow string) int {
 	count := countUpdate(ps)
-	fmt.Printf("\n🔎 Preview: update %d / total %d\n\n", count, len(ps))
-	for _, p := range ps {
-		println(renderItem(p, arrow))
+	title := fmt.Sprintf("🥔 Preview │ update %d │ total %d", count, len(ps))
+	println(renderBlock(normalBorder, title))
+
+	if len(ps) > 0 {
+		println(renderItem(ps[0], arrow))
 	}
-	println(footer)
+	if len(ps) > 1 {
+		for _, p := range ps[1:] {
+			println()
+			println(renderItem(p, arrow))
+		}
+	}
+	// for _, p := range ps {
+	// 	print(renderItem(p, arrow))
+	// }
+	
+	println(renderBlock(dotBorder, footer))
 
 	return count
 }
