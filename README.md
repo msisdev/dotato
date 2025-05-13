@@ -92,7 +92,7 @@ Prepare your backup directory like this.
 Write `dotato.yaml`.
 ```yaml
 # dotato.yaml
-version: 1.0.0
+version: v1
 
 mode: file
 
