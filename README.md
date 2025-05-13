@@ -64,11 +64,15 @@ Export dotfiles
 
 
 ## Installation
+### With binaries
+Download binary file in the dotato release page [here](https://github.com/msisdev/dotato/releases).
+
 ### With Go
-dotato is written in pure go. If you have [go](https://go.dev/dl/), it is easy:
+If you have [go](https://go.dev/dl/), it is easy:
 ```console
 go install github.com/msisdev/dotato@latest
 ```
+Some systems may require C library.
 
 And make sure you have `~/go/bin` in `PATH` env var.
 
