@@ -85,7 +85,7 @@ Prepare your backup directory like this.
 └── ⚙️dotato.yaml
 ```
 
-Write `dotato.yaml` to tell dotato where your dotfiles are.
+Write `dotato.yaml`.
 ```yaml
 # dotato.yaml
 version: 1.0.0
@@ -97,7 +97,7 @@ groups:
     nux: "~"   # write directory of your dotfile
 ```
 
-Write `bash/.dotatoignore` to tell which files to ignore/grab.
+Write `bash/.dotatoignore`. It applies to both import/export.
 ```gitignore
 #bash/.dotatoignore
 *         # ignore all
@@ -123,23 +123,43 @@ dotato export group bash nux
 ```
 📁
 ├── 📁bash
-│   ├── ✨.bashrc        # dotato will copy this to ~/.bashrc
+│   ├── 🚚.bashrc        # dotato will copy this to ~/.bashrc
 │   └── 📄.dotatoignore
 └── ⚙️dotato.yaml
 ```
 
 ## Tips
+[CLI](https://github.com/msisdev/dotato/wiki/Commands)
+- Use flag `-h` to read hints.
+
 [`dotato.yaml`](https://github.com/msisdev/dotato/wiki/Configuration#dotatoyaml)
-- There is another entity 'plan' - for selecting multiple groups.
+- There is another entity 'plan' — select multiple groups.
 - Create groups as many as you like.
 - Create duplicate groups to maintain different versions.
-- You can have many directories in one group - address with many machines.
+- You can save many directories in one group — manage different machines.
 
 [`.dotatoignore`](https://github.com/msisdev/dotato/wiki/Configuration#dotatoignore)
-- It works same with gitignore.
+- It works same with [gitignore](https://git-scm.com/docs/gitignore).
 - You can define global rule - one ignore rule applied to all groups.
 - Nest many dotatoignore files under group directory.
-- Remember it is applied on both imprt/export command.
+- Remember it is applied on both import/export command.
 
-[Commands](https://github.com/msisdev/dotato/wiki/Commands)
-- Use `-h` flag to read hints.
+
+
+
+
+## Advanced
+Currently dotato doesn't provide advanced features.
+- Templating
+- Install script
+- Password encryption
+
+You can...
+1. Create issue and wait for support
+2. Use another tools like [chezmoi](https://www.chezmoi.io/), [etc](https://github.com/topics/dotfiles-manager)
+3. Use dotato API — [engine](https://pkg.go.dev/github.com/msisdev/dotato/pkg/engine) — if you love dotato and ready to go down the rabbit hole.
+
+If you decided to use dotato API, golang standard libraries will help.
+- Use [template](https://pkg.go.dev/text/template) to change file content.
+- Use [os.Exec](https://pkg.go.dev/os/exec) to run external commands
+- Use [crypto](https://pkg.go.dev/crypto) to encrypt/decrypt file content.
