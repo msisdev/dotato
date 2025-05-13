@@ -22,6 +22,8 @@ jobs:
 
       - run: go mod tidy
 
+      - run: go mod vendor
+
       - run: go test -v ./...
 
       - name: GoReleaser
