@@ -25,18 +25,18 @@ func ExportGroup(logger *log.Logger, args *args.ExportGroupArgs) {
 	mode, err := modespinner.Run(a)
 	if err != nil {
 		logger.Fatal(err)
-		return
+		os.Exit(1)
 	}
 	if mode != config.ModeFile && mode != config.ModeLink {
 		logger.Fatal("Invalid mode")
-		return
+		os.Exit(1)
 	}
 
 	// Get base
 	base, err := basespinner.Run(a, args.Group, args.Resolver)
 	if err != nil {
 		logger.Fatal(err)
-		return
+		os.Exit(1)
 	}
 
 	// Preview
@@ -45,13 +45,13 @@ func ExportGroup(logger *log.Logger, args *args.ExportGroupArgs) {
 		ps, err = previewspinner.RunPreviewExportGroupFile(a, args.Group, base)
 		if err != nil {
 			logger.Fatal(err)
-			return
+			os.Exit(1)
 		}
 	} else {
 		ps, err = previewspinner.RunPreviewExportGroupLink(a, args.Group, base)
 		if err != nil {
 			logger.Fatal(err)
-			return
+			os.Exit(1)
 		}
 	}
 
@@ -74,7 +74,7 @@ func ExportGroup(logger *log.Logger, args *args.ExportGroupArgs) {
 		yes, err := confirm.Run("Do you want to proceed?")
 		if err != nil {
 			logger.Fatal(err)
-			return
+			os.Exit(1)
 		}
 		if !yes {
 			return
@@ -112,9 +112,10 @@ func ExportGroup(logger *log.Logger, args *args.ExportGroupArgs) {
 		})
 	})
 	if err != nil {
-		if err != ui.ErrQuit {
-			logger.Fatal(err)
+		if err == ui.ErrQuit {
+			return
 		}
-		return
+		logger.Fatal(err)
+		os.Exit(1)
 	}
 }

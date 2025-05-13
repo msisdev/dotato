@@ -24,25 +24,25 @@ func Unlink(logger *log.Logger, args *args.DangerUnlinkArgs) {
 	mode, err := modespinner.Run(a)
 	if err != nil {
 		logger.Fatal(err)
-		return
+		os.Exit(1)
 	}
 	if mode == config.ModeFile {
 		logger.Fatal("unlink group not supported in file mode")
-		return
+		os.Exit(1)
 	}
 
 	// Get histories
 	hs, err := a.E.GetHistoryByMode(mode)
 	if err != nil {
 		logger.Fatal(err)
-		return
+		os.Exit(1)
 	}
 
 	// Preview
 	ps, err := previewspinner.RunPreviewDangerUnlink(a, hs)
 	if err != nil {
 		logger.Fatal(err)
-		return
+		os.Exit(1)
 	}
 
 	// Print preview
@@ -59,7 +59,7 @@ func Unlink(logger *log.Logger, args *args.DangerUnlinkArgs) {
 		ok, err := confirm.Run("Do you want to proceed?")
 		if err != nil {
 			logger.Fatal(err)
-			return
+			os.Exit(1)
 		}
 		if !ok {
 			return
@@ -93,9 +93,10 @@ func Unlink(logger *log.Logger, args *args.DangerUnlinkArgs) {
 		})
 	})
 	if err != nil {
-		if err != ui.ErrQuit {
-			logger.Fatal(err)
+		if err == ui.ErrQuit {
+			return
 		}
-		return
+		logger.Fatal(err)
+		os.Exit(1)
 	}
 }

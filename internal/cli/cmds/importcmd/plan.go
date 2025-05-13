@@ -26,30 +26,30 @@ func ImportPlan(logger *log.Logger, args *args.ImportPlanArgs) {
 	mode, err := modespinner.Run(a)
 	if err != nil {
 		logger.Fatal(err)
-		return
+		os.Exit(1)
 	}
 	if mode != config.ModeFile && mode != config.ModeLink {
 		logger.Fatal("Invalid mode")
-		return
+		os.Exit(1)
 	}
 
 	// Get groups
 	groups, ok, err := a.E.GetConfigGroups(args.Plan)
 	if err != nil {
 		logger.Fatal(err)
-		return
+		os.Exit(1)
 	}
 	if !ok {
 		// Plan not found
 		logger.Fatal("No such plan")
-		return
+		os.Exit(1)
 	}
 	if len(groups) == 0 {
 		// Empty group list means all groups
 		groups, err = a.E.GetConfigGroupAll()
 		if err != nil {
 			logger.Fatal(err)
-			return
+			os.Exit(1)
 		}
 	}
 
@@ -59,7 +59,7 @@ func ImportPlan(logger *log.Logger, args *args.ImportPlanArgs) {
 		base, err := basespinner.Run(a, group, args.Resolver)
 		if err != nil {
 			logger.Fatal(err)
-			return
+			os.Exit(1)
 		}
 
 		bases[group] = base
@@ -74,13 +74,13 @@ func ImportPlan(logger *log.Logger, args *args.ImportPlanArgs) {
 			list, err = previewspinner.RunPreviewImportGroupFile(a, group, base)
 			if err != nil {
 				logger.Fatal(err)
-				return
+				os.Exit(1)
 			}
 		} else {
 			list, err = previewspinner.RunPreviewImportGroupLink(a, group, base)
 			if err != nil {
 				logger.Fatal(err)
-				return
+				os.Exit(1)
 			}
 		}
 
@@ -106,7 +106,7 @@ func ImportPlan(logger *log.Logger, args *args.ImportPlanArgs) {
 		ok, err := confirm.Run("Do you want to proceed?")
 		if err != nil {
 			logger.Fatal(err)
-			return
+			os.Exit(1)
 		}
 		if !ok {
 			return
@@ -144,9 +144,11 @@ func ImportPlan(logger *log.Logger, args *args.ImportPlanArgs) {
 		})
 	})
 	if err != nil {
-		if err != ui.ErrQuit {
-			logger.Fatal(err)
+		if err == ui.ErrQuit {
+			return
 		}
-		return
+
+		logger.Fatal(err)
+		os.Exit(1)
 	}
 }

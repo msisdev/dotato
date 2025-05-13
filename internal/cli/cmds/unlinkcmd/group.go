@@ -23,14 +23,14 @@ func UnlinkGroup(logger *log.Logger, args *args.UnlinkGroupArgs) {
 	base, err := basespinner.Run(a, args.Group, args.Resolver)
 	if err != nil {
 		logger.Fatal(err)
-		return
+		os.Exit(1)
 	}
 
 	// Preview
 	ps, err := previewspinner.RunPreviewUnlinkGroup(a, args.Group, base)
 	if err != nil {
 		logger.Fatal(err)
-		return
+		os.Exit(1)
 	}
 
 	// Print preview
@@ -47,7 +47,7 @@ func UnlinkGroup(logger *log.Logger, args *args.UnlinkGroupArgs) {
 		yes, err := confirm.Run("Do you want to proceed?")
 		if err != nil {
 			logger.Fatal(err)
-			return
+			os.Exit(1)
 		}
 		if !yes {
 			return
@@ -81,9 +81,11 @@ func UnlinkGroup(logger *log.Logger, args *args.UnlinkGroupArgs) {
 		})
 	})
 	if err != nil {
-		if err != ui.ErrQuit {
-			logger.Fatal(err)
+		if err == ui.ErrQuit {
+			return
 		}
-		return
+
+		logger.Fatal(err)
+		os.Exit(1)
 	}
 }

@@ -20,40 +20,23 @@ import (
 func UnlinkPlan(logger *log.Logger, args *args.UnlinkPlanArgs) {
 	a := app.New(logger)
 
-	{
-		plans, err := a.E.GetConfigPlans()
-		if err != nil {
-			logger.Fatal(err)
-			return
-		}
-
-		if groupList, ok := plans[args.Plan]; !ok {
-			logger.Fatal("Group not found")
-			return
-		} else {
-			if len(groupList) == 0 {
-
-			}
-		}
-	}
-
 	// Get groups
 	groups, ok, err := a.E.GetConfigGroups(args.Plan)
 	if err != nil {
 		logger.Fatal(err)
-		return
+		os.Exit(1)
 	}
 	if !ok {
 		// Plan not found
 		logger.Fatal("No such plan")
-		return
+		os.Exit(1)
 	}
 	if len(groups) == 0 {
 		// Empty group list means all groups
 		groups, err = a.E.GetConfigGroupAll()
 		if err != nil {
 			logger.Fatal(err)
-			return
+			os.Exit(1)
 		}
 	}
 
@@ -63,7 +46,7 @@ func UnlinkPlan(logger *log.Logger, args *args.UnlinkPlanArgs) {
 		base, err := basespinner.Run(a, group, args.Resolver)
 		if err != nil {
 			logger.Fatal(err)
-			return
+			os.Exit(1)
 		}
 
 		bases[group] = base
@@ -75,7 +58,7 @@ func UnlinkPlan(logger *log.Logger, args *args.UnlinkPlanArgs) {
 		list, err := previewspinner.RunPreviewUnlinkGroup(a, group, base)
 		if err != nil {
 			logger.Fatal(err)
-			return
+			os.Exit(1)
 		}
 
 		ps = append(ps, list...)
@@ -95,7 +78,7 @@ func UnlinkPlan(logger *log.Logger, args *args.UnlinkPlanArgs) {
 		ok, err := confirm.Run("Do you want to proceed?")
 		if err != nil {
 			logger.Fatal(err)
-			return
+			os.Exit(1)
 		}
 		if !ok {
 			return
@@ -129,9 +112,11 @@ func UnlinkPlan(logger *log.Logger, args *args.UnlinkPlanArgs) {
 		})
 	})
 	if err != nil {
-		if err != ui.ErrQuit {
-			logger.Fatal(err)
+		if err == ui.ErrQuit {
+			return
 		}
-		return
+
+		logger.Fatal(err)
+		os.Exit(1)
 	}
 }

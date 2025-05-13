@@ -2,6 +2,7 @@ package initcmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/charmbracelet/log"
 	"github.com/msisdev/dotato/internal/cli/args"
@@ -13,7 +14,7 @@ func Init(logger *log.Logger, args *args.InitArgs) {
 	ok, err := factory.WriteExampleConfig(filesystem.NewOSFS(), 0666)
 	if err != nil {
 		logger.Fatal(err)
-		return
+		os.Exit(1)
 	}
 
 	if ok {
