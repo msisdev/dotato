@@ -29,3 +29,5 @@ dotato
 
 # dotato local test folder
 bash
+# Added by goreleaser init:
+dist/

@@ -10,6 +10,7 @@ require (
 	github.com/goccy/go-yaml v1.17.1
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06
 	github.com/stretchr/testify v1.10.0
+	gorm.io/gorm v1.25.7
 )
 
 require (
@@ -56,5 +57,4 @@ require (
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	golang.org/x/text v0.24.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gorm.io/gorm v1.25.12
 )

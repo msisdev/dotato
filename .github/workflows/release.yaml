@@ -1,4 +1,4 @@
-name: Build
+name: Release
 
 on:
   push:
@@ -21,8 +21,6 @@ jobs:
           cache: true
 
       - run: go mod tidy
-
-      - run: go mod vendor
 
       - run: go test -v ./...
 
