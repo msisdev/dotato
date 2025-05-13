@@ -140,7 +140,7 @@ dotato export group bash nux
 - There is another entity 'plan' — select multiple groups.
 - Create groups as many as you like.
 - Create duplicate groups to maintain different versions.
-- You can save many directories in one group — manage different machines.
+- You can have many directory paths for one group — manage different machines.
 
 [`.dotatoignore`](https://github.com/msisdev/dotato/wiki/Configuration#dotatoignore)
 - It works same with [gitignore](https://git-scm.com/docs/gitignore).
