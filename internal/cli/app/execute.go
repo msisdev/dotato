@@ -203,7 +203,7 @@ func (a App) ExportLink(
 	dirPerm os.FileMode,
 	filePerm os.FileMode,
 ) error {
-	if pre.DotOp == FileOpNone {
+	if pre.DotOp == FileOpNone || pre.DotOp == FileOpSkip {
 		return nil
 	}
 

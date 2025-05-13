@@ -9,6 +9,7 @@ import (
 func countUpdate(ps []app.Preview) int {
 	count := 0
 	for _, p := range ps {
+		// If both dot and dtt are none or skip, do nothing
 		if (p.DotOp != app.FileOpNone && p.DotOp != app.FileOpSkip) ||
 			(p.DttOp != app.FileOpNone && p.DttOp != app.FileOpSkip) {
 			count++
