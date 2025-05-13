@@ -20,31 +20,11 @@ var (
 	negativeForegroundStyle = lipgloss.NewStyle().Foreground(ui.NegativeColor)
 	negativeBackgroundStyle = lipgloss.NewStyle().Foreground(ui.EmptyColor).Background(ui.NegativeColor)
 
-	normalBorder = lipgloss.Border{
-		Top:					"─",
-    Bottom:      	"─",
-		Left:        	"│",
-    Right:       	"│",
-    TopLeft:     	"┌",
-    TopRight:    	"┐",
-    BottomLeft:  	"└",
-    BottomRight: 	"┘",
-	}
-	// normalBorder = lipgloss.NormalBorder()
-	dotBorder = lipgloss.Border{
-		Top:					"‧",
-    Bottom:      	"‧",
-    Left:        	"⁚",
-    Right:       	"⁚",
-    TopLeft:     	"‧",
-    TopRight:    	"‧",
-    BottomLeft:  	"‧",
-    BottomRight: 	"‧",
-	}
 	blockStyle = lipgloss.NewStyle().
 		Align(lipgloss.Center).
-		Width(64).
-		BorderForeground(ui.MutedColor)
+		Width(40).
+		BorderForeground(ui.MutedColor).
+		Border(lipgloss.RoundedBorder())
 )
 
 // https://www.unicode.org/charts/ -> Block Elements
@@ -75,7 +55,7 @@ var (
 		negativeBackgroundStyle.Bold(true).Render("?") +
 		negativeForegroundStyle.Render(iconRightBar))
 	footer = fmt.Sprintf(
-		"%s okay ‧ %s skip ‧ %s create ‧ %s overwrite",
+		"%sokay %sskip %screate %soverwrite",
 		iconNone, iconSkip, iconCreate, iconOverwrite,
 	)
 )
@@ -126,6 +106,6 @@ func renderItem(p app.Preview, arrow string) string {
 	)
 }
 
-func renderBlock(border lipgloss.Border, line string) string {
-	return blockStyle.Border(border).Render(line)
+func renderBlock(line string) string {
+	return blockStyle.Render(line)
 }
