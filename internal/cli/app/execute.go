@@ -66,28 +66,47 @@ func (a App) ImportLink(
 		dttabs = pre.Dtt.Path.Abs()
 	)
 
-	// Create dtt first
-	if pre.DttOp != FileOpNone {
-		if pre.DttOp == FileOpOverwrite {
-			if !pre.Dtt.IsFile {
-				// Remove symlink
-				err := a.fs.Remove(dotabs)
-				if err != nil {
-					return err
-				}
-			}
-		} else {
+	// Handle dtt first.
+	//
+	// Do rename if it's possible.
+	// If not, do create.
+	if pre.DttOp != FileOpNone && pre.DttOp != FileOpSkip {
+		if pre.DttOp == FileOpCreate {
 			// Create directory
 			err := a.fs.MkdirAll(pre.Dtt.Path.Parent().Abs(), dirPerm)
 			if err != nil {
 				return err
 			}
-		}
 
-		// Create file
-		err := filesystem.CreateAndCopyFile(a.fs, dotabs, dttabs, filePerm)
-		if err != nil {
-			return err
+			// Rename
+			err = a.fs.Rename(dotabs, dttabs)
+			if err != nil {
+				return err
+			}
+		} else if pre.Dtt.IsFile && pre.Dot.IsFile {
+			// Rename
+			err := a.fs.Rename(dotabs, dttabs)
+			if err != nil {
+				return err
+			}
+		} else if pre.Dtt.IsFile && !pre.Dot.IsFile {
+			// Copy
+			err := filesystem.CreateAndCopyFile(a.fs, dotabs, dttabs, filePerm)
+			if err != nil {
+				return err
+			}
+		} else {
+			// Remove symlink
+			err := a.fs.Remove(dotabs)
+			if err != nil {
+				return err
+			}
+
+			// Create file
+			err = filesystem.CreateAndCopyFile(a.fs, dotabs, dttabs, filePerm)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
