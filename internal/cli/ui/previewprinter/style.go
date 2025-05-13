@@ -20,11 +20,23 @@ var (
 	negativeForegroundStyle = lipgloss.NewStyle().Foreground(ui.NegativeColor)
 	negativeBackgroundStyle = lipgloss.NewStyle().Foreground(ui.EmptyColor).Background(ui.NegativeColor)
 
+	border = lipgloss.Border{
+		// Top:         "─",
+		// Bottom:      "─",
+		Top:         " ",
+		Bottom:      " ",
+		Left:        "│",
+		Right:       "│",
+		TopLeft:     "╭",
+		TopRight:    "╮",
+		BottomLeft:  "╰",
+		BottomRight: "╯",
+	}
 	blockStyle = lipgloss.NewStyle().
 		Align(lipgloss.Center).
 		Width(40).
 		BorderForeground(ui.MutedColor).
-		Border(lipgloss.RoundedBorder())
+		Border(border)
 )
 
 // https://www.unicode.org/charts/ -> Block Elements
