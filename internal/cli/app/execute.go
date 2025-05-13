@@ -45,7 +45,7 @@ func (a App) ImportFile(
 		return err
 	}
 
-	// Do not write history because dotfile is not changed.
+	// We don't need to write history here because dotfile is not modified.
 	return nil
 }
 
