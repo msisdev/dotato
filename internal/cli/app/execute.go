@@ -134,6 +134,9 @@ func (a App) ImportLink(
 	}
 
 	// Write history
+	if tx == nil {
+		return nil
+	}
 	err := a.E.TxUpsertHistory(tx, engine.History{
 		DotPath: pre.Dot.Path.Abs(),
 		DttPath: pre.Dtt.Real.Abs(),
@@ -185,6 +188,9 @@ func (a App) ExportFile(
 	}
 
 	// Write history
+	if tx == nil {
+		return nil
+	}
 	err = a.E.TxUpsertHistory(tx, engine.History{
 		DotPath: pre.Dot.Path.Abs(),
 		DttPath: pre.Dtt.Real.Abs(),
@@ -234,6 +240,9 @@ func (a App) ExportLink(
 	}
 
 	// Write history
+	if tx == nil {
+		return nil
+	}
 	err = a.E.TxUpsertHistory(tx, engine.History{
 		DotPath: pre.Dot.Path.Abs(),
 		DttPath: pre.Dtt.Real.Abs(),
@@ -274,6 +283,9 @@ func (a App) Unlink(
 	}
 
 	// Delete history
+	if tx == nil {
+		return nil
+	}
 	err = a.E.TxDeleteHistory(tx, engine.History{
 		DotPath: pre.Dot.Path.Abs(),
 	})
