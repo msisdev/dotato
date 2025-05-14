@@ -62,7 +62,7 @@ Require dotato
 Set Shell "bash"
 Set FontSize 32
 Set Width 1200
-Set Height 900
+Set Height 1000
 
 Type "dotato import group bash nux"
 Sleep 500ms

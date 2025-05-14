@@ -116,7 +116,7 @@ func renderItem(p app.Preview, arrow string) string {
 	}
 
 	return fmt.Sprintf(
-		"%s%s\n %s%s%s",
+		"%s %s\n %s%s %s",
 		dotIcon, dotPath, arrow, dttIcon, dttPath,
 	)
 }
