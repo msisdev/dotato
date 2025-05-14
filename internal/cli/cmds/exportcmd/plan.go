@@ -90,9 +90,9 @@ func ExportPlan(logger *log.Logger, args *args.ExportPlanArgs) {
 	// Print preview
 	var count int
 	if mode == config.ModeFile {
-		count = previewprinter.RunPreviewExportFile(ps)
+		count = previewprinter.RunPreviewExportFile(ps, args.ViewAll)
 	} else {
-		count = previewprinter.RunPreviewExportLink(ps)
+		count = previewprinter.RunPreviewExportLink(ps, args.ViewAll)
 	}
 	if count == 0 {
 		return

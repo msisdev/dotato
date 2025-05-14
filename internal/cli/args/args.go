@@ -20,6 +20,7 @@ type DangerArgs struct {
 type DangerUnlinkArgs struct {
 	Yes      bool `arg:"-y,--yes" help:"skip confirmation"`
 	No       bool `arg:"-n,--no" help:"exit on confirmation"`
+	ViewAll  bool `arg:"-a,--view-all" help:"view all files"`
 	FilePerm int  `arg:"-f,--file-perm" help:"create file with permission" default:"0644"`
 	DirPerm  int  `arg:"-d,--dir-perm" help:"create directory with permission" default:"0755"`
 }
@@ -35,6 +36,7 @@ type ExportPlanArgs struct {
 	Resolver string `arg:"positional,required" help:"resolver name"`
 	Yes      bool   `arg:"-y,--yes" help:"skip confirmation"`
 	No       bool   `arg:"-n,--no" help:"exit on confirmation"`
+	ViewAll  bool `arg:"-a,--view-all" help:"view all files"`
 	FilePerm int    `arg:"-f,--file-perm" help:"create file with permission" default:"0644"`
 	DirPerm  int    `arg:"-d,--dir-perm" help:"create directory with permission" default:"0755"`
 }
@@ -43,6 +45,7 @@ type ExportGroupArgs struct {
 	Resolver string `arg:"positional,required" help:"resolver name"`
 	Yes      bool   `arg:"-y,--yes" help:"skip confirmation"`
 	No       bool   `arg:"-n,--no" help:"exit on confirmation"`
+	ViewAll  bool `arg:"-a,--view-all" help:"view all files"`
 	FilePerm int    `arg:"-f,--file-perm" help:"create file with permission" default:"0644"`
 	DirPerm  int    `arg:"-d,--dir-perm" help:"create directory with permission" default:"0755"`
 }
@@ -58,6 +61,7 @@ type ImportPlanArgs struct {
 	Resolver string `arg:"positional,required" help:"resolver name"`
 	Yes      bool   `arg:"-y,--yes" help:"skip confirmation"`
 	No       bool   `arg:"-n,--no" help:"exit on confirmation"`
+	ViewAll  bool `arg:"-a,--view-all" help:"view all files"`
 	FilePerm int    `arg:"-f,--file-perm" help:"create file with permission" default:"0644"`
 	DirPerm  int    `arg:"-d,--dir-perm" help:"create directory with permission" default:"0755"`
 }
@@ -66,6 +70,7 @@ type ImportGroupArgs struct {
 	Resolver string `arg:"positional,required" help:"resolver name"`
 	Yes      bool   `arg:"-y,--yes" help:"skip confirmation"`
 	No       bool   `arg:"-n,--no" help:"exit on confirmation"`
+	ViewAll  bool `arg:"-a,--view-all" help:"view all files"`
 	FilePerm int    `arg:"-f,--file-perm" help:"create file with permission" default:"0644"`
 	DirPerm  int    `arg:"-d,--dir-perm" help:"create directory with permission" default:"0755"`
 }
@@ -85,6 +90,7 @@ type UnlinkPlanArgs struct {
 	Resolver string `arg:"positional,required" help:"resolver name"`
 	Yes      bool   `arg:"-y,--yes" help:"skip confirmation"`
 	No       bool   `arg:"-n,--no" help:"skip confirmation"`
+	ViewAll  bool `arg:"-a,--view-all" help:"view all files"`
 	FilePerm int    `arg:"-f,--file-perm" help:"create file with permission" default:"0644"`
 	DirPerm  int    `arg:"-d,--dir-perm" help:"create directory with permission" default:"0755"`
 }
@@ -93,6 +99,7 @@ type UnlinkGroupArgs struct {
 	Resolver string `arg:"positional,required" help:"resolver name"`
 	Yes      bool   `arg:"-y,--yes" help:"skip confirmation"`
 	No       bool   `arg:"-n,--no" help:"skip confirmation"`
+	ViewAll  bool `arg:"-a,--view-all" help:"view all files"`
 	FilePerm int    `arg:"-f,--file-perm" help:"create file with permission" default:"0644"`
 	DirPerm  int    `arg:"-d,--dir-perm" help:"create directory with permission" default:"0755"`
 }

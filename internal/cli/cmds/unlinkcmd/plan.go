@@ -65,7 +65,7 @@ func UnlinkPlan(logger *log.Logger, args *args.UnlinkPlanArgs) {
 	}
 
 	// Print preview
-	count := previewprinter.RunPreviewUnlink(ps)
+	count := previewprinter.RunPreviewUnlink(ps, args.ViewAll)
 	if count == 0 {
 		return
 	}

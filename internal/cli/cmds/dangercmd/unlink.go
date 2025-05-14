@@ -46,7 +46,7 @@ func Unlink(logger *log.Logger, args *args.DangerUnlinkArgs) {
 	}
 
 	// Print preview
-	update := previewprinter.RunPreviewUnlink(ps)
+	update := previewprinter.RunPreviewUnlink(ps, args.ViewAll)
 	if update == 0 {
 		return
 	}

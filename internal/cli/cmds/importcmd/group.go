@@ -54,9 +54,9 @@ func ImportGroup(logger *log.Logger, args *args.ImportGroupArgs) {
 	// Print preview
 	var count int
 	if mode == config.ModeFile {
-		count = previewprinter.RunPreviewImportFile(ps)
+		count = previewprinter.RunPreviewImportFile(ps, args.ViewAll)
 	} else {
-		count = previewprinter.RunPreviewImportLink(ps)
+		count = previewprinter.RunPreviewImportLink(ps, args.ViewAll)
 	}
 	if count == 0 {
 		return

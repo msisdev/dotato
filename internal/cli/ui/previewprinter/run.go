@@ -1,59 +1,93 @@
 package previewprinter
 
 import (
-	"fmt"
-
 	"github.com/msisdev/dotato/internal/cli/app"
 )
 
-func countUpdate(ps []app.Preview) int {
-	count := 0
+func run(ps []app.Preview, viewAll bool, arrow string) int {
+	// count
+	updates := 0
 	for _, p := range ps {
-		// If both dot and dtt are none or skip, do nothing
-		if (p.DotOp != app.FileOpNone && p.DotOp != app.FileOpSkip) ||
-			(p.DttOp != app.FileOpNone && p.DttOp != app.FileOpSkip) {
-			count++
+		if isUpdate(p) {
+			updates++
 		}
 	}
-	return count
+
+	println(renderHeader(updates, len(ps)))
+	println()
+	printPreviews(ps, viewAll, arrow)
+	println()
+	println(renderBlock())
+
+	return updates
 }
 
-func run(ps []app.Preview, arrow string) int {
-	count := countUpdate(ps)
-	title := fmt.Sprintf("🥔 Preview │ update %d │ total %d", count, len(ps))
-	println(renderBlock(title))
-
-	if len(ps) > 0 {
-		println(renderItem(ps[0], arrow))
+func isUpdate(p app.Preview) bool {
+	// If both dot and dtt are none, it is up to date
+	if (p.DotOp == app.FileOpNone || p.DotOp == app.FileOpSkip) &&
+		(p.DttOp == app.FileOpNone || p.DttOp == app.FileOpSkip) {
+		return false
 	}
-	if len(ps) > 1 {
-		for _, p := range ps[1:] {
-			println()
-			println(renderItem(p, arrow))
+
+	return true
+}
+
+func isPrintSkipped(p app.Preview) bool {
+ if (p.DotOp == app.FileOpNone && p.DttOp == app.FileOpNone) {
+	return true
+ }
+
+ return false
+}
+
+func printPreviews(ps []app.Preview, viewAll bool, arrow string) {
+	idx := 0
+	printed := false
+
+	// Try to print at least one item
+	for ; idx < len(ps); idx++ {
+		if !viewAll && isPrintSkipped(ps[idx]) {
+			continue
 		}
+
+		println(renderItem(ps[idx], arrow))
+		idx++
+		printed = true
+		break
 	}
-	
-	println(renderBlock(footer))
 
-	return count
+	// Print the rest of the items
+	for ; idx < len(ps); idx++ {
+		if !viewAll && isPrintSkipped(ps[idx]) {
+			continue
+		}
+
+		println()
+		println(renderItem(ps[idx], arrow))
+		printed = true
+	}
+
+	if !printed {
+		println("☀️ All files are ok.")
+	}
 }
 
-func RunPreviewImportFile(ps []app.Preview) int {
-	return run(ps, arrowImportFile)
+func RunPreviewImportFile(ps []app.Preview, viewAll bool) int {
+	return run(ps, viewAll, arrowImportFile)
 }
 
-func RunPreviewImportLink(ps []app.Preview) int {
-	return run(ps, arrowImportLink)
+func RunPreviewImportLink(ps []app.Preview, viewAll bool) int {
+	return run(ps, viewAll, arrowImportLink)
 }
 
-func RunPreviewExportFile(ps []app.Preview) int {
-	return run(ps, arrowExportFile)
+func RunPreviewExportFile(ps []app.Preview, viewAll bool) int {
+	return run(ps, viewAll, arrowExportFile)
 }
 
-func RunPreviewExportLink(ps []app.Preview) int {
-	return run(ps, arrowExportLink)
+func RunPreviewExportLink(ps []app.Preview, viewAll bool) int {
+	return run(ps, viewAll, arrowExportLink)
 }
 
-func RunPreviewUnlink(ps []app.Preview) int {
-	return run(ps, arrowUnlink)
+func RunPreviewUnlink(ps []app.Preview, viewAll bool) int {
+	return run(ps, viewAll, arrowUnlink)
 }

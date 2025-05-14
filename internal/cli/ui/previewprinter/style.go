@@ -8,6 +8,7 @@ import (
 	"github.com/msisdev/dotato/internal/cli/ui"
 )
 
+// Styles
 var (
 	mutedForegroundStyle    = lipgloss.NewStyle().Foreground(ui.MutedColor)
 	mutedBackgroundStyle    = lipgloss.NewStyle().Foreground(ui.EmptyColor).Background(ui.MutedColor)
@@ -50,6 +51,7 @@ const (
 	arrowUnlink     = "<->"
 )
 
+// Rendered icons
 var (
 	iconNone = (mutedForegroundStyle.Render(iconLeftBar) +
 		mutedBackgroundStyle.Bold(true).Render("o") +
@@ -66,11 +68,12 @@ var (
 	iconUnknown = (negativeForegroundStyle.Render(iconLeftBar) +
 		negativeBackgroundStyle.Bold(true).Render("?") +
 		negativeForegroundStyle.Render(iconRightBar))
-	footer = fmt.Sprintf(
-		"%sokay %sskip %screate %soverwrite",
-		iconNone, iconSkip, iconCreate, iconOverwrite,
-	)
 )
+
+func renderHeader(updates, total int) string {
+	line := fmt.Sprintf("🥔 Preview │ update %d │ total %d", updates, total)
+	return blockStyle.Render(line)
+}
 
 func renderIcon(op app.FileOp) (string, bool) {
 	switch op {
@@ -118,6 +121,10 @@ func renderItem(p app.Preview, arrow string) string {
 	)
 }
 
-func renderBlock(line string) string {
+func renderBlock() string {
+	line := fmt.Sprintf(
+		"%sokay %sskip %screate %soverwrite",
+		iconNone, iconSkip, iconCreate, iconOverwrite,
+	)
 	return blockStyle.Render(line)
 }
