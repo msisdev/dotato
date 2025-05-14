@@ -33,11 +33,11 @@ func isUpdate(p app.Preview) bool {
 }
 
 func isPrintSkipped(p app.Preview) bool {
- if (p.DotOp == app.FileOpNone && p.DttOp == app.FileOpNone) {
-	return true
- }
+	if p.DotOp == app.FileOpNone && p.DttOp == app.FileOpNone {
+		return true
+	}
 
- return false
+	return false
 }
 
 func printPreviews(ps []app.Preview, viewAll bool, arrow string) {

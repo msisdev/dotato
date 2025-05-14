@@ -34,10 +34,10 @@ var (
 		BottomRight: "╯",
 	}
 	blockStyle = lipgloss.NewStyle().
-		Align(lipgloss.Center).
-		Width(40).
-		BorderForeground(ui.MutedColor).
-		Border(border)
+			Align(lipgloss.Center).
+			Width(40).
+			BorderForeground(ui.MutedColor).
+			Border(border)
 )
 
 // https://www.unicode.org/charts/ -> Block Elements

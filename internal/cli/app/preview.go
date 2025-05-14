@@ -111,7 +111,7 @@ func (a App) PreviewImportFile(
 	// dtt exists
 	if p.Dtt.IsFile {
 		p.DotOp = FileOpNone
-		
+
 		eq, err := filesystem.IsFileContentEqual(
 			a.fs,
 			p.Dot.Path.Abs(),
@@ -251,8 +251,7 @@ func (a App) PreviewExportFile(
 		return nil, fmt.Errorf("dotato file %s does not exist", p.Dtt.Path)
 	}
 	// dtt exists
-	if !p.Dtt.IsFile && (
-		p.Dtt.Target.IsEqual(p.Dot.Path) ||
+	if !p.Dtt.IsFile && (p.Dtt.Target.IsEqual(p.Dot.Path) ||
 		p.Dtt.Real.IsEqual(p.Dot.Path)) {
 		p.DotOp = FileOpSkip
 		p.DttOp = FileOpNone
@@ -305,8 +304,7 @@ func (a App) PreviewExportLink(
 	if !p.Dtt.Exists {
 		return nil, fmt.Errorf("dotato file %s does not exist", p.Dtt.Path)
 	}
-	if !p.Dtt.IsFile && (
-		p.Dtt.Target.IsEqual(p.Dot.Path) ||
+	if !p.Dtt.IsFile && (p.Dtt.Target.IsEqual(p.Dot.Path) ||
 		p.Dtt.Real.IsEqual(p.Dot.Path)) {
 		p.DotOp = FileOpSkip
 		p.DttOp = FileOpNone
