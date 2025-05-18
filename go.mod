@@ -10,6 +10,7 @@ require (
 	github.com/goccy/go-yaml v1.17.1
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06
 	github.com/stretchr/testify v1.10.0
+	golang.org/x/mod v0.24.0
 	gorm.io/gorm v1.25.7
 )
 
@@ -25,6 +26,7 @@ require (
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
 	github.com/glebarez/go-sqlite v1.21.2 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect
@@ -50,6 +52,7 @@ require (
 	github.com/charmbracelet/bubbletea v1.3.5
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/glebarez/sqlite v1.11.0
+	github.com/google/go-github/v72 v72.0.0
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect

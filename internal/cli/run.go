@@ -11,6 +11,7 @@ import (
 	"github.com/msisdev/dotato/internal/cli/cmds/importcmd"
 	"github.com/msisdev/dotato/internal/cli/cmds/initcmd"
 	"github.com/msisdev/dotato/internal/cli/cmds/unlinkcmd"
+	"github.com/msisdev/dotato/internal/cli/cmds/versioncmd"
 	"github.com/msisdev/dotato/internal/cli/cmds/wherecmd"
 )
 
@@ -90,7 +91,7 @@ func Run() {
 	}
 
 	if args.Version != nil {
-		printVersion(logger)
+		versioncmd.Run(logger, args.Version)
 		return
 	}
 
@@ -101,8 +102,4 @@ func Run() {
 		}
 		return
 	}
-}
-
-func printVersion(logger *log.Logger) {
-	logger.Info("Dotato version: " + dotatoVersion())
 }
