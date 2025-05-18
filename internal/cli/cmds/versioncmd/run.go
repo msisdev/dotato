@@ -56,6 +56,6 @@ func Run(logger *log.Logger, args *args.VersionArgs) {
 	println(renderLatestAvailable(current, latest))
 
 	if semver.Compare(semver.Major(current), semver.Major(latest)) == -1 {
-		println("This is a major release, please check the changelog before upgrading.")
+		println(renderMajorUpgradeWarning())
 	}
 }
