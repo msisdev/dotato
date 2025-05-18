@@ -23,7 +23,7 @@ func Run(logger *log.Logger, args *args.VersionArgs) {
 	}
 
 	var latest string
-	title := "Querying latest release ..."
+	title := "Fetching verseion info ..."
 	err := mxspinner.Run(title, func(store *store.Store[string], quit <-chan bool) error {
 		ctx, cancel := context.WithTimeout(context.Background(), timeout)
 		defer cancel()
@@ -34,10 +34,12 @@ func Run(logger *log.Logger, args *args.VersionArgs) {
 			return err
 		}
 
+		store.Set("Fetched version info")
+
 		return nil
 	})
 	if err != nil {
-		logger.Error("Failed to query latest release", "error", err)
+		logger.Error("Failed to fetch latest release", "error", err)
 		return
 	}
 	if !semver.IsValid(latest) {
@@ -56,9 +58,4 @@ func Run(logger *log.Logger, args *args.VersionArgs) {
 	if semver.Compare(semver.Major(current), semver.Major(latest)) == -1 {
 		println("This is a major release, please check the changelog before upgrading.")
 	}
-
-	return
 }
-
-
-
